@@ -13,11 +13,7 @@ import type { RuneBalance } from '@/types/ordiscan';
  */
 export const GET = withApiHandler(
   async (request: NextRequest) => {
-    const validation = await validateRequest(
-      request,
-      requestSchemas.addressRequest,
-      'query',
-    );
+    const validation = await validateRequest(request, requestSchemas.addressRequest, 'query');
     if (!validation.success) {
       return validation.errorResponse;
     }
@@ -28,9 +24,7 @@ export const GET = withApiHandler(
       address: address,
     });
 
-    const validBalances: RuneBalance[] = Array.isArray(balances)
-      ? balances
-      : [];
+    const validBalances: RuneBalance[] = Array.isArray(balances) ? balances : [];
 
     return ok(validBalances);
   },

@@ -44,8 +44,8 @@
   background-color: var(--win98-gray);
   border-width: 2px;
   border-style: solid;
-  border-color: var(--win98-dark-gray) var(--win98-light-gray)
-    var(--win98-light-gray) var(--win98-dark-gray); /* Inset border look */
+  border-color: var(--win98-dark-gray) var(--win98-light-gray) var(--win98-light-gray)
+    var(--win98-dark-gray); /* Inset border look */
 
   z-index: 50; /* Ensure dropdown is above other content - Increased z-index */
   padding: 2px; /* Inner padding for the border effect */
@@ -107,8 +107,8 @@
   background-color: var(--win98-gray);
   border-width: 2px;
   border-style: solid;
-  border-color: var(--win98-dark-gray) var(--win98-light-gray)
-    var(--win98-light-gray) var(--win98-dark-gray);
+  border-color: var(--win98-dark-gray) var(--win98-light-gray) var(--win98-light-gray)
+    var(--win98-dark-gray);
   color: var(--win98-black);
   font-size: 0.875rem;
   z-index: 50;
@@ -130,8 +130,8 @@
   background-color: var(--win98-gray);
   border-width: 2px;
   border-style: solid;
-  border-color: var(--win98-light-gray) var(--win98-dark-gray)
-    var(--win98-dark-gray) var(--win98-light-gray);
+  border-color: var(--win98-light-gray) var(--win98-dark-gray) var(--win98-dark-gray)
+    var(--win98-light-gray);
   font-size: 0.75rem;
   text-decoration: none;
   color: var(--win98-black);
@@ -142,6 +142,6 @@
 }
 
 .installLink:active {
-  border-color: var(--win98-dark-gray) var(--win98-light-gray)
-    var(--win98-light-gray) var(--win98-dark-gray);
+  border-color: var(--win98-dark-gray) var(--win98-light-gray) var(--win98-light-gray)
+    var(--win98-dark-gray);
 }

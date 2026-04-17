@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import type React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'runesswap-background';
 
@@ -25,11 +26,7 @@ const BackgroundContext = createContext<BackgroundContextType | null>(null);
  * @param props - Component props.
  * @param props.children - Child components.
  */
-export function BackgroundProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function BackgroundProvider({ children }: { children: React.ReactNode }) {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   // Load background from localStorage on mount and save when it changes
@@ -75,7 +72,6 @@ export function BackgroundProvider({
  */
 export const useBackground = () => {
   const context = useContext(BackgroundContext);
-  if (!context)
-    throw new Error('useBackground must be used within a BackgroundProvider');
+  if (!context) throw new Error('useBackground must be used within a BackgroundProvider');
   return context;
 };

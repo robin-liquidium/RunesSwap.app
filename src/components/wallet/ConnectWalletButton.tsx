@@ -1,13 +1,8 @@
 'use client';
 
-import React from 'react';
-
 import styles from '@/components/wallet/ConnectWalletButton.module.css';
 import WalletOptionsList from '@/components/wallet/WalletOptionsList';
-import {
-  AVAILABLE_WALLETS,
-  useWalletConnection,
-} from '@/hooks/useWalletConnection';
+import { AVAILABLE_WALLETS, useWalletConnection } from '@/hooks/useWalletConnection';
 import { truncateAddress } from '@/utils/formatters';
 
 /**
@@ -38,9 +33,7 @@ function ConnectWalletButton() {
 
   if (connected && address) {
     const connectedWalletName =
-      AVAILABLE_WALLETS.find((w) => w.provider === provider)?.name ||
-      provider ||
-      'Wallet';
+      AVAILABLE_WALLETS.find((w) => w.provider === provider)?.name || provider || 'Wallet';
     return (
       <div className={styles.connectedInfo}>
         <span className={styles.connectedText}>
@@ -63,11 +56,7 @@ function ConnectWalletButton() {
 
   return (
     <div className={styles.connectContainer} ref={dropdownRef}>
-      <button
-        onClick={toggleDropdown}
-        className={styles.connectButton}
-        disabled={isConnecting}
-      >
+      <button onClick={toggleDropdown} className={styles.connectButton} disabled={isConnecting}>
         Connect Wallet
       </button>
       {isDropdownOpen && (

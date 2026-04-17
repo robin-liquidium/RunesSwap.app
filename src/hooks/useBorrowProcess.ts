@@ -2,12 +2,12 @@
 import type { LaserEyesContextType } from '@omnisat/lasereyes';
 import { useState } from 'react';
 
+import { prepareLiquidiumBorrow, submitLiquidiumBorrow } from '@/lib/api/liquidium';
+import type { RuneData } from '@/lib/runesData';
 import type {
   LiquidiumPrepareBorrowResponse,
   LiquidiumSubmitBorrowResponse,
-} from '@/lib/api';
-import { prepareLiquidiumBorrow, submitLiquidiumBorrow } from '@/lib/api';
-import type { RuneData } from '@/lib/runesData';
+} from '@/types/liquidium';
 import { parseAmount } from '@/utils/formatters';
 import { convertToRawAmount } from '@/utils/runeFormatting';
 
@@ -47,12 +47,7 @@ export function useBorrowProcess({
     feeRate: number,
   ) => {
     const parsed = parseAmount(collateralAmount);
-    if (
-      !selectedQuoteId ||
-      !collateralAmount.trim() ||
-      Number.isNaN(parsed) ||
-      parsed <= 0
-    ) {
+    if (!selectedQuoteId || !collateralAmount.trim() || Number.isNaN(parsed) || parsed <= 0) {
       setLoanProcessError('Missing required information (quote or amount).');
       return;
     }
@@ -72,17 +67,16 @@ export function useBorrowProcess({
         return;
       }
 
-      const prepareResult: LiquidiumPrepareBorrowResponse =
-        await prepareLiquidiumBorrow({
-          instant_offer_id: selectedQuoteId,
-          fee_rate: feeRate,
-          token_amount: rawTokenAmount,
-          borrower_payment_address: paymentAddress,
-          borrower_payment_pubkey: paymentPublicKey,
-          borrower_ordinal_address: address,
-          borrower_ordinal_pubkey: publicKey,
-          address,
-        });
+      const prepareResult: LiquidiumPrepareBorrowResponse = await prepareLiquidiumBorrow({
+        instant_offer_id: selectedQuoteId,
+        fee_rate: feeRate,
+        token_amount: rawTokenAmount,
+        borrower_payment_address: paymentAddress,
+        borrower_payment_pubkey: paymentPublicKey,
+        borrower_ordinal_address: address,
+        borrower_ordinal_pubkey: publicKey,
+        address,
+      });
 
       if (
         !prepareResult.success ||
@@ -107,12 +101,11 @@ export function useBorrowProcess({
 
       setIsSigning(false);
       setIsSubmitting(true);
-      const submitResult: LiquidiumSubmitBorrowResponse =
-        await submitLiquidiumBorrow({
-          signed_psbt_base_64: signedPsbtBase64,
-          prepare_offer_id: prepareResult.data.prepare_offer_id,
-          address,
-        });
+      const submitResult: LiquidiumSubmitBorrowResponse = await submitLiquidiumBorrow({
+        signed_psbt_base_64: signedPsbtBase64,
+        prepare_offer_id: prepareResult.data.prepare_offer_id,
+        address,
+      });
 
       if (!submitResult.success || !submitResult.data?.loan_transaction_id) {
         throw new Error(
@@ -124,8 +117,7 @@ export function useBorrowProcess({
 
       setLoanTxId(submitResult.data.loan_transaction_id);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to start loan.';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start loan.';
       setLoanProcessError(errorMessage);
     } finally {
       setIsPreparing(false);

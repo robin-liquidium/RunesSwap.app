@@ -1,10 +1,7 @@
-import { runApiTests, setupApiMocks, testData } from '@/test-utils';
 import { apiGet, apiPost } from '@/lib/api/createApiClient';
 import {
-  QUERY_KEYS,
   fetchBtcBalanceFromApi,
   fetchListRunesFromApi,
-  fetchPopularFromApi,
   fetchPortfolioDataFromApi,
   fetchRuneActivityFromApi,
   fetchRuneBalancesFromApi,
@@ -12,9 +9,11 @@ import {
   fetchRuneInfoFromApi,
   fetchRuneMarketFromApi,
   fetchRunePriceHistoryFromApi,
-  fetchRunesFromApi,
   updateRuneDataViaApi,
-} from '@/lib/api';
+} from '@/lib/api/ordiscan';
+import { fetchPopularFromApi } from '@/lib/api/popular';
+import { fetchRunesFromApi } from '@/lib/api/satsTerminal';
+import { runApiTests, setupApiMocks, testData } from '@/test-utils';
 
 jest.mock('../createApiClient', () => ({
   apiGet: jest.fn(),
@@ -24,19 +23,6 @@ jest.mock('../../logger', () => ({ logFetchError: jest.fn() }));
 
 describe('API Client Functions', () => {
   beforeEach(setupApiMocks);
-
-  it('exports expected query keys', () => {
-    const expectedKeys = [
-      'POPULAR_RUNES',
-      'RUNE_INFO',
-      'RUNE_MARKET',
-      'BTC_BALANCE',
-      'RUNE_BALANCES',
-      'RUNE_ACTIVITY',
-      'PORTFOLIO_DATA',
-    ];
-    expectedKeys.forEach((key) => expect(QUERY_KEYS).toHaveProperty(key));
-  });
 
   describe('fetchRunesFromApi', () => {
     it('returns empty array for empty query and fetches data successfully', async () => {
@@ -211,9 +197,7 @@ describe('API Client Functions', () => {
       expect(result).toEqual(testData.priceHistory);
 
       (apiGet as jest.Mock).mockRejectedValue(new Error('Error'));
-      await expect(fetchRunePriceHistoryFromApi('FAIL')).rejects.toThrow(
-        'Error',
-      );
+      await expect(fetchRunePriceHistoryFromApi('FAIL')).rejects.toThrow('Error');
     });
   });
 });

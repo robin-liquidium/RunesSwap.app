@@ -1,11 +1,8 @@
-import {
-  useQuery,
-  type UseQueryOptions,
-  type UseQueryResult,
-} from '@tanstack/react-query';
+import { type UseQueryOptions, type UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import { fetchRuneBalancesFromApi, QUERY_KEYS } from '@/lib/api';
-import { type RuneBalance as OrdiscanRuneBalance } from '@/types/ordiscan';
+import { fetchRuneBalancesFromApi } from '@/lib/api/ordiscan';
+import { queryKeys } from '@/lib/queryKeys';
+import type { RuneBalance as OrdiscanRuneBalance } from '@/types/ordiscan';
 
 /**
  * Fetches Rune balances for the given address using React Query.
@@ -16,17 +13,12 @@ import { type RuneBalance as OrdiscanRuneBalance } from '@/types/ordiscan';
  */
 export function useRuneBalances(
   address: string | null,
-  options?: Omit<
-    UseQueryOptions<OrdiscanRuneBalance[], Error>,
-    'queryKey' | 'queryFn'
-  >,
+  options?: Omit<UseQueryOptions<OrdiscanRuneBalance[], Error>, 'queryKey' | 'queryFn'>,
 ): UseQueryResult<OrdiscanRuneBalance[], Error> {
   return useQuery<OrdiscanRuneBalance[], Error>({
-    queryKey: [QUERY_KEYS.RUNE_BALANCES, address],
+    queryKey: queryKeys.runeBalances(address || ''),
     queryFn: () => fetchRuneBalancesFromApi(address || ''),
     enabled: !!address,
     ...options,
   });
 }
-
-export default useRuneBalances;

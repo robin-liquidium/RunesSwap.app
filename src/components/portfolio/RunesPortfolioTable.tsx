@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import { FormattedRuneAmount } from '@/components/formatters/FormattedRuneAmount';
 import styles from '@/components/portfolio/PortfolioTab.module.css';
@@ -71,19 +71,13 @@ const RunesPortfolioTable: React.FC<RunesPortfolioTableProps> = ({
         role="columnheader"
         tabIndex={0}
         aria-sort={
-          sortField === 'name'
-            ? sortDirection === 'asc'
-              ? 'ascending'
-              : 'descending'
-            : 'none'
+          sortField === 'name' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
         }
         onKeyDown={(e) => e.key === 'Enter' && onSort('name')}
       >
         Rune Name
         {sortField === 'name' && (
-          <span className={styles.sortArrow}>
-            {sortDirection === 'asc' ? '↑' : '↓'}
-          </span>
+          <span className={styles.sortArrow}>{sortDirection === 'asc' ? '↑' : '↓'}</span>
         )}
       </div>
       <div
@@ -93,19 +87,13 @@ const RunesPortfolioTable: React.FC<RunesPortfolioTableProps> = ({
         role="columnheader"
         tabIndex={0}
         aria-sort={
-          sortField === 'balance'
-            ? sortDirection === 'asc'
-              ? 'ascending'
-              : 'descending'
-            : 'none'
+          sortField === 'balance' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
         }
         onKeyDown={(e) => e.key === 'Enter' && onSort('balance')}
       >
         Balance
         {sortField === 'balance' && (
-          <span className={styles.sortArrow}>
-            {sortDirection === 'asc' ? '↑' : '↓'}
-          </span>
+          <span className={styles.sortArrow}>{sortDirection === 'asc' ? '↑' : '↓'}</span>
         )}
       </div>
       <div
@@ -115,19 +103,13 @@ const RunesPortfolioTable: React.FC<RunesPortfolioTableProps> = ({
         role="columnheader"
         tabIndex={0}
         aria-sort={
-          sortField === 'value'
-            ? sortDirection === 'asc'
-              ? 'ascending'
-              : 'descending'
-            : 'none'
+          sortField === 'value' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
         }
         onKeyDown={(e) => e.key === 'Enter' && onSort('value')}
       >
         Value (USD)
         {sortField === 'value' && (
-          <span className={styles.sortArrow}>
-            {sortDirection === 'asc' ? '↑' : '↓'}
-          </span>
+          <span className={styles.sortArrow}>{sortDirection === 'asc' ? '↑' : '↓'}</span>
         )}
       </div>
       <div style={{ fontWeight: 'bold' }}>Action</div>
@@ -136,10 +118,7 @@ const RunesPortfolioTable: React.FC<RunesPortfolioTableProps> = ({
       {balances.map((rune) => {
         const usdValue = rune.usdValue.toFixed(2);
         return (
-          <div
-            key={rune.name}
-            className={`${styles.listItem} ${styles.grid4col}`}
-          >
+          <div key={rune.name} className={`${styles.listItem} ${styles.grid4col}`}>
             <div className={styles.runeName}>
               <div className={styles.runeNameContent}>
                 <RuneIcon
@@ -150,17 +129,12 @@ const RunesPortfolioTable: React.FC<RunesPortfolioTableProps> = ({
                   height={24}
                 />
                 <div className={styles.runeNameText}>
-                  <div className={styles.runeFullName}>
-                    {rune.formattedName}
-                  </div>
+                  <div className={styles.runeFullName}>{rune.formattedName}</div>
                 </div>
               </div>
             </div>
             <div className={styles.runeBalance}>
-              <FormattedRuneAmount
-                runeName={rune.name}
-                rawAmount={rune.balance}
-              />
+              <FormattedRuneAmount runeName={rune.name} rawAmount={rune.balance} />
             </div>
             <div className={styles.runeValue}>${usdValue}</div>
             <Button

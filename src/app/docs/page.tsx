@@ -1,7 +1,6 @@
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
 import Link from 'next/link';
-import path from 'path';
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -27,9 +26,7 @@ export default function DocsPage() {
     <div className={styles.container}>
       <h1 className="heading">Documentation</h1>
       <div className={styles.docsContent}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {fileContents}
-        </ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{fileContents}</ReactMarkdown>
       </div>
       <div className={styles.backToHome}>
         <Link href="/">Back to Home</Link>

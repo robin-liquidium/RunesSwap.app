@@ -12,6 +12,7 @@ const config: Config = {
   testEnvironment: 'jsdom',
   // Keep existing module name mapping for path aliases
   moduleNameMapper: {
+    '^@omnisat/lasereyes$': '<rootDir>/__mocks__/omnisatLasereyesMock.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^.+\\.module\\.(css|scss)$': '<rootDir>/__mocks__/styleMock.js',
     '^.+\\.(css|scss)$': '<rootDir>/__mocks__/styleMock.js',

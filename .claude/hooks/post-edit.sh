@@ -26,17 +26,11 @@ if [ -n "$FILE_PATH" ] && [[ "$FILE_PATH" =~ \.(ts|tsx|js|jsx|css|scss|json|md)$
         FILE_PATH="$CLAUDE_PROJECT_DIR/$FILE_PATH"
     fi
     
-    if [ -f "$FILE_PATH" ] && command -v pnpm &> /dev/null; then
-        # Format the file
-        echo "📝 Running prettier on: $FILE_PATH"
-        pnpm prettier --write "$FILE_PATH" 2>/dev/null || true
-        
-        # Run lint fix on TypeScript/JavaScript files
-        if [[ "$FILE_PATH" =~ \.(ts|tsx|js|jsx|md)$ ]]; then
-            echo "🔧 Running lint fix on: $FILE_PATH"
-            pnpm lint --fix --file "$FILE_PATH" 2>/dev/null || true
-        fi
-        
+    if [ -f "$FILE_PATH" ] && command -v bun &> /dev/null; then
+        # Format and lint the file
+        echo "📝 Running Biome on: $FILE_PATH"
+        bunx biome check --write "$FILE_PATH" 2>/dev/null || true
+
         echo "✅ Auto-formatting completed for: $FILE_PATH"
     fi
 fi

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import usePopularRunes from '@/hooks/usePopularRunes';
-import { fetchRunesFromApi } from '@/lib/api';
+import { fetchRunesFromApi } from '@/lib/api/satsTerminal';
 import type { Asset } from '@/types/common';
 import { BTC_ASSET } from '@/types/common';
 import { mapPopularToAsset } from '@/utils/popularRunes';
@@ -23,7 +23,7 @@ interface UseSwapRunesArgs {
  * @param args - Arguments including pre-selected rune/asset and state setters.
  * @returns Popular runes list and loading states.
  */
-export function useSwapRunes({
+function useSwapRunes({
   preSelectedRune = null,
   preSelectedAsset = null,
   assetOut,
@@ -36,10 +36,8 @@ export function useSwapRunes({
     error: popularError,
   } = usePopularRunes<Asset>(mapPopularToAsset);
   const [popularRunes, setPopularRunes] = useState<Asset[]>([]);
-  const [isPreselectedRuneLoading, setIsPreselectedRuneLoading] =
-    useState(!!preSelectedRune);
-  const [hasLoadedPreselectedRune, setHasLoadedPreselectedRune] =
-    useState(false);
+  const [isPreselectedRuneLoading, setIsPreselectedRuneLoading] = useState(!!preSelectedRune);
+  const [hasLoadedPreselectedRune, setHasLoadedPreselectedRune] = useState(false);
 
   useEffect(() => {
     if (preSelectedAsset && !hasLoadedPreselectedRune) {
@@ -76,9 +74,7 @@ export function useSwapRunes({
       if (preSelectedRune && !hasLoadedPreselectedRune) {
         setIsPreselectedRuneLoading(true);
         const normalized = normalizeRuneName(preSelectedRune);
-        let rune = popularRunes.find(
-          (r) => normalizeRuneName(r.name) === normalized,
-        );
+        let rune = popularRunes.find((r) => normalizeRuneName(r.name) === normalized);
 
         if (!rune) {
           const provisionalAsset: Asset = {
@@ -97,11 +93,6 @@ export function useSwapRunes({
           setAssetOut(rune);
           setIsPreselectedRuneLoading(false);
           setHasLoadedPreselectedRune(true);
-          if (typeof window !== 'undefined') {
-            const url = new URL(window.location.href);
-            url.searchParams.delete('rune');
-            window.history.replaceState({}, '', url.toString());
-          }
         } else {
           try {
             const searchResults = await fetchRunesFromApi(preSelectedRune);
@@ -136,11 +127,6 @@ export function useSwapRunes({
 
             setIsPreselectedRuneLoading(false);
             setHasLoadedPreselectedRune(true);
-            if (typeof window !== 'undefined') {
-              const url = new URL(window.location.href);
-              url.searchParams.delete('rune');
-              window.history.replaceState({}, '', url.toString());
-            }
           }
         }
       } else if (!preSelectedRune) {
@@ -150,14 +136,7 @@ export function useSwapRunes({
     };
 
     findAndSelectRune();
-  }, [
-    preSelectedRune,
-    popularRunes,
-    hasLoadedPreselectedRune,
-    setAssetIn,
-    setAssetOut,
-    assetOut,
-  ]);
+  }, [preSelectedRune, popularRunes, hasLoadedPreselectedRune, setAssetIn, setAssetOut, assetOut]);
 
   return {
     popularRunes,

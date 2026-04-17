@@ -25,21 +25,21 @@ if [[ "$COMMAND" == *"git commit"* ]]; then
     
     # Run linting
     echo "📝 Running linter..."
-    if ! pnpm lint --fix; then
+    if ! bun run lint:fix; then
         echo "❌ Linting failed. Please fix the issues before committing."
         exit 1
     fi
     
     # Run type checking
     echo "🔍 Running type checks..."
-    if ! pnpm type-check; then
+    if ! bun run type-check; then
         echo "❌ Type checking failed. Please fix type errors before committing."
         exit 1
     fi
     
     # Run tests
     echo "🧪 Running tests..."
-    if ! pnpm test; then
+    if ! bun run test; then
         echo "❌ Tests failed. Please fix failing tests before committing."
         exit 1
     fi
@@ -47,7 +47,7 @@ if [[ "$COMMAND" == *"git commit"* ]]; then
     # Run AI check (if configured in package.json scripts)
     if node -e 'const p=require("./package.json");process.exit(p.scripts&&p.scripts["ai-check"]?0:1)'; then
         echo "🤖 Running AI checks..."
-        if ! pnpm ai-check; then
+        if ! bun run ai-check; then
             echo "❌ AI checks failed. Please review the issues before committing."
             exit 1
         fi

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 
 import type { SwapStep } from '@/components/swap/SwapButton';
 import styles from '@/components/swap/SwapStatusMessages.module.css';
@@ -37,7 +37,7 @@ interface SwapStatusMessagesProps {
 /**
  * Component to display status messages during the swap process
  */
-export const SwapStatusMessages: React.FC<SwapStatusMessagesProps> = ({
+const SwapStatusMessages: React.FC<SwapStatusMessagesProps> = ({
   isSwapping,
   swapStep,
   swapError,
@@ -47,10 +47,7 @@ export const SwapStatusMessages: React.FC<SwapStatusMessagesProps> = ({
   <>
     {/* Display Swap Process Status */}
     {isSwapping && swapStep !== 'error' && swapStep !== 'success' && (
-      <div
-        className={`smallText ${styles.messageWithIcon}`}
-        style={{ paddingTop: '0.5rem' }}
-      >
+      <div className={`smallText ${styles.messageWithIcon}`} style={{ paddingTop: '0.5rem' }}>
         <Image
           src="/icons/windows_hourglass.png"
           alt="Processing"
@@ -86,20 +83,16 @@ export const SwapStatusMessages: React.FC<SwapStatusMessagesProps> = ({
         >
           {swapError.includes('fee rate') ? (
             <>
-              The Bitcoin network is experiencing high congestion. The app is
-              automatically trying with a higher fee rate. If it fails again,
-              please try later.
+              The Bitcoin network is experiencing high congestion. The app is automatically trying
+              with a higher fee rate. If it fails again, please try later.
             </>
           ) : swapError.includes('congested') ? (
             <>
-              The Bitcoin network is currently congested. Please try again later
-              when network fees have decreased.
+              The Bitcoin network is currently congested. Please try again later when network fees
+              have decreased.
             </>
           ) : (
-            <>
-              Please retry the swap, reconnect your wallet, or try a different
-              amount.
-            </>
+            <>Please retry the swap, reconnect your wallet, or try a different amount.</>
           )}
         </div>
       </>

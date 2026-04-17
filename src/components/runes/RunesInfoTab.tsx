@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import RuneDetails from '@/components/runes/RuneDetails';
 import RuneSearchBar from '@/components/runes/RuneSearchBar';
@@ -8,7 +8,7 @@ import styles from '@/components/runes/RunesInfoTab.module.css';
 import { useRuneInfo } from '@/hooks/useRuneInfo';
 import { useRuneMarketData } from '@/hooks/useRuneMarketData';
 import { useRunesInfoStore } from '@/store/runesInfoStore';
-import { type RuneInfo as OrdiscanRuneInfo } from '@/types/ordiscan';
+import type { RuneInfo as OrdiscanRuneInfo } from '@/types/ordiscan';
 import type { Rune } from '@/types/satsTerminal';
 
 /**
@@ -27,15 +27,12 @@ interface RunesInfoTabProps {
  *
  * @param props - Component props.
  */
-export function RunesInfoTab({
-  onShowPriceChart,
-  showPriceChart = false,
-}: RunesInfoTabProps) {
-  const { selectedRuneInfo: persistedSelectedRuneInfo, setSelectedRuneInfo } =
-    useRunesInfoStore();
+function RunesInfoTab({ onShowPriceChart, showPriceChart = false }: RunesInfoTabProps) {
+  const { selectedRuneInfo: persistedSelectedRuneInfo, setSelectedRuneInfo } = useRunesInfoStore();
 
-  const [selectedRuneForInfo, setSelectedRuneForInfo] =
-    useState<OrdiscanRuneInfo | null>(persistedSelectedRuneInfo);
+  const [selectedRuneForInfo, setSelectedRuneForInfo] = useState<OrdiscanRuneInfo | null>(
+    persistedSelectedRuneInfo,
+  );
   const [showLoading, setShowLoading] = useState(false);
 
   // Use shared hooks for rune data
@@ -64,20 +61,14 @@ export function RunesInfoTab({
     if (detailedRuneInfo) {
       const updatedInfo: OrdiscanRuneInfo = {
         ...detailedRuneInfo,
-        formatted_name:
-          detailedRuneInfo.formatted_name || detailedRuneInfo.name,
+        formatted_name: detailedRuneInfo.formatted_name || detailedRuneInfo.name,
       } as OrdiscanRuneInfo;
 
       setSelectedRuneInfo(updatedInfo);
     } else if (detailedRuneInfoError && selectedRuneForInfo) {
       setSelectedRuneInfo(selectedRuneForInfo);
     }
-  }, [
-    detailedRuneInfo,
-    detailedRuneInfoError,
-    selectedRuneForInfo,
-    setSelectedRuneInfo,
-  ]);
+  }, [detailedRuneInfo, detailedRuneInfoError, selectedRuneForInfo, setSelectedRuneInfo]);
 
   const handleRuneSelect = (rune: Rune) => {
     const minimalRuneInfo: OrdiscanRuneInfo = {

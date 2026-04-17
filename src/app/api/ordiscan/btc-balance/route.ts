@@ -34,10 +34,7 @@ export const GET = withApiHandler(
       return ok(balanceResponseSchema.parse({ balance: 0 }));
     }
 
-    const totalBalance = utxos.reduce(
-      (sum, utxo) => sum + (utxo.value || 0),
-      0,
-    );
+    const totalBalance = utxos.reduce((sum, utxo) => sum + (utxo.value || 0), 0);
     return ok(balanceResponseSchema.parse({ balance: totalBalance }));
   },
   { defaultErrorMessage: 'Failed to fetch BTC balance' },

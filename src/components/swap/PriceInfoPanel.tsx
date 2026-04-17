@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/swap/PriceInfoPanel.module.css';
 import type { Asset } from '@/types/common';
@@ -51,17 +51,14 @@ interface PriceInfoPanelProps {
    * Function to show the price chart
    */
   onShowPriceChart:
-    | ((
-        assetName?: string | undefined,
-        shouldToggle?: boolean | undefined,
-      ) => void)
+    | ((assetName?: string | undefined, shouldToggle?: boolean | undefined) => void)
     | undefined;
 }
 
 /**
  * Component that displays price information and exchange rate
  */
-export const PriceInfoPanel: React.FC<PriceInfoPanelProps> = ({
+const PriceInfoPanel: React.FC<PriceInfoPanelProps> = ({
   assetIn,
   assetOut,
   exchangeRate,

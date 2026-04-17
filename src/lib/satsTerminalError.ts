@@ -11,23 +11,13 @@ export function handleSatsTerminalError(error: unknown): NextResponse | null {
 
   if (
     errorInfo.message.includes('Quote expired') ||
-    (error &&
-      typeof error === 'object' &&
-      (error as { code?: string }).code === 'ERR677K3')
+    (error && typeof error === 'object' && (error as { code?: string }).code === 'ERR677K3')
   ) {
-    return createErrorResponse(
-      'Quote expired. Please fetch a new quote.',
-      errorInfo.details,
-      410,
-    );
+    return createErrorResponse('Quote expired. Please fetch a new quote.', errorInfo.details, 410);
   }
 
   if (errorMessage.includes('Rate limit') || errorInfo.status === 429) {
-    return createErrorResponse(
-      'Rate limit exceeded',
-      'Please try again later',
-      429,
-    );
+    return createErrorResponse('Rate limit exceeded', 'Please try again later', 429);
   }
 
   if (errorMessage.includes('Unexpected token')) {

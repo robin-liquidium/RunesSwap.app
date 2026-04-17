@@ -1,5 +1,5 @@
 import { useRuneDataQuery } from '@/hooks/useRuneDataQuery';
-import { fetchRuneInfoFromApi } from '@/lib/api';
+import { fetchRuneInfoFromApi } from '@/lib/api/ordiscan';
 
 interface UseRuneInfoOptions {
   enabled?: boolean;
@@ -10,10 +10,7 @@ interface UseRuneInfoOptions {
 /**
  * Hook for fetching rune information
  */
-export function useRuneInfo(
-  runeName: string | null | undefined,
-  options: UseRuneInfoOptions = {},
-) {
+export function useRuneInfo(runeName: string | null | undefined, options: UseRuneInfoOptions = {}) {
   return useRuneDataQuery('runeInfo', runeName, fetchRuneInfoFromApi, {
     staleTime: Infinity,
     retry: 2,

@@ -3,7 +3,8 @@
 import type { LaserEyesContextType } from '@omnisat/lasereyes';
 import { LaserEyesProvider, MAINNET, useLaserEyes } from '@omnisat/lasereyes';
 import { QueryClientProvider } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 import { BackgroundProvider } from '@/context/BackgroundContext';
 import { LaserEyesContext } from '@/context/LaserEyesContext';
@@ -38,12 +39,7 @@ function SharedLaserEyesProvider({ children }: { children: React.ReactNode }) {
   // useLaserEyes is safe here because this component is only mounted when we
   // are wrapped by a real LaserEyesProvider (after client hydration).
   const laserEyesData = useLaserEyes();
-
-  return (
-    <LaserEyesContext.Provider value={laserEyesData}>
-      {children}
-    </LaserEyesContext.Provider>
-  );
+  return <LaserEyesContext.Provider value={laserEyesData}>{children}</LaserEyesContext.Provider>;
 }
 
 /**

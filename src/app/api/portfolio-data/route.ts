@@ -4,21 +4,14 @@ import { ok } from '@/lib/apiResponse';
 import { validateRequest } from '@/lib/apiUtils';
 import type { RuneData } from '@/lib/runesData';
 import { getOrdiscanClient } from '@/lib/serverUtils';
-import {
-  batchFetchRuneMarketData,
-  batchFetchRunes,
-} from '@/lib/supabaseQueries';
+import { batchFetchRuneMarketData, batchFetchRunes } from '@/lib/supabaseQueries';
 import { requestSchemas } from '@/lib/validationSchemas';
 import { withApiHandler } from '@/lib/withApiHandler';
 import type { RuneBalance, RuneMarketInfo } from '@/types/ordiscan';
 
 export const GET = withApiHandler(
   async (request: NextRequest) => {
-    const validation = await validateRequest(
-      request,
-      requestSchemas.addressRequest,
-      'query',
-    );
+    const validation = await validateRequest(request, requestSchemas.addressRequest, 'query');
     if (!validation.success) {
       return validation.errorResponse;
     }
@@ -31,9 +24,7 @@ export const GET = withApiHandler(
 
     // Wait for balances first since we need the rune names for subsequent queries
     const balances: RuneBalance[] = await balancesPromise;
-    const validBalances: RuneBalance[] = Array.isArray(balances)
-      ? balances
-      : [];
+    const validBalances: RuneBalance[] = Array.isArray(balances) ? balances : [];
 
     if (validBalances.length === 0) {
       return ok({
@@ -71,9 +62,7 @@ export const GET = withApiHandler(
 
     // Prepare arrays for missing data
     const missingRuneNames = runeNames.filter((name) => !runeInfoMap[name]);
-    const missingMarketDataNames = runeNames.filter(
-      (name) => !marketDataMap[name],
-    );
+    const missingMarketDataNames = runeNames.filter((name) => !marketDataMap[name]);
 
     // Use lib functions for missing data
     const { getRuneData } = await import('@/lib/runesData');

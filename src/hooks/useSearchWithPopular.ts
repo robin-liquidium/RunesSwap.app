@@ -2,6 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
+import { queryKeys } from '@/lib/queryKeys';
+
 interface UseSearchWithPopularOptions<T, R> {
   searchFn: (query: string) => Promise<R[]>;
   mapper: (item: R) => T;
@@ -11,6 +13,7 @@ interface UseSearchWithPopularOptions<T, R> {
   initialError?: string | null;
   debounceMs?: number;
   initialQuery?: string;
+  namespace?: string;
 }
 
 /**
@@ -28,7 +31,7 @@ interface UseSearchWithPopularOptions<T, R> {
  * @param options.initialQuery - Initial search query.
  * @returns Search state, results, and reset function.
  */
-export function useSearchWithPopular<T, R>({
+function useSearchWithPopular<T, R>({
   searchFn,
   mapper,
   popularFn,
@@ -37,6 +40,7 @@ export function useSearchWithPopular<T, R>({
   initialError = null,
   debounceMs = 300,
   initialQuery = '',
+  namespace = 'default',
 }: UseSearchWithPopularOptions<T, R>) {
   // Local input state with debounced value
   const [query, setQuery] = useState(initialQuery);
@@ -55,7 +59,7 @@ export function useSearchWithPopular<T, R>({
     isFetching: isSearchFetching,
     error: searchError,
   } = useQuery<T[], Error>({
-    queryKey: ['search', trimmed],
+    queryKey: queryKeys.search(namespace, trimmed),
     // Per TanStack docs, queryFn must return a value, not void
     queryFn: async () => {
       const res = await searchFn(trimmed);
@@ -71,7 +75,7 @@ export function useSearchWithPopular<T, R>({
     isFetching: isPopularFetching,
     error: popularError,
   } = useQuery<T[], Error>({
-    queryKey: ['popular-items'],
+    queryKey: queryKeys.popularItems(namespace),
     queryFn: async () => {
       if (!popularFn) return initialItems;
       const res = await popularFn();
@@ -80,23 +84,17 @@ export function useSearchWithPopular<T, R>({
     // only relevant when not searching
     enabled: !trimmed,
     // Seed from initialItems if present
-    ...(initialItems.length > 0
-      ? ({ initialData: initialItems as T[] } as const)
-      : {}),
+    ...(initialItems.length > 0 ? ({ initialData: initialItems as T[] } as const) : {}),
   });
 
   // Keep cache loosely in sync when initialItems change (non-search state)
   const initialItemsRef = useRef(initialItems);
   useEffect(() => {
-    if (
-      !trimmed &&
-      initialItems !== initialItemsRef.current &&
-      initialItems.length > 0
-    ) {
-      queryClient.setQueryData<T[]>(['popular-items'], initialItems);
+    if (!trimmed && initialItems !== initialItemsRef.current && initialItems.length > 0) {
+      queryClient.setQueryData<T[]>(queryKeys.popularItems(namespace), initialItems);
       initialItemsRef.current = initialItems;
     }
-  }, [initialItems, trimmed, queryClient]);
+  }, [initialItems, namespace, trimmed, queryClient]);
 
   // Prefer freshly-changed initialItems immediately; otherwise prefer fetched popular data
   const popularSource =

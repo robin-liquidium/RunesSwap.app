@@ -23,22 +23,6 @@ export function safeArrayAccess<T>(array: T[], index: number): T | undefined {
 }
 
 /**
- * Assert that a value is not null or undefined.
- * @param value - The value to check
- * @param errorMessage - Error message if value is null/undefined
- * @returns The value with non-null assertion
- */
-export function assertDefined<T>(
-  value: T | null | undefined,
-  errorMessage: string,
-): T {
-  if (value == null) {
-    throw new Error(errorMessage);
-  }
-  return value;
-}
-
-/**
  * Parse JWT payload safely.
  * @param jwt - The JWT string
  * @returns Parsed payload or null if parsing fails
@@ -66,15 +50,7 @@ export function safeParseJWT(jwt: string): Record<string, unknown> | null {
  * @param value - The value to check
  * @returns True if value is not null or undefined
  */
-export function isDefined<T>(value: T | null | undefined): value is T {
+// biome-ignore lint/correctness/noUnusedVariables: used by generated Liquidium SDK code.
+function isDefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
-}
-
-/**
- * Filter out null and undefined values from an array.
- * @param array - Array with potentially null/undefined values
- * @returns Array with only defined values
- */
-export function filterDefined<T>(array: (T | null | undefined)[]): T[] {
-  return array.filter(isDefined);
 }

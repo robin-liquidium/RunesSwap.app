@@ -1,5 +1,5 @@
+import type { GetPSBTParams, Order } from '@satsterminal-sdk/swaps';
 import type { NextRequest } from 'next/server';
-import type { GetPSBTParams, Order } from 'satsterminal-sdk';
 import { z } from 'zod';
 
 import { ok } from '@/lib/apiResponse';
@@ -24,11 +24,7 @@ const getPsbtParamsSchema = z.object({
 });
 
 const handler = async (request: NextRequest) => {
-  const validation = await validateRequest(
-    request,
-    getPsbtParamsSchema,
-    'body',
-  );
+  const validation = await validateRequest(request, getPsbtParamsSchema, 'body');
   if (!validation.success) return validation.errorResponse;
   const validatedParams = validation.data;
 

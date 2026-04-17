@@ -1,5 +1,5 @@
 import useSearchWithPopular from '@/hooks/useSearchWithPopular';
-import { fetchRunesFromApi } from '@/lib/api';
+import { fetchRunesFromApi } from '@/lib/api/satsTerminal';
 import type { Asset } from '@/types/common';
 import type { Rune } from '@/types/satsTerminal';
 
@@ -19,7 +19,7 @@ interface UseAssetSearchArgs {
  * @param args.assetsError - Error state for initial assets.
  * @returns Search state and results.
  */
-export function useAssetSearch({
+function useAssetSearch({
   availableAssets,
   isAssetsLoading = false,
   assetsError = null,
@@ -41,6 +41,7 @@ export function useAssetSearch({
     initialItems: availableAssets,
     initialLoading: isAssetsLoading,
     initialError: assetsError,
+    namespace: 'asset-search',
   });
 
   return {

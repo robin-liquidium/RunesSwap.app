@@ -9,25 +9,15 @@ import type {
   SubmitRepayResponse,
 } from '@/types/liquidium';
 
-export type {
-  BorrowRangeResponse,
-  LiquidiumBorrowQuoteOffer,
-  LiquidiumBorrowQuoteResponse,
-  LiquidiumPrepareBorrowResponse,
-  LiquidiumSubmitBorrowResponse,
-  RepayLiquidiumLoanResponse,
-  SubmitRepayResponse,
-} from '@/types/liquidium';
-
 export const repayLiquidiumLoan = async (
   loanId: string,
   address: string,
 ): Promise<RepayLiquidiumLoanResponse> => {
   try {
-    const { data } = await post<RepayLiquidiumLoanResponse>(
-      '/api/liquidium/repay',
-      { loanId, address },
-    );
+    const { data } = await post<RepayLiquidiumLoanResponse>('/api/liquidium/repay', {
+      loanId,
+      address,
+    });
 
     if (!data.success) {
       throw new Error('Failed to repay loan');
@@ -39,12 +29,9 @@ export const repayLiquidiumLoan = async (
       const transformedData: RepayLiquidiumLoanResponse = {
         success: data.success,
         data: {
-          psbt:
-            ((data.data as Record<string, unknown>).base64_psbt as string) ||
-            data.data.psbt,
+          psbt: ((data.data as Record<string, unknown>).base64_psbt as string) || data.data.psbt,
           repaymentAmountSats:
-            ((data.data as Record<string, unknown>)
-              .repayment_amount_sats as number) ??
+            ((data.data as Record<string, unknown>).repayment_amount_sats as number) ??
             data.data.repaymentAmountSats,
           loanId:
             ((data.data as Record<string, unknown>).offer_id as string) ||
@@ -170,11 +157,7 @@ export const submitLiquidiumBorrow = async (params: {
     return data as LiquidiumSubmitBorrowResponse;
   } catch (error: unknown) {
     // Special handling for JSON parse errors with successful HTTP status
-    if (
-      error instanceof Error &&
-      error.message.includes('JSON') &&
-      !('status' in error)
-    ) {
+    if (error instanceof Error && error.message.includes('JSON') && !('status' in error)) {
       return {
         success: true,
         data: {

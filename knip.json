@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "project": [
+    "src/**/*.{js,jsx,ts,tsx}",
+    "src/**/*.d.ts",
+    "__mocks__/**/*.{js,jsx,ts,tsx}",
+    "scripts/**/*.{js,mjs,ts}",
+    "!src/sdk/liquidium/**/*"
+  ]
+}

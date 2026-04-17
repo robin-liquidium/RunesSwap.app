@@ -43,10 +43,7 @@ export const GET = withApiHandler(
     const client = createLiquidiumClient(userJwt);
     const portfolio = await client.portfolio.getApiV1Portfolio();
 
-    const loans =
-      portfolio?.borrower?.runes?.loans ??
-      portfolio?.lender?.runes?.loans ??
-      [];
+    const loans = portfolio?.borrower?.runes?.loans ?? portfolio?.lender?.runes?.loans ?? [];
 
     return ok({
       loans,

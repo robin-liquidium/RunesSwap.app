@@ -1,32 +1,17 @@
-import { fetchExternal } from '@/lib/fetchWrapper';
+import { apiGet } from '@/lib/api/createApiClient';
 import { logFetchError } from '@/lib/logger';
-
-export const COINGECKO_BTC_PRICE_URL =
-  'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
-
-interface CoinGeckoResponse {
-  bitcoin: {
-    usd: number;
-  };
-}
 
 export const getBtcPrice = async (): Promise<number> => {
   try {
-    const { data } = await fetchExternal<CoinGeckoResponse>(
-      COINGECKO_BTC_PRICE_URL,
-      {
-        timeout: 10000,
-        retries: 3,
-      },
-    );
+    const data = await apiGet<{ usd: number }>('/api/btc-price');
 
-    if (!data.bitcoin || !data.bitcoin.usd) {
-      throw new Error('Invalid response format from CoinGecko');
+    if (typeof data.usd !== 'number') {
+      throw new Error('Invalid response format from BTC price API');
     }
 
-    return data.bitcoin.usd;
+    return data.usd;
   } catch (error) {
-    logFetchError(COINGECKO_BTC_PRICE_URL, error);
+    logFetchError('/api/btc-price', error);
     throw new Error('Failed to fetch BTC price from CoinGecko');
   }
 };

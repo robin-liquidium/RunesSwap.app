@@ -12,12 +12,8 @@ export type Timeframe = '24h' | '7d' | '30d' | '90d';
  * @param defaultTimeframe - Initial timeframe selection (default: '24h').
  * @returns Chart data, state, and control functions.
  */
-export default function usePriceChart(
-  assetName: string,
-  defaultTimeframe: Timeframe = '24h',
-) {
-  const [selectedTimeframe, setSelectedTimeframe] =
-    useState<Timeframe>(defaultTimeframe);
+export default function usePriceChart(assetName: string, defaultTimeframe: Timeframe = '24h') {
+  const [selectedTimeframe, setSelectedTimeframe] = useState<Timeframe>(defaultTimeframe);
   const [showTooltip, setShowTooltip] = useState(false);
 
   const priceHistory = usePriceHistory(assetName, selectedTimeframe);

@@ -1,5 +1,5 @@
-import type { RuneInfo } from '@/types/ordiscan';
 import { useRunesInfoStore } from '@/store/runesInfoStore';
+import type { RuneInfo } from '@/types/ordiscan';
 
 describe('runesInfoStore', () => {
   it('updates selected rune info', () => {

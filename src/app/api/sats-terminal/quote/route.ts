@@ -1,5 +1,5 @@
+import type { QuoteParams } from '@satsterminal-sdk/swaps';
 import type { NextRequest } from 'next/server';
-import type { QuoteParams } from 'satsterminal-sdk';
 
 import { fail, ok } from '@/lib/apiResponse';
 import { validateRequest } from '@/lib/apiUtils';
@@ -10,11 +10,7 @@ import { normalizeRuneName } from '@/utils/runeUtils';
 
 export const POST = withApiHandler(
   async (request: NextRequest) => {
-    const validation = await validateRequest(
-      request,
-      requestSchemas.quoteRequest,
-      'body',
-    );
+    const validation = await validateRequest(request, requestSchemas.quoteRequest, 'body');
     if (!validation.success) return validation.errorResponse;
 
     const { btcAmount, address, runeName, sell } = validation.data;
@@ -73,8 +69,7 @@ export const POST = withApiHandler(
       if (combined.includes('unexpected token')) {
         return fail('API service unavailable', {
           status: 503,
-          details:
-            'The SatsTerminal API is currently unavailable. Please try again later.',
+          details: 'The SatsTerminal API is currently unavailable. Please try again later.',
         });
       }
 

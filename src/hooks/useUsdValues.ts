@@ -1,12 +1,12 @@
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
 import Big from 'big.js';
 import { useMemo } from 'react';
-import type { QuoteResponse } from 'satsterminal-sdk';
 
 import type { Asset } from '@/types/common';
 import type { RuneMarketInfo as OrdiscanRuneMarketInfo } from '@/types/ordiscan';
 import { sanitizeForBig } from '@/utils/formatters';
 
-export interface UseUsdValuesArgs {
+interface UseUsdValuesArgs {
   inputAmount: string;
   outputAmount: string;
   assetIn: Asset | null;
@@ -59,16 +59,8 @@ export default function useUsdValues({
         inputUsdVal = amountBig.times(btcPriceUsd);
       } else if (!assetIn.isBTC && inputRuneMarketInfo) {
         inputUsdVal = amountBig.times(inputRuneMarketInfo.price_in_usd);
-      } else if (
-        !assetIn.isBTC &&
-        quote &&
-        quote.totalPrice &&
-        btcPriceUsd &&
-        !quoteError
-      ) {
-        const totalFormattedAmount = new Big(
-          sanitizeForBig(quote.totalFormattedAmount),
-        );
+      } else if (!assetIn.isBTC && quote && quote.totalPrice && btcPriceUsd && !quoteError) {
+        const totalFormattedAmount = new Big(sanitizeForBig(quote.totalFormattedAmount));
         const totalPrice = new Big(sanitizeForBig(quote.totalPrice));
 
         if (totalFormattedAmount.gt(0)) {
@@ -84,33 +76,21 @@ export default function useUsdValues({
           if (assetOut.isBTC && btcPriceUsd) {
             outputUsdVal = outputAmountBig.times(btcPriceUsd);
           } else if (!assetOut.isBTC && outputRuneMarketInfo) {
-            outputUsdVal = outputAmountBig.times(
-              outputRuneMarketInfo.price_in_usd,
-            );
-          } else if (
-            !assetOut.isBTC &&
-            quote &&
-            quote.totalPrice &&
-            btcPriceUsd &&
-            !quoteError
-          ) {
-            const totalFormattedAmount = new Big(
-              sanitizeForBig(quote.totalFormattedAmount),
-            );
+            outputUsdVal = outputAmountBig.times(outputRuneMarketInfo.price_in_usd);
+          } else if (!assetOut.isBTC && quote && quote.totalPrice && btcPriceUsd && !quoteError) {
+            const totalFormattedAmount = new Big(sanitizeForBig(quote.totalFormattedAmount));
             const totalPrice = new Big(sanitizeForBig(quote.totalPrice));
 
             if (totalFormattedAmount.gt(0)) {
               const btcPerRune = totalPrice.div(totalFormattedAmount);
-              outputUsdVal = outputAmountBig
-                .times(btcPerRune)
-                .times(btcPriceUsd);
+              outputUsdVal = outputAmountBig.times(btcPerRune).times(btcPriceUsd);
             }
           }
         }
       }
 
       const format = (v: Big | null) =>
-        v !== null && v.gt(0)
+        v?.gt(0)
           ? parseFloat(v.toFixed(2)).toLocaleString(undefined, {
               style: 'currency',
               currency: 'USD',

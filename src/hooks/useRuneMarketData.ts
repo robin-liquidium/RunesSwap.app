@@ -1,5 +1,5 @@
 import { useRuneDataQuery } from '@/hooks/useRuneDataQuery';
-import { fetchRuneMarketFromApi } from '@/lib/api';
+import { fetchRuneMarketFromApi } from '@/lib/api/ordiscan';
 
 interface UseRuneMarketDataOptions {
   enabled?: boolean;

@@ -10,10 +10,7 @@ type ApiResponse<T> = {
 /**
  * Simple API client for GET requests with query parameters
  */
-export function apiGet<T>(
-  endpoint: string,
-  params?: Record<string, unknown>,
-): Promise<T> {
+export function apiGet<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
   return makeApiCall('GET', endpoint, undefined, params);
 }
 

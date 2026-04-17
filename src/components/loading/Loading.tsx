@@ -5,17 +5,12 @@ import React from 'react';
 /**
  * Available variants for the Loading component.
  */
-export type LoadingVariant =
-  | 'spinner'
-  | 'dots'
-  | 'progress'
-  | 'rune-amount'
-  | 'balance';
+type LoadingVariant = 'spinner' | 'dots' | 'progress' | 'rune-amount' | 'balance';
 
 /**
  * Props for the Loading component.
  */
-export interface LoadingProps {
+interface LoadingProps {
   /**
    * Variant of the loading component to render
    */
@@ -65,14 +60,13 @@ export function Loading({
 
   // Determine if we should show dots based on variant and showDots prop
   const shouldShowDots =
-    variant === 'dots' ||
-    ((variant === 'spinner' || variant === 'balance') && !!showDots);
+    variant === 'dots' || ((variant === 'spinner' || variant === 'balance') && !!showDots);
 
   React.useEffect(() => {
     if (!shouldShowDots) return;
 
     const interval = setInterval(() => {
-      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
+      setDots((prev) => (prev.length >= 3 ? '' : `${prev}.`));
     }, 500);
 
     return () => clearInterval(interval);
@@ -119,11 +113,7 @@ export function Loading({
       );
 
     case 'rune-amount':
-      return (
-        <span className={className}>
-          {rawAmount || ''} (Loading decimals...)
-        </span>
-      );
+      return <span className={className}>{rawAmount || ''} (Loading decimals...)</span>;
 
     case 'balance':
       return (
@@ -132,9 +122,6 @@ export function Loading({
           {shouldShowDots ? dots : ''}
         </span>
       );
-
-    case 'dots':
-    case 'spinner':
     default:
       return (
         <span className={className}>

@@ -22,9 +22,7 @@ interface WalletErrorPatterns {
   };
 }
 
-const WALLET_ERROR_PATTERNS: Partial<
-  Record<ProviderType, WalletErrorPatterns>
-> = {
+const WALLET_ERROR_PATTERNS: Partial<Record<ProviderType, WalletErrorPatterns>> = {
   [UNISAT]: {
     notInstalledPatterns: ['not detected', 'not installed', 'not found'],
   },
@@ -45,20 +43,13 @@ const WALLET_ERROR_PATTERNS: Partial<
     notInstalledPatterns: ['no bitcoin wallet installed'],
   },
   [OKX]: {
-    notInstalledPatterns: [
-      'cannot read properties of undefined',
-      'provider not available',
-    ],
+    notInstalledPatterns: ['cannot read properties of undefined', 'provider not available'],
   },
   [ORANGE]: {
     notInstalledPatterns: ['no orange bitcoin wallet installed'],
   },
   [PHANTOM]: {
-    notInstalledPatterns: [
-      "phantom isn't installed",
-      'provider unavailable',
-      'no provider',
-    ],
+    notInstalledPatterns: ["phantom isn't installed", 'provider unavailable', 'no provider'],
   },
   [WIZZ]: {
     notInstalledPatterns: ['wallet is not installed'],
@@ -129,15 +120,8 @@ export function useWalletConnection() {
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [installLink, setInstallLink] = useState<string | null>(null);
 
-  const {
-    connect,
-    disconnect,
-    connected,
-    isConnecting,
-    address,
-    provider,
-    hasUnisat,
-  } = useSharedLaserEyes();
+  const { connect, disconnect, connected, isConnecting, address, provider, hasUnisat } =
+    useSharedLaserEyes();
 
   const checkWalletInstalled = (providerToConnect: ProviderType): boolean => {
     // Only UNISAT exposes a reliable pre-connection check via hasUnisat;
@@ -160,8 +144,7 @@ export function useWalletConnection() {
     }
 
     const walletName =
-      AVAILABLE_WALLETS.find((w) => w.provider === providerToConnect)?.name ||
-      providerToConnect;
+      AVAILABLE_WALLETS.find((w) => w.provider === providerToConnect)?.name || providerToConnect;
 
     if (!checkWalletInstalled(providerToConnect)) {
       setConnectionError(`${walletName} wallet not installed.`);
@@ -189,8 +172,8 @@ export function useWalletConnection() {
         const errorString = error.message.toLowerCase();
         const walletPatterns = WALLET_ERROR_PATTERNS[providerToConnect];
         if (walletPatterns) {
-          isWalletNotInstalledError = walletPatterns.notInstalledPatterns.some(
-            (pattern) => errorString.includes(pattern.toLowerCase()),
+          isWalletNotInstalledError = walletPatterns.notInstalledPatterns.some((pattern) =>
+            errorString.includes(pattern.toLowerCase()),
           );
         }
 
@@ -202,11 +185,7 @@ export function useWalletConnection() {
 
         errorMessage = error.message;
       } else {
-        logger.warn(
-          'Non-Error exception during wallet connect',
-          { error },
-          'WALLET',
-        );
+        logger.warn('Non-Error exception during wallet connect', { error }, 'WALLET');
         isWalletNotInstalledError = true;
         errorMessage = 'Wallet provider unavailable';
       }
@@ -237,10 +216,7 @@ export function useWalletConnection() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };

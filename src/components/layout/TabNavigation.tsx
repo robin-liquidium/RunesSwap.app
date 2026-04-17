@@ -1,123 +1,47 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import styles from '@/app/page.module.css';
 import ConnectWalletButton from '@/components/wallet/ConnectWalletButton';
 
-const ALLOWED_TABS = [
-  'swap',
-  'runesInfo',
-  'yourTxs',
-  'portfolio',
-  'borrow',
+const TAB_ROUTES = [
+  { tab: 'swap', href: '/swap', label: 'Swap' },
+  { tab: 'borrow', href: '/borrow', label: 'Borrow' },
+  { tab: 'runesInfo', href: '/runes-info', label: 'Runes Info' },
+  { tab: 'yourTxs', href: '/your-txs', label: 'Your TXs' },
+  { tab: 'portfolio', href: '/portfolio', label: 'Portfolio' },
 ] as const;
 
 /**
  * Union type representing the available tabs in the application.
  */
-export type ActiveTab = (typeof ALLOWED_TABS)[number];
+export type ActiveTab = (typeof TAB_ROUTES)[number]['tab'];
 
 /**
- * Props for the TabNavigation component.
- */
-interface TabNavigationProps {
-  /** Optional callback invoked when the active tab changes. */
-  onTabChange?: (tab: ActiveTab) => void;
-}
-
-/**
- * Renders the top tab navigation, manages the currently active tab, and keeps it synchronized with the URL and external listeners.
+ * Renders the top tab navigation as route links.
  *
- * The component initializes the active tab from the URL `tab` parameter (if present), updates the browser history when the active tab changes, listens for global `tabChange` custom events to update the active tab, and invokes `onTabChange` whenever the active tab changes. When switching to the "swap" tab, an existing `rune` URL parameter is preserved; otherwise the `rune` parameter is removed.
- *
- * @param onTabChange - Optional callback invoked with the new active tab whenever the active tab changes
+ * Active styling is derived from the current pathname.
  */
-export default function TabNavigation({ onTabChange }: TabNavigationProps) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('swap');
-
-  // Read URL parameters after component mounts to avoid hydration mismatch
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const sp = new URLSearchParams(window.location.search);
-      const param = sp.get('tab') as ActiveTab | null;
-      if (param) {
-        if (ALLOWED_TABS.includes(param)) {
-          setActiveTab(param);
-        }
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleTabChangeEvent = (event: CustomEvent<{ tab?: string }>) => {
-      const tab = event.detail?.tab;
-      if (tab && ALLOWED_TABS.includes(tab as ActiveTab)) {
-        setActiveTab(tab as ActiveTab);
-      }
-    };
-    window.addEventListener('tabChange', handleTabChangeEvent as EventListener);
-    return () => {
-      window.removeEventListener(
-        'tabChange',
-        handleTabChangeEvent as EventListener,
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    onTabChange?.(activeTab);
-  }, [activeTab, onTabChange]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const url = new URL(window.location.href);
-    url.searchParams.set('tab', activeTab);
-    const sp = new URLSearchParams(window.location.search);
-    const runeParam = sp.get('rune');
-    if (activeTab === 'swap' && runeParam) {
-      url.searchParams.set('rune', runeParam);
-    } else {
-      url.searchParams.delete('rune');
-    }
-    window.history.pushState({}, '', url.toString());
-  }, [activeTab]);
-
-  const handleClick = (tab: ActiveTab) => setActiveTab(tab);
+export default function TabNavigation() {
+  const pathname = usePathname();
 
   return (
     <div className={styles.headerContainer}>
       <div className={styles.tabsInHeader}>
-        <button
-          className={`${styles.pageTabButton} ${activeTab === 'swap' ? styles.pageTabActive : ''}`}
-          onClick={() => handleClick('swap')}
-        >
-          Swap
-        </button>
-        <button
-          className={`${styles.pageTabButton} ${activeTab === 'borrow' ? styles.pageTabActive : ''}`}
-          onClick={() => handleClick('borrow')}
-        >
-          Borrow
-        </button>
-        <button
-          className={`${styles.pageTabButton} ${activeTab === 'runesInfo' ? styles.pageTabActive : ''}`}
-          onClick={() => handleClick('runesInfo')}
-        >
-          Runes Info
-        </button>
-        <button
-          className={`${styles.pageTabButton} ${activeTab === 'yourTxs' ? styles.pageTabActive : ''}`}
-          onClick={() => handleClick('yourTxs')}
-        >
-          Your TXs
-        </button>
-        <button
-          className={`${styles.pageTabButton} ${activeTab === 'portfolio' ? styles.pageTabActive : ''}`}
-          onClick={() => handleClick('portfolio')}
-        >
-          Portfolio
-        </button>
+        {TAB_ROUTES.map((route) => {
+          const isActive = pathname === route.href;
+          return (
+            <Link
+              key={route.tab}
+              href={route.href}
+              className={`${styles.pageTabButton} ${isActive ? styles.pageTabActive : ''}`}
+            >
+              {route.label}
+            </Link>
+          );
+        })}
       </div>
       <div className={styles.connectButtonContainer}>
         <ConnectWalletButton />

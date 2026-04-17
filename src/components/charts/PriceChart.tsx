@@ -1,6 +1,7 @@
 import Big from 'big.js';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import {
   CartesianGrid,
   Line,
@@ -16,12 +17,13 @@ import TimeframeSelector from '@/components/charts/TimeframeSelector';
 import styles from '@/components/layout/AppInterface.module.css';
 import { Loading } from '@/components/loading';
 import usePriceChart from '@/hooks/usePriceChart';
-import { formatSatsToBtc } from '@/utils/formatters';
 import {
   formatDate,
   formatNumberWithLocale,
+  formatSatsToBtc,
   formatTime,
 } from '@/utils/formatters';
+
 // Path to hourglass icon used while BTC price is loading
 const HOURGLASS_SRC = '/icons/windows_hourglass.png';
 
@@ -96,9 +98,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
           height={48}
           style={{ marginRight: 12 }}
         />
-        <span
-          style={{ fontSize: '1.2rem', color: '#000080', fontWeight: 'bold' }}
-        >
+        <span style={{ fontSize: '1.2rem', color: '#000080', fontWeight: 'bold' }}>
           {btcPriceLoadingTimeout
             ? 'Unable to load BTC price. Chart may be inaccurate.'
             : 'Loading BTC price...'}
@@ -125,10 +125,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
               <XAxis
                 dataKey="timestamp"
                 type="number"
-                domain={[
-                  startTime?.getTime() || 'dataMin',
-                  endTime?.getTime() || 'dataMax',
-                ]}
+                domain={[startTime?.getTime() || 'dataMin', endTime?.getTime() || 'dataMax']}
                 ticks={getCustomTicks}
                 tickFormatter={(ts) => {
                   const date = new Date(ts);
@@ -159,7 +156,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
               />
               <YAxis
                 dataKey="price"
-                tickFormatter={(v) => formatNumberWithLocale(v) + ' sats'}
+                tickFormatter={(v) => `${formatNumberWithLocale(v)} sats`}
                 tick={{ fill: '#000', fontSize: 10 }}
                 axisLine={{ stroke: '#000' }}
                 tickLine={{ stroke: '#000' }}
@@ -275,10 +272,7 @@ const PriceChart: React.FC<PriceChartProps> = ({
             </div>
           )}
         </div>
-        <TimeframeSelector
-          timeframe={selectedTimeframe}
-          onChange={setSelectedTimeframe}
-        />
+        <TimeframeSelector timeframe={selectedTimeframe} onChange={setSelectedTimeframe} />
       </div>
 
       {/* Collapse Chart button */}

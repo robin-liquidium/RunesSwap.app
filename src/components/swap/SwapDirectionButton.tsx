@@ -1,5 +1,5 @@
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/swap/SwapDirectionButton.module.css';
 import type { Asset } from '@/types/common';
@@ -32,7 +32,7 @@ interface SwapDirectionButtonProps {
 /**
  * Button component that allows users to swap the direction of assets in a trade
  */
-export const SwapDirectionButton: React.FC<SwapDirectionButtonProps> = ({
+const SwapDirectionButton: React.FC<SwapDirectionButtonProps> = ({
   assetIn,
   assetOut,
   disabled = false,

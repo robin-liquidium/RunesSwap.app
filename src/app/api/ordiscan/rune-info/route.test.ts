@@ -1,6 +1,6 @@
-import { type RuneData, getRuneData } from '@/lib/runesData';
-import { createTestRequest } from '@/test-utils';
 import { GET } from '@/app/api/ordiscan/rune-info/route';
+import { getRuneData, type RuneData } from '@/lib/runesData';
+import { createTestRequest } from '@/test-utils';
 
 jest.mock('@/lib/runesData');
 const mockGetRuneData = jest.mocked(getRuneData);
@@ -47,28 +47,17 @@ describe('rune info route', () => {
     },
   ];
 
-  testCases.forEach(
-    ({
-      name,
-      mockData,
-      url,
-      expectedStatus,
-      expectedData,
-      expectedSuccess,
-    }) => {
-      it(`returns ${expectedStatus} when ${name}`, async () => {
-        mockGetRuneData.mockResolvedValue(mockData);
-        const response = await GET(createTestRequest(url));
+  testCases.forEach(({ name, mockData, url, expectedStatus, expectedData, expectedSuccess }) => {
+    it(`returns ${expectedStatus} when ${name}`, async () => {
+      mockGetRuneData.mockResolvedValue(mockData);
+      const response = await GET(createTestRequest(url));
 
-        expect(mockGetRuneData).toHaveBeenCalledWith(
-          name === 'rune found' ? 'BTC' : 'UNKNOWN',
-        );
-        expect(response.status).toBe(expectedStatus);
+      expect(mockGetRuneData).toHaveBeenCalledWith(name === 'rune found' ? 'BTC' : 'UNKNOWN');
+      expect(response.status).toBe(expectedStatus);
 
-        const data = await response.json();
-        expect(data.success).toBe(expectedSuccess);
-        expect(data.data).toEqual(expectedData);
-      });
-    },
-  );
+      const data = await response.json();
+      expect(data.success).toBe(expectedSuccess);
+      expect(data.data).toEqual(expectedData);
+    });
+  });
 });

@@ -4,7 +4,7 @@ import type { LaserEyesContextType } from '@omnisat/lasereyes';
 import Big from 'big.js';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import BorrowQuotesList from '@/components/borrow/BorrowQuotesList';
 import BorrowSuccessMessage from '@/components/borrow/BorrowSuccessMessage';
@@ -51,7 +51,7 @@ interface BorrowTabProps {
  *
  * @param props - Component props.
  */
-export function BorrowTab({
+function BorrowTab({
   connected,
   address,
   paymentAddress,
@@ -65,16 +65,17 @@ export function BorrowTab({
   const [collateralAmount, setCollateralAmount] = useState('');
   const [feeRate, setFeeRate] = useState(0);
 
-  const { data: runeBalances, isLoading: isRuneBalancesLoading } =
-    useRuneBalances(address, {
-      enabled: !!connected && !!address,
-      staleTime: 30000,
-    });
+  const { data: runeBalances, isLoading: isRuneBalancesLoading } = useRuneBalances(address, {
+    enabled: !!connected && !!address,
+    staleTime: 30000,
+  });
 
-  const { data: collateralRuneInfo, isLoading: isCollateralRuneInfoLoading } =
-    useRuneInfo(collateralAsset?.isBTC ? null : collateralAsset?.name, {
+  const { data: collateralRuneInfo, isLoading: isCollateralRuneInfoLoading } = useRuneInfo(
+    collateralAsset?.isBTC ? null : collateralAsset?.name,
+    {
       enabled: !!collateralAsset && !collateralAsset.isBTC,
-    });
+    },
+  );
 
   const { data: collateralRuneMarketInfo } = useRuneMarketData(
     collateralAsset?.isBTC ? null : collateralAsset?.name,
@@ -130,10 +131,7 @@ export function BorrowTab({
   });
 
   // Use centralized balance calculation hook at top level
-  const collateralRawBalance = useRuneBalance(
-    collateralAsset?.name,
-    runeBalances,
-  );
+  const collateralRawBalance = useRuneBalance(collateralAsset?.name, runeBalances);
 
   const handleSelectCollateral = (asset: Asset) => {
     setCollateralAsset(asset);
@@ -157,17 +155,12 @@ export function BorrowTab({
       isRuneBalancesLoading || isCollateralRuneInfoLoading ? (
         <Loading variant="dots" message="Loading balance" />
       ) : (
-        <FormattedRuneAmount
-          runeName={collateralAsset.name}
-          rawAmount={collateralRawBalance}
-        />
+        <FormattedRuneAmount runeName={collateralAsset.name} rawAmount={collateralRawBalance} />
       )
     ) : null;
 
   const usdValue =
-    collateralAmount &&
-    parseAmount(collateralAmount) > 0 &&
-    collateralRuneMarketInfo?.price_in_usd
+    collateralAmount && parseAmount(collateralAmount) > 0 && collateralRuneMarketInfo?.price_in_usd
       ? (() => {
           const amt = new Big(sanitizeForBig(collateralAmount));
           const usd = amt.times(collateralRuneMarketInfo.price_in_usd);
@@ -201,11 +194,7 @@ export function BorrowTab({
           const rawBalance = collateralRawBalance;
           if (!rawBalance) return;
           const decimals = collateralRuneInfo?.decimals ?? 0;
-          const formattedAmount = percentageOfRawAmount(
-            rawBalance,
-            decimals,
-            percentage,
-          );
+          const formattedAmount = percentageOfRawAmount(rawBalance, decimals, percentage);
           setCollateralAmount(formattedAmount);
           resetQuotes();
           setSelectedQuoteId(null);
@@ -246,9 +235,7 @@ export function BorrowTab({
         <>
           <FeeSelector onChange={setFeeRate} />
           <Button
-            onClick={() =>
-              startLoan(selectedQuoteId, collateralAmount, feeRate)
-            }
+            onClick={() => startLoan(selectedQuoteId, collateralAmount, feeRate)}
             disabled={!canStartLoan}
           >
             {isPreparing
@@ -278,12 +265,7 @@ export function BorrowTab({
       <BorrowSuccessMessage
         loanTxId={loanTxId}
         onViewPortfolio={() => {
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(
-              new CustomEvent('tabChange', { detail: { tab: 'portfolio' } }),
-            );
-          }
-          router.push('/?tab=portfolio', { scroll: false });
+          router.push('/portfolio', { scroll: false });
         }}
         onStartAnother={() => {
           resetLoanProcess();

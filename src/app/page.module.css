@@ -16,6 +16,7 @@
 }
 
 .pageTabButton {
+  display: inline-block;
   padding: var(--space-2) var(--space-4);
   background-color: var(--win98-gray);
   border: var(--win98-border-outset);
@@ -24,6 +25,7 @@
   position: relative;
   font-weight: bold;
   color: var(--win98-black);
+  text-decoration: none;
 }
 
 .pageTabButton:hover {

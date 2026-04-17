@@ -4,16 +4,6 @@ import type { RuneBalance as OrdiscanRuneBalance } from 'ordiscan';
 export type RuneBalance = OrdiscanRuneBalance;
 
 /**
- * API response format for rune balances (transforms amount -> balance).
- */
-export interface ApiRuneBalance {
-  /** Name of the rune. */
-  name: string;
-  /** Balance amount as a string. */
-  balance: string;
-}
-
-/**
  * Detailed information about a specific Rune, based on Ordiscan API response.
  */
 export interface RuneInfo {

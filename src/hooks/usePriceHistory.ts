@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { fetchRunePriceHistoryFromApi, QUERY_KEYS } from '@/lib/api';
+import { fetchRunePriceHistoryFromApi } from '@/lib/api/ordiscan';
+import { queryKeys } from '@/lib/queryKeys';
 import { safeArrayAccess, safeArrayFirst } from '@/utils/typeGuards';
 
 /**
@@ -17,12 +18,9 @@ import { safeArrayAccess, safeArrayFirst } from '@/utils/typeGuards';
  *  - `isLoading`: `true` while the query is loading, `false` otherwise.
  *  - `isError`: `true` if the query errored, `false` otherwise.
  */
-export function usePriceHistory(
-  assetName: string,
-  timeframe: '24h' | '7d' | '30d' | '90d',
-) {
+function usePriceHistory(assetName: string, timeframe: '24h' | '7d' | '30d' | '90d') {
   const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.RUNE_PRICE_HISTORY, assetName],
+    queryKey: queryKeys.runePriceHistory(assetName),
     queryFn: () => fetchRunePriceHistoryFromApi(assetName),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
@@ -37,20 +35,16 @@ export function usePriceHistory(
   ) {
     const filled: { timestamp: number; price: number }[] = [];
     const firstDataPoint = safeArrayFirst(sortedData);
-    let lastPrice =
-      sortedData.length && firstDataPoint ? firstDataPoint.price : undefined;
+    let lastPrice = sortedData.length && firstDataPoint ? firstDataPoint.price : undefined;
     let dataIdx = 0;
     for (let i = hours - 1; i >= 0; i--) {
       const ts = endTimestamp - i * 60 * 60 * 1000;
-      while (
-        dataIdx < sortedData.length &&
-        safeArrayAccess(sortedData, dataIdx)?.timestamp !== undefined &&
-        safeArrayAccess(sortedData, dataIdx)!.timestamp <= ts
-      ) {
+      while (dataIdx < sortedData.length) {
         const currentPoint = safeArrayAccess(sortedData, dataIdx);
-        if (currentPoint) {
-          lastPrice = currentPoint.price;
+        if (!currentPoint || currentPoint.timestamp > ts) {
+          break;
         }
+        lastPrice = currentPoint.price;
         dataIdx++;
       }
       if (typeof lastPrice === 'number') {
@@ -67,10 +61,7 @@ export function usePriceHistory(
 
     const sortedData = data.prices
       .map((p) => ({ ...p, price: p.price }))
-      .filter(
-        (p): p is { timestamp: number; price: number } =>
-          typeof p.price === 'number',
-      )
+      .filter((p): p is { timestamp: number; price: number } => typeof p.price === 'number')
       .sort((a, b) => a.timestamp - b.timestamp);
 
     let now = Date.now();
@@ -103,27 +94,20 @@ export function usePriceHistory(
 
     let filtered;
     if (timeframe === '90d') {
-      filtered = sortedData.filter(
-        (p) => p.timestamp >= windowStart && p.timestamp <= now,
-      );
+      filtered = sortedData.filter((p) => p.timestamp >= windowStart && p.timestamp <= now);
     } else {
       filtered = fillMissingHours(sortedData, hours, now);
     }
 
     return {
       filteredPriceData: filtered,
-      startTime:
-        filtered.length > 0
-          ? new Date(safeArrayFirst(filtered)?.timestamp || 0)
-          : null,
+      startTime: filtered.length > 0 ? new Date(safeArrayFirst(filtered)?.timestamp || 0) : null,
       endTime:
         filtered.length > 0
-          ? new Date(
-              safeArrayAccess(filtered, filtered.length - 1)?.timestamp || 0,
-            )
+          ? new Date(safeArrayAccess(filtered, filtered.length - 1)?.timestamp || 0)
           : null,
     };
-  }, [data, timeframe]);
+  }, [data, timeframe, fillMissingHours]);
 
   const getCustomTicks = useMemo(() => {
     if (!startTime || !endTime || filteredPriceData.length === 0) return [];
@@ -135,9 +119,7 @@ export function usePriceHistory(
         const tickCount = Math.min(8, dataTimestamps.length);
         if (tickCount <= 2) return dataTimestamps;
         const step = Math.floor(dataTimestamps.length / (tickCount - 1));
-        return dataTimestamps.filter(
-          (_, i) => i % step === 0 || i === dataTimestamps.length - 1,
-        );
+        return dataTimestamps.filter((_, i) => i % step === 0 || i === dataTimestamps.length - 1);
       }
       case '7d':
       case '30d':
@@ -145,9 +127,7 @@ export function usePriceHistory(
         const tickCount = 6;
         if (dataTimestamps.length <= tickCount) return dataTimestamps;
         const step = Math.floor(dataTimestamps.length / (tickCount - 1));
-        return dataTimestamps.filter(
-          (_, i) => i % step === 0 || i === dataTimestamps.length - 1,
-        );
+        return dataTimestamps.filter((_, i) => i % step === 0 || i === dataTimestamps.length - 1);
       }
     }
   }, [startTime, endTime, filteredPriceData, timeframe]);

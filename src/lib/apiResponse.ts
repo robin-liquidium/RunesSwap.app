@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server';
 
 /** Represents a successful API response. */
-export type ApiSuccess<T> = { success: true; data: T };
+type ApiSuccess<T> = { success: true; data: T };
 
 /** Represents a failed API response. */
-export type ApiError = {
+type ApiError = {
   success: false;
   error: { message: string; code?: string; details?: string };
 };
-
-/** Union type for API responses. */
-export type ApiResponse<T> = ApiSuccess<T> | ApiError;
 
 /**
  * Creates a successful API response.

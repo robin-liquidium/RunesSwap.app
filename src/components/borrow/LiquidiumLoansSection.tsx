@@ -1,5 +1,5 @@
 import Big from 'big.js';
-import React from 'react';
+import type React from 'react';
 
 import { FormattedLiquidiumCollateral } from '@/components/formatters/FormattedLiquidiumCollateral';
 import styles from '@/components/portfolio/PortfolioTab.module.css';
@@ -78,10 +78,7 @@ const LiquidiumLoansSection: React.FC<LiquidiumLoansSectionProps> = ({
         <div>No Liquidium loans found</div>
       ) : (
         loans.map((loan) => (
-          <div
-            key={loan.id}
-            className={`${styles.liquidiumItem} ${styles.grid6col}`}
-          >
+          <div key={loan.id} className={`${styles.liquidiumItem} ${styles.grid6col}`}>
             <div>
               <FormattedLiquidiumCollateral
                 runeId={loan.collateral_details.rune_id}
@@ -102,21 +99,13 @@ const LiquidiumLoansSection: React.FC<LiquidiumLoansSectionProps> = ({
                 {loan.loan_details.state}
               </span>
             </div>
-            <div>
-              {new Date(
-                loan.loan_details.loan_term_end_date,
-              ).toLocaleDateString()}
-            </div>
+            <div>{new Date(loan.loan_details.loan_term_end_date).toLocaleDateString()}</div>
             <div className={styles.btcValueContainer}>
               <div className={styles.btcAmount}>
                 {formatSatsToBtc(
                   loan.loan_details.total_repayment_sats ??
                     new Big(loan.loan_details.principal_amount_sats)
-                      .times(
-                        new Big(1).plus(
-                          loan.loan_details.discount?.discount_rate ?? 0,
-                        ),
-                      )
+                      .times(new Big(1).plus(loan.loan_details.discount?.discount_rate ?? 0))
                       .round(0, Big.roundUp) // round up to the nearest satoshi to avoid undercharging
                       .toNumber(),
                 )}
@@ -134,12 +123,8 @@ const LiquidiumLoansSection: React.FC<LiquidiumLoansSectionProps> = ({
                   {isRepayingLoanId === loan.id ? 'Repaying...' : 'Repay'}
                 </Button>
               )}
-              {loan.loan_details.state === 'ACTIVATING' && (
-                <Button disabled>Activating...</Button>
-              )}
-              {loan.loan_details.state === 'REPAYING' && (
-                <Button disabled>Processing...</Button>
-              )}
+              {loan.loan_details.state === 'ACTIVATING' && <Button disabled>Activating...</Button>}
+              {loan.loan_details.state === 'REPAYING' && <Button disabled>Processing...</Button>}
             </div>
           </div>
         ))

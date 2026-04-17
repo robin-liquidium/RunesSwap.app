@@ -3,18 +3,12 @@ import { NextRequest } from 'next/server';
 import { apiGet } from '@/lib/api/createApiClient';
 
 // Request helpers
-export function createTestRequest(
-  url: string,
-  method: 'GET' | 'POST' = 'GET',
-): NextRequest {
+export function createTestRequest(url: string, method: 'GET' | 'POST' = 'GET'): NextRequest {
   return new NextRequest(url, { method });
 }
 
 // Response validation helpers
-export async function expectSuccessResponse(
-  response: Response,
-  expectedData?: unknown,
-) {
+export async function expectSuccessResponse(response: Response, expectedData?: unknown) {
   expect(response.status).toBe(200);
   const data = await response.json();
   expect(data.success).toBe(true);
@@ -24,11 +18,7 @@ export async function expectSuccessResponse(
   return data;
 }
 
-export async function expectErrorResponse(
-  response: Response,
-  status: number,
-  message?: string,
-) {
+export async function expectErrorResponse(response: Response, status: number, message?: string) {
   expect(response.status).toBe(status);
   const data = await response.json();
   expect(data.success).toBe(false);
@@ -38,11 +28,11 @@ export async function expectErrorResponse(
   return data;
 }
 
-export function runApiTests<T extends (...args: any[]) => Promise<any>>(
+export function runApiTests<TArgs extends unknown[], TResult>(
   name: string,
-  fn: T,
+  fn: (...args: TArgs) => Promise<TResult>,
   endpoint: string,
-  params: Parameters<T>,
+  params: TArgs,
   callArgs: Record<string, unknown> | undefined,
   mockResponse: unknown,
   throwsOnError = false,
@@ -65,31 +55,6 @@ export function runApiTests<T extends (...args: any[]) => Promise<any>>(
     });
   });
 }
-
-// Mock factories
-export const mockWalletProvider = (
-  overrides: Record<string, unknown> = {},
-) => ({
-  requestAccounts: jest.fn().mockResolvedValue(['test-address']),
-  signPsbt: jest.fn().mockResolvedValue('signed-psbt'),
-  getPublicKey: jest.fn().mockResolvedValue('test-pubkey'),
-  ...overrides,
-});
-
-export const mockQuoteData = (overrides: Record<string, unknown> = {}) => ({
-  selectedOrders: [{ amount: '1000', price: 100 }],
-  totalFormattedAmount: '1000',
-  totalPrice: '0.001',
-  ...overrides,
-});
-
-export const mockBorrowListing = (overrides: Record<string, unknown> = {}) => ({
-  id: 'test-listing-id',
-  principalAmountSat: 100000,
-  interestRate: 0.1,
-  duration: 30,
-  ...overrides,
-});
 
 // Test data fixtures
 export const testData = {
@@ -154,43 +119,11 @@ export const testData = {
     txid: 'test-txid',
     timestamp: '2023-01-01T00:00:00Z',
     runestone_messages: [{ type, rune: 'BITCOIN' }],
-    inputs: [
-      { address: userAddress, output: 'txid:0', rune: '', rune_amount: '' },
-    ],
-    outputs: [
-      { address: userAddress, vout: 0, rune: 'BITCOIN', rune_amount: '1000' },
-    ],
+    inputs: [{ address: userAddress, output: 'txid:0', rune: '', rune_amount: '' }],
+    outputs: [{ address: userAddress, vout: 0, rune: 'BITCOIN', rune_amount: '1000' }],
     ...overrides,
   }),
 };
 
 // Mock management helpers
 export const setupApiMocks = () => jest.clearAllMocks();
-
-export const mockFetch = (response: unknown, status = 200) => {
-  global.fetch = jest.fn().mockResolvedValue({
-    ok: status < 400,
-    status,
-    json: () => Promise.resolve(response),
-    text: () => Promise.resolve(JSON.stringify(response)),
-  } as Response);
-};
-
-export const mockLocalStorage = () => {
-  const store: Record<string, string> = {};
-  Object.defineProperty(window, 'localStorage', {
-    value: {
-      getItem: jest.fn((key: string) => store[key] || null),
-      setItem: jest.fn((key: string, value: string) => {
-        store[key] = value;
-      }),
-      removeItem: jest.fn((key: string) => {
-        delete store[key];
-      }),
-      clear: jest.fn(() => {
-        Object.keys(store).forEach((key) => delete store[key]);
-      }),
-    },
-    writable: true,
-  });
-};

@@ -1,8 +1,8 @@
 import {
   formatNumberString,
-  truncateTxid,
   formatSatsToBtc,
   sanitizeForBig,
+  truncateTxid,
 } from '@/utils/formatters';
 
 describe('truncateTxid', () => {

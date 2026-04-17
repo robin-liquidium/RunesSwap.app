@@ -28,11 +28,7 @@ export function createSuccessResponse<T>(data: T, status = 200): NextResponse {
  * @param status - HTTP status code (default: 500)
  * @returns NextResponse with standardized format
  */
-export function createErrorResponse(
-  message: string,
-  details?: string,
-  status = 500,
-): NextResponse {
+export function createErrorResponse(message: string, details?: string, status = 500): NextResponse {
   // Avoid noisy logs during tests; still log in dev/prod
   if (process.env.NODE_ENV !== 'test') {
     const includeDetails = process.env.NODE_ENV !== 'production';
@@ -113,8 +109,7 @@ export function handleApiError(
   }
 
   // Default case for unknown error types
-  const errorDetails =
-    typeof error === 'string' ? error : JSON.stringify(error);
+  const errorDetails = typeof error === 'string' ? error : JSON.stringify(error);
   return {
     message: defaultMessage,
     status: 500,
@@ -134,9 +129,7 @@ export async function validateRequest<T>(
   request: Request,
   schema: ZodSchema<T>,
   source: 'body' | 'query' = 'body',
-): Promise<
-  { success: true; data: T } | { success: false; errorResponse: NextResponse }
-> {
+): Promise<{ success: true; data: T } | { success: false; errorResponse: NextResponse }> {
   let rawData: unknown;
   try {
     if (source === 'body') {

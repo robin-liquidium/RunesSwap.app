@@ -1,4 +1,4 @@
-import { type QuoteResponse } from 'satsterminal-sdk';
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
 
 import type { SwapProcessAction } from '@/components/swap/SwapProcessManager';
 import type { Asset } from '@/types/common';
@@ -10,10 +10,7 @@ interface UseSwapAssetsArgs {
   popularRunes: Asset[];
   showPriceChart: boolean;
   onShowPriceChart:
-    | ((
-        assetName?: string | undefined,
-        shouldToggle?: boolean | undefined,
-      ) => void)
+    | ((assetName?: string | undefined, shouldToggle?: boolean | undefined) => void)
     | undefined;
   dispatchSwap: React.Dispatch<SwapProcessAction>;
   setQuote: React.Dispatch<React.SetStateAction<QuoteResponse | null>>;
@@ -35,7 +32,7 @@ interface UseSwapAssetsArgs {
  * @param args - Arguments including current assets, amounts, and handlers.
  * @returns Asset selection state and handlers.
  */
-export function useSwapAssets({
+function useSwapAssets({
   popularRunes,
   showPriceChart,
   onShowPriceChart,

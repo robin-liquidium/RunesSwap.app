@@ -11,9 +11,7 @@ import { safeArrayFirst } from '@/utils/typeGuards';
  * @param address - The wallet address to check.
  * @returns The JWT string if valid, or an error NextResponse.
  */
-export async function getLiquidiumJwt(
-  address: string,
-): Promise<string | NextResponse> {
+export async function getLiquidiumJwt(address: string): Promise<string | NextResponse> {
   const { data, error } = await supabase
     .from('liquidium_tokens')
     .select('jwt, expires_at')
@@ -21,11 +19,7 @@ export async function getLiquidiumJwt(
     .limit(1);
 
   if (error) {
-    return createErrorResponse(
-      'Database error retrieving authentication',
-      error.message,
-      500,
-    );
+    return createErrorResponse('Database error retrieving authentication', error.message, 500);
   }
 
   const token = safeArrayFirst(data);

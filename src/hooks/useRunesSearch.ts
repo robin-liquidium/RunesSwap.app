@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import useSearchWithPopular from '@/hooks/useSearchWithPopular';
-import { fetchPopularFromApi, fetchRunesFromApi } from '@/lib/api';
+import { fetchPopularFromApi } from '@/lib/api/popular';
+import { fetchRunesFromApi } from '@/lib/api/satsTerminal';
 import { useRunesInfoStore } from '@/store/runesInfoStore';
 import type { Rune } from '@/types/satsTerminal';
 import { mapPopularToRune } from '@/utils/popularRunes';
@@ -19,19 +20,15 @@ interface UseRunesSearchOptions {
  * @param options - Options for the search (cached items, loading states).
  * @returns Search state, handlers, and results.
  */
-export function useRunesSearch({
+function useRunesSearch({
   cachedPopularRunes = [],
   isPopularRunesLoading = false,
   popularRunesError = null,
 }: UseRunesSearchOptions = {}) {
-  const { runeSearchQuery: persistedQuery, setRuneSearchQuery } =
-    useRunesInfoStore();
+  const { runeSearchQuery: persistedQuery, setRuneSearchQuery } = useRunesInfoStore();
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const cachedRunes = useMemo(
-    () => mapPopularToRune(cachedPopularRunes),
-    [cachedPopularRunes],
-  );
+  const cachedRunes = useMemo(() => mapPopularToRune(cachedPopularRunes), [cachedPopularRunes]);
 
   const {
     query: searchQuery,
@@ -50,6 +47,7 @@ export function useRunesSearch({
     initialLoading: isPopularRunesLoading,
     initialError: popularRunesError ? popularRunesError.message : null,
     initialQuery: persistedQuery,
+    namespace: 'runes-search',
   });
 
   const handleSearchChange = (value: string) => {

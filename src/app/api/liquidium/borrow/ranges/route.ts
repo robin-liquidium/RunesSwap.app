@@ -1,6 +1,11 @@
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 
+import {
+  enforceLiquidiumRateLimit,
+  requireLiquidiumJwt,
+  resolveLiquidiumRuneId,
+} from '@/app/api/liquidium/helpers';
 import { fail, ok } from '@/lib/apiResponse';
 import { handleApiError, validateRequest } from '@/lib/apiUtils';
 import { createLiquidiumClient } from '@/lib/liquidiumSdk';
@@ -38,91 +43,27 @@ export async function GET(request: NextRequest) {
   if (!validation.success) {
     return validation.errorResponse;
   }
+  const limited = enforceLiquidiumRateLimit(request, 'borrow:ranges');
+  if (limited) return limited;
 
-  let { runeId } = validation.data;
+  const { runeId } = validation.data;
   const { address } = validation.data;
 
   try {
-    // 0. Look up the actual rune ID from our database
-    if (runeId.includes(':')) {
-      // Already in correct format
-    } else {
-      // Try to find by name first
-      const { data: runeDataByName, error: runeErrorByName } = await supabase
-        .from('runes')
-        .select('id')
-        .ilike('name', runeId)
-        .limit(1);
-
-      if (runeErrorByName) {
-        logger.error(
-          'Failed to fetch rune by name',
-          { error: runeErrorByName },
-          'API',
-        );
-      } else {
-        const firstRuneByName = safeArrayFirst(runeDataByName);
-        if (firstRuneByName?.id) {
-          runeId = firstRuneByName.id;
-        } else {
-          // If not found by name, try to find by ID prefix
-          const { data: runeDataById, error: runeErrorById } = await supabase
-            .from('runes')
-            .select('id')
-            .ilike('id', `${runeId}:%`)
-            .limit(1);
-
-          if (runeErrorById) {
-            logger.error(
-              'Failed to fetch rune by ID',
-              { error: runeErrorById },
-              'API',
-            );
-          } else {
-            const firstRuneById = safeArrayFirst(runeDataById);
-            if (firstRuneById?.id) {
-              runeId = firstRuneById.id;
-            } else {
-              // Special case for LIQUIDIUMTOKEN
-              if (runeId.toLowerCase() === 'liquidiumtoken') {
-                const { data: liquidiumData, error: liquidiumError } =
-                  await supabase
-                    .from('runes')
-                    .select('id')
-                    .eq('name', 'LIQUIDIUMTOKEN')
-                    .limit(1);
-
-                if (liquidiumError) {
-                  logger.error(
-                    'Failed to fetch LIQUIDIUMTOKEN',
-                    { error: liquidiumError },
-                    'API',
-                  );
-                } else {
-                  const firstLiquidiumData = safeArrayFirst(liquidiumData);
-                  if (firstLiquidiumData?.id) {
-                    runeId = firstLiquidiumData.id;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    const resolvedRuneId = await resolveLiquidiumRuneId(runeId);
 
     // Check if we have a cached range that's less than 5 minutes old
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     const { data: cachedRanges, error: cachedRangesError } = await supabase
       .from('rune_borrow_ranges')
       .select('*')
-      .eq('rune_id', runeId)
+      .eq('rune_id', resolvedRuneId)
       .gt('updated_at', fiveMinutesAgo.toISOString())
       .limit(1);
 
     if (!cachedRangesError && cachedRanges && cachedRanges.length > 0) {
       return ok({
-        runeId,
+        runeId: resolvedRuneId,
         minAmount: cachedRanges[0].min_amount,
         maxAmount: cachedRanges[0].max_amount,
         cached: true,
@@ -131,48 +72,18 @@ export async function GET(request: NextRequest) {
     }
 
     // 1. Get User JWT from Supabase
-    const { data: tokenRows, error: tokenError } = await supabase
-      .from('liquidium_tokens')
-      .select('jwt, expires_at')
-      .eq('wallet_address', address)
-      .limit(1);
-
-    if (tokenError) {
-      return fail('Database error retrieving authentication', {
-        status: 500,
-        details: tokenError.message,
-      });
+    const jwtResult = await requireLiquidiumJwt(address);
+    if ('errorResponse' in jwtResult) {
+      return jwtResult.errorResponse;
     }
-
-    const firstToken = safeArrayFirst(tokenRows);
-    if (!firstToken?.jwt) {
-      return fail('Liquidium authentication required', {
-        status: 401,
-        details:
-          'No JWT found for this address. Please authenticate with Liquidium first.',
-      });
-    }
-
-    const userJwt = firstToken.jwt;
-    const expiresAt = firstToken.expires_at;
-
-    // Check if JWT is expired
-    if (expiresAt && new Date(expiresAt) < new Date()) {
-      return fail('Authentication expired', {
-        status: 401,
-        details:
-          'Your authentication has expired. Please re-authenticate with Liquidium.',
-      });
-    }
+    const userJwt = jwtResult.jwt;
 
     // We'll use a dummy amount of 1 to get the valid ranges
     const dummyAmount = '1';
 
     // Response type helpers from the Liquidium SDK (needs to be declared
     // before we receive the response so we can type the variable correctly)
-    type OffersResp = Awaited<
-      ReturnType<BorrowerService['getApiV1BorrowerCollateralRunesOffers']>
-    >;
+    type OffersResp = Awaited<ReturnType<BorrowerService['getApiV1BorrowerCollateralRunesOffers']>>;
 
     /*
      * Older versions of the API returned `valid_ranges` at the top level.
@@ -189,19 +100,17 @@ export async function GET(request: NextRequest) {
 
     try {
       const client = createLiquidiumClient(userJwt);
-      liquidiumData =
-        await client.borrower.getApiV1BorrowerCollateralRunesOffers({
-          runeId,
-          runeAmount: dummyAmount,
-        });
+      liquidiumData = await client.borrower.getApiV1BorrowerCollateralRunesOffers({
+        runeId: resolvedRuneId,
+        runeAmount: dummyAmount,
+      });
     } catch (sdkError) {
-      const message =
-        sdkError instanceof Error ? sdkError.message : 'Unknown error';
+      const message = sdkError instanceof Error ? sdkError.message : 'Unknown error';
 
       // Handle 404 gracefully - this means no offers are available for this rune
       if (message.includes('Not Found') || message.includes('404')) {
         return ok({
-          runeId,
+          runeId: resolvedRuneId,
           minAmount: '0',
           maxAmount: '0',
           loanTermDays: [],
@@ -280,36 +189,32 @@ export async function GET(request: NextRequest) {
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Unknown error processing ranges';
+        error instanceof Error ? error.message : 'Unknown error processing ranges';
       return fail('Invalid range data', { status: 500, details: errorMessage });
     }
 
     // Store the range in the database
-    const { error: upsertError } = await supabase
-      .from('rune_borrow_ranges')
-      .upsert(
-        {
-          rune_id: runeId,
-          min_amount: minAmount,
-          max_amount: maxAmount,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: 'rune_id',
-        },
-      );
+    const { error: upsertError } = await supabase.from('rune_borrow_ranges').upsert(
+      {
+        rune_id: resolvedRuneId,
+        min_amount: minAmount,
+        max_amount: maxAmount,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: 'rune_id',
+      },
+    );
     if (upsertError) {
       logger.warn('Failed to upsert rune_borrow_ranges', {
         error: upsertError,
-        runeId,
+        runeId: resolvedRuneId,
       });
     }
 
     // Return successful response
     return ok({
-      runeId,
+      runeId: resolvedRuneId,
       minAmount,
       maxAmount,
       loanTermDays,

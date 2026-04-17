@@ -11,23 +11,11 @@ import {
   XVERSE,
 } from '@omnisat/lasereyes';
 import { act, renderHook } from '@testing-library/react';
-import {
-  AVAILABLE_WALLETS,
-  useWalletConnection,
-} from '@/hooks/useWalletConnection';
+import { AVAILABLE_WALLETS, useWalletConnection } from '@/hooks/useWalletConnection';
 
 // Test data fixtures
 const WALLET_FIXTURES = {
-  providers: [
-    UNISAT,
-    XVERSE,
-    LEATHER,
-    OYL,
-    MAGIC_EDEN,
-    OKX,
-    PHANTOM,
-    WIZZ,
-  ] as const,
+  providers: [UNISAT, XVERSE, LEATHER, OYL, MAGIC_EDEN, OKX, PHANTOM, WIZZ] as const,
   installErrorPatterns: [
     'not detected',
     'no bitcoin wallet installed',
@@ -85,9 +73,7 @@ function mockClickOutside(
   } as unknown as HTMLDivElement;
 
   act(() => {
-    document.dispatchEvent(
-      new MouseEvent('mousedown', { bubbles: true, cancelable: true }),
-    );
+    document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
   });
 }
 
@@ -199,31 +185,24 @@ describe('useWalletConnection', () => {
         await result.current.handleConnect(UNISAT);
       });
 
-      expect(result.current.connectionError).toBe(
-        'Unisat wallet not installed.',
-      );
+      expect(result.current.connectionError).toBe('Unisat wallet not installed.');
       expect(result.current.installLink).toBe('https://unisat.io/download');
     });
 
-    it.each(WALLET_FIXTURES.installErrorPatterns)(
-      'handles install error pattern: "%s"',
-      async (errorMessage) => {
-        const { mockConnect } = createMockLaserEyes();
-        mockConnect.mockRejectedValue(new Error(errorMessage));
-        const { result } = renderHook(() => useWalletConnection());
+    it.each(
+      WALLET_FIXTURES.installErrorPatterns,
+    )('handles install error pattern: "%s"', async (errorMessage) => {
+      const { mockConnect } = createMockLaserEyes();
+      mockConnect.mockRejectedValue(new Error(errorMessage));
+      const { result } = renderHook(() => useWalletConnection());
 
-        await act(async () => {
-          await result.current.handleConnect(XVERSE);
-        });
+      await act(async () => {
+        await result.current.handleConnect(XVERSE);
+      });
 
-        expect(result.current.connectionError).toBe(
-          'Xverse wallet not installed.',
-        );
-        expect(result.current.installLink).toBe(
-          'https://www.xverse.app/download',
-        );
-      },
-    );
+      expect(result.current.connectionError).toBe('Xverse wallet not installed.');
+      expect(result.current.installLink).toBe('https://www.xverse.app/download');
+    });
 
     it('handles generic connection errors', async () => {
       const { mockConnect } = createMockLaserEyes();
@@ -234,9 +213,7 @@ describe('useWalletConnection', () => {
         await result.current.handleConnect(XVERSE);
       });
 
-      expect(result.current.connectionError).toBe(
-        'Failed to connect to Xverse: Connection failed',
-      );
+      expect(result.current.connectionError).toBe('Failed to connect to Xverse: Connection failed');
       expect(result.current.installLink).toBe(null);
     });
 
@@ -249,12 +226,8 @@ describe('useWalletConnection', () => {
         await result.current.handleConnect(XVERSE);
       });
 
-      expect(result.current.connectionError).toBe(
-        'Xverse wallet not installed.',
-      );
-      expect(result.current.installLink).toBe(
-        'https://www.xverse.app/download',
-      );
+      expect(result.current.connectionError).toBe('Xverse wallet not installed.');
+      expect(result.current.installLink).toBe('https://www.xverse.app/download');
     });
   });
 
@@ -273,45 +246,30 @@ describe('useWalletConnection', () => {
     });
 
     it('removes event listener on unmount', () => {
-      const removeEventListenerSpy = jest.spyOn(
-        document,
-        'removeEventListener',
-      );
+      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
       const { unmount } = renderHook(() => useWalletConnection());
 
       unmount();
 
-      expect(removeEventListenerSpy).toHaveBeenCalledWith(
-        'mousedown',
-        expect.any(Function),
-      );
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
       removeEventListenerSpy.mockRestore();
     });
   });
 
   describe('wallet-specific install links', () => {
-    it.each(WALLET_FIXTURES.providers)(
-      'provides correct install link for %s',
-      async (provider) => {
-        const { mockConnect } = createMockLaserEyes();
-        mockConnect.mockRejectedValue(new Error('not installed'));
-        const { result } = renderHook(() => useWalletConnection());
+    it.each(WALLET_FIXTURES.providers)('provides correct install link for %s', async (provider) => {
+      const { mockConnect } = createMockLaserEyes();
+      mockConnect.mockRejectedValue(new Error('not installed'));
+      const { result } = renderHook(() => useWalletConnection());
 
-        await act(async () => {
-          await result.current.handleConnect(provider as ProviderType);
-        });
+      await act(async () => {
+        await result.current.handleConnect(provider as ProviderType);
+      });
 
-        const walletName =
-          AVAILABLE_WALLETS.find((w) => w.provider === provider)?.name ||
-          provider;
-        expect(result.current.connectionError).toBe(
-          `${walletName} wallet not installed.`,
-        );
-        expect(result.current.installLink).toBe(
-          WALLET_FIXTURES.installLinks[provider],
-        );
-      },
-    );
+      const walletName = AVAILABLE_WALLETS.find((w) => w.provider === provider)?.name || provider;
+      expect(result.current.connectionError).toBe(`${walletName} wallet not installed.`);
+      expect(result.current.installLink).toBe(WALLET_FIXTURES.installLinks[provider]);
+    });
   });
 
   describe('AVAILABLE_WALLETS constant', () => {
@@ -327,8 +285,7 @@ describe('useWalletConnection', () => {
         {
           name: 'Phantom',
           provider: PHANTOM,
-          disclaimer:
-            'Runes are not supported in Phantom wallet. Use with caution.',
+          disclaimer: 'Runes are not supported in Phantom wallet. Use with caution.',
         },
         { name: 'Wizz', provider: WIZZ },
       ]);

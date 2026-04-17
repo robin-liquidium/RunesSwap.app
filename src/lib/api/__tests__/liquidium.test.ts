@@ -1,4 +1,3 @@
-import { get, post } from '@/lib/fetchWrapper';
 import {
   fetchBorrowQuotesFromApi,
   fetchBorrowRangesFromApi,
@@ -7,6 +6,7 @@ import {
   submitLiquidiumBorrow,
   submitRepayPsbt,
 } from '@/lib/api/liquidium';
+import { get, post } from '@/lib/fetchWrapper';
 
 // Mock the fetchWrapper module
 jest.mock('../../fetchWrapper', () => ({
@@ -123,28 +123,18 @@ describe('liquidium API', () => {
       ['network error', () => new Error('Network error'), 'Network error'],
     ])('handles %s', async (_, errorFactory, expectedError) => {
       (get as jest.Mock).mockRejectedValue(errorFactory());
-      await expect(fetchBorrowQuotesFromApi(...params)).rejects.toThrow(
-        expectedError,
-      );
+      await expect(fetchBorrowQuotesFromApi(...params)).rejects.toThrow(expectedError);
     });
 
     it('handles API error response', async () => {
-      (get as jest.Mock).mockResolvedValue(
-        mockResponse(mockErrorResponse('API Error')),
-      );
-      await expect(fetchBorrowQuotesFromApi(...params)).rejects.toThrow(
-        errorMessage,
-      );
+      (get as jest.Mock).mockResolvedValue(mockResponse(mockErrorResponse('API Error')));
+      await expect(fetchBorrowQuotesFromApi(...params)).rejects.toThrow(errorMessage);
     });
   });
 
   describe('fetchBorrowRangesFromApi', () => {
-    const params: Parameters<typeof fetchBorrowRangesFromApi> = [
-      'test-rune-id',
-      'bc1test123',
-    ];
-    const expectedUrl =
-      '/api/liquidium/borrow/ranges?runeId=test-rune-id&address=bc1test123';
+    const params: Parameters<typeof fetchBorrowRangesFromApi> = ['test-rune-id', 'bc1test123'];
+    const expectedUrl = '/api/liquidium/borrow/ranges?runeId=test-rune-id&address=bc1test123';
     const encodedParams: Parameters<typeof fetchBorrowRangesFromApi> = [
       'rune with spaces',
       'bc1+special@chars',
@@ -175,18 +165,12 @@ describe('liquidium API', () => {
       ['network error', () => new Error('Network error'), 'Network error'],
     ])('handles %s', async (_, errorFactory, expectedError) => {
       (get as jest.Mock).mockRejectedValue(errorFactory());
-      await expect(fetchBorrowRangesFromApi(...params)).rejects.toThrow(
-        expectedError,
-      );
+      await expect(fetchBorrowRangesFromApi(...params)).rejects.toThrow(expectedError);
     });
 
     it('handles API error response', async () => {
-      (get as jest.Mock).mockResolvedValue(
-        mockResponse(mockErrorResponse('API Error')),
-      );
-      await expect(fetchBorrowRangesFromApi(...params)).rejects.toThrow(
-        errorMessage,
-      );
+      (get as jest.Mock).mockResolvedValue(mockResponse(mockErrorResponse('API Error')));
+      await expect(fetchBorrowRangesFromApi(...params)).rejects.toThrow(errorMessage);
     });
   });
 
@@ -220,10 +204,7 @@ describe('liquidium API', () => {
     it('executes successfully', async () => {
       (post as jest.Mock).mockResolvedValue(mockResponse(mockResponse1));
       const result = await prepareLiquidiumBorrow(params);
-      expect(post).toHaveBeenCalledWith(
-        '/api/liquidium/borrow/prepare',
-        params,
-      );
+      expect(post).toHaveBeenCalledWith('/api/liquidium/borrow/prepare', params);
       expect(result).toEqual(mockResponse1);
     });
 
@@ -237,9 +218,7 @@ describe('liquidium API', () => {
       } else {
         (post as jest.Mock).mockResolvedValue(v);
       }
-      await expect(prepareLiquidiumBorrow(params)).rejects.toThrow(
-        'Failed to prepare borrow',
-      );
+      await expect(prepareLiquidiumBorrow(params)).rejects.toThrow('Failed to prepare borrow');
     });
   });
 
@@ -271,9 +250,7 @@ describe('liquidium API', () => {
       } else {
         (post as jest.Mock).mockResolvedValue(v);
       }
-      await expect(submitLiquidiumBorrow(params)).rejects.toThrow(
-        'Failed to submit borrow',
-      );
+      await expect(submitLiquidiumBorrow(params)).rejects.toThrow('Failed to submit borrow');
     });
   });
 
@@ -285,11 +262,7 @@ describe('liquidium API', () => {
         data: { runeDetails: FIXTURES.quoteResponse.runeDetails },
       };
       (get as jest.Mock).mockResolvedValue(mockResponse(nestedResponse));
-      const result = await fetchBorrowQuotesFromApi(
-        'test-rune-id',
-        '500',
-        'bc1test123',
-      );
+      const result = await fetchBorrowQuotesFromApi('test-rune-id', '500', 'bc1test123');
       expect(result.runeDetails).toEqual(FIXTURES.quoteResponse.runeDetails);
     });
 
@@ -310,10 +283,7 @@ describe('liquidium API', () => {
 
   // Repay operations
   describe('repayLiquidiumLoan', () => {
-    const params: Parameters<typeof repayLiquidiumLoan> = [
-      'loan-123',
-      'bc1user123',
-    ];
+    const params: Parameters<typeof repayLiquidiumLoan> = ['loan-123', 'bc1user123'];
     const expectedCall = { loanId: 'loan-123', address: 'bc1user123' };
     const errorMessage = 'Failed to repay loan';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 
 import { FormattedRuneAmount } from '@/components/formatters/FormattedRuneAmount';
 import RuneIcon from '@/components/runes/RuneIcon';
@@ -10,11 +10,7 @@ import type {
   RuneInfo as OrdiscanRuneInfo,
   RuneMarketInfo as OrdiscanRuneMarketInfo,
 } from '@/types/ordiscan';
-import {
-  formatNumberString,
-  formatNumberWithLocale,
-  truncateTxid,
-} from '@/utils/formatters';
+import { formatNumberString, formatNumberWithLocale, truncateTxid } from '@/utils/formatters';
 import { getRuneIconUrl } from '@/utils/runeUtils';
 
 /**
@@ -39,10 +35,7 @@ interface RuneDetailsProps {
   showLoading: boolean;
   /** Callback to toggle the price chart. */
   onShowPriceChart:
-    | ((
-        assetName?: string | undefined,
-        shouldToggle?: boolean | undefined,
-      ) => void)
+    | ((assetName?: string | undefined, shouldToggle?: boolean | undefined) => void)
     | undefined;
   /** Whether the price chart is currently shown. */
   showPriceChart?: boolean | undefined;
@@ -73,9 +66,7 @@ const RuneDetails: React.FC<RuneDetailsProps> = ({
       <p>Loading details for {selectedRune.formatted_name}...</p>
     )}
     {detailedRuneInfoError && selectedRune && !showLoading && (
-      <p className={styles.errorText}>
-        Error loading details: {detailedRuneInfoError.message}
-      </p>
+      <p className={styles.errorText}>Error loading details: {detailedRuneInfoError.message}</p>
     )}
     {!isDetailedRuneInfoLoading && !showLoading && detailedRuneInfo && (
       <div>
@@ -172,14 +163,12 @@ const RuneDetails: React.FC<RuneDetailsProps> = ({
           )}
         {detailedRuneInfo.mint_count_cap && (
           <p>
-            <strong>Mint Cap:</strong>{' '}
-            {formatNumberString(detailedRuneInfo.mint_count_cap)}
+            <strong>Mint Cap:</strong> {formatNumberString(detailedRuneInfo.mint_count_cap)}
           </p>
         )}
         {detailedRuneInfo.mint_start_block !== null && (
           <p>
-            <strong>Mint Start Block:</strong>{' '}
-            {detailedRuneInfo.mint_start_block}
+            <strong>Mint Start Block:</strong> {detailedRuneInfo.mint_start_block}
           </p>
         )}
         {detailedRuneInfo.mint_end_block !== null && (
@@ -209,9 +198,7 @@ const RuneDetails: React.FC<RuneDetailsProps> = ({
       </div>
     )}
     {!selectedRune && !isDetailedRuneInfoLoading && !showLoading && (
-      <p className={styles.hintText}>
-        Select a rune from the list or search by name.
-      </p>
+      <p className={styles.hintText}>Select a rune from the list or search by name.</p>
     )}
   </div>
 );

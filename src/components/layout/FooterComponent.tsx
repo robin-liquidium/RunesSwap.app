@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 
 import styles from '@/components/layout/AppInterface.module.css';
 import { formatUsd } from '@/utils/formatters';
@@ -24,11 +23,7 @@ interface FooterComponentProps {
  *
  * @param props - Component props.
  */
-export function FooterComponent({
-  btcPriceUsd,
-  isBtcPriceLoading,
-  btcPriceError,
-}: FooterComponentProps) {
+function FooterComponent({ btcPriceUsd, isBtcPriceLoading, btcPriceError }: FooterComponentProps) {
   return (
     <div className={styles.btcPriceFooter}>
       {isBtcPriceLoading ? (
@@ -41,25 +36,14 @@ export function FooterComponent({
         <span>BTC Price: N/A</span>
       )}
       <div className={styles.socialLinks}>
-        <Link href="/changelog" legacyBehavior passHref>
-          <a className={styles.footerButton} title="Changelog">
-            Changelog
-          </a>
+        <Link href="/changelog" className={styles.footerButton} title="Changelog">
+          Changelog
         </Link>
-        <Link href="/legal" legacyBehavior passHref>
-          <a className={styles.footerButton} title="Legal">
-            Legal
-          </a>
+        <Link href="/legal" className={styles.footerButton} title="Legal">
+          Legal
         </Link>
-        <Link href="/docs" legacyBehavior passHref>
-          <a className={styles.footerIconButton} title="Documentation">
-            <Image
-              src="/icons/help_book_big-0.png"
-              alt="Documentation"
-              width={16}
-              height={16}
-            />
-          </a>
+        <Link href="/docs" className={styles.footerIconButton} title="Documentation">
+          <Image src="/icons/help_book_big-0.png" alt="Documentation" width={16} height={16} />
         </Link>
         <a
           href="https://github.com/ropl-btc/RunesSwap.app"
@@ -68,12 +52,7 @@ export function FooterComponent({
           title="GitHub"
           className={styles.socialLink}
         >
-          <Image
-            src="/icons/github-mark.svg"
-            alt="GitHub"
-            width={16}
-            height={16}
-          />
+          <Image src="/icons/github-mark.svg" alt="GitHub" width={16} height={16} />
         </a>
         <a
           href="https://twitter.com/robin_liquidium"
@@ -82,12 +61,7 @@ export function FooterComponent({
           title="X (Twitter)"
           className={styles.socialLink}
         >
-          <Image
-            src="/icons/x-logo.svg"
-            alt="X (Twitter)"
-            width={16}
-            height={16}
-          />
+          <Image src="/icons/x-logo.svg" alt="X (Twitter)" width={16} height={16} />
         </a>
       </div>
     </div>

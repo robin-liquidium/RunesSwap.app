@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import InputArea from '@/components/swap/InputArea';
 import type { Asset } from '@/types/common';

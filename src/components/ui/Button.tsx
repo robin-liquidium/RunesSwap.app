@@ -6,7 +6,7 @@ import styles from '@/components/ui/Button.module.css';
  * Props for the Button component.
  * Extends standard HTML button attributes.
  */
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
  * A reusable button component with standard styling.

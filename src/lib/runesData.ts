@@ -1,10 +1,6 @@
 import { logApiError, logDbError } from '@/lib/logger';
 import { getOrdiscanClient } from '@/lib/serverUtils';
-import {
-  fetchRuneByName,
-  type RuneRecord,
-  upsertRuneData,
-} from '@/lib/supabaseQueries';
+import { fetchRuneByName, type RuneRecord, upsertRuneData } from '@/lib/supabaseQueries';
 
 /**
  * Data structure for a Rune, matching Supabase schema and API response.

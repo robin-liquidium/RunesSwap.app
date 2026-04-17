@@ -1,3 +1,4 @@
+import { GET } from '@/app/api/popular-runes/route';
 import * as popularRunes from '@/lib/popularRunes';
 import {
   createTestRequest,
@@ -5,7 +6,6 @@ import {
   expectSuccessResponse,
   testData,
 } from '@/test-utils';
-import { GET } from '@/app/api/popular-runes/route';
 
 jest.mock('@/lib/popularRunes');
 const mockGetPopularRunes = jest.mocked(popularRunes.getPopularRunes);
@@ -43,25 +43,17 @@ describe('/api/popular-runes', () => {
     },
   ];
 
-  testCases.forEach(
-    ({ name, setup, expectSuccess, expectedData, expectError }) => {
-      it(`should handle ${name}`, async () => {
-        setup();
-        const response = await GET(
-          createTestRequest('http://localhost:3000/api/popular-runes'),
-        );
+  testCases.forEach(({ name, setup, expectSuccess, expectedData, expectError }) => {
+    it(`should handle ${name}`, async () => {
+      setup();
+      const response = await GET(createTestRequest('http://localhost:3000/api/popular-runes'));
 
-        if (expectSuccess) {
-          await expectSuccessResponse(response, expectedData);
-          expect(mockGetPopularRunes).toHaveBeenCalledTimes(1);
-        } else if (expectError) {
-          await expectErrorResponse(
-            response,
-            expectError.status,
-            expectError.message,
-          );
-        }
-      });
-    },
-  );
+      if (expectSuccess) {
+        await expectSuccessResponse(response, expectedData);
+        expect(mockGetPopularRunes).toHaveBeenCalledTimes(1);
+      } else if (expectError) {
+        await expectErrorResponse(response, expectError.status, expectError.message);
+      }
+    });
+  });
 });

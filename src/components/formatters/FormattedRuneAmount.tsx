@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import { Loading } from '@/components/loading';
 import { useRuneInfo } from '@/hooks/useRuneInfo';
 import { formatRuneAmount } from '@/utils/runeFormatting';
@@ -22,20 +20,13 @@ interface FormattedRuneAmountProps {
  *
  * @param props - Component props.
  */
-export function FormattedRuneAmount({
-  runeName,
-  rawAmount,
-}: FormattedRuneAmountProps) {
+export function FormattedRuneAmount({ runeName, rawAmount }: FormattedRuneAmountProps) {
   const {
     data: runeInfo,
     isLoading,
     error,
   } = useRuneInfo(runeName, {
-    enabled:
-      !!runeName &&
-      rawAmount !== 'N/A' &&
-      rawAmount !== null &&
-      rawAmount !== undefined, // Only run if we have a rune name and a valid raw amount
+    enabled: !!runeName && rawAmount !== 'N/A' && rawAmount !== null && rawAmount !== undefined, // Only run if we have a rune name and a valid raw amount
   });
 
   if (rawAmount === 'N/A' || rawAmount === null || rawAmount === undefined) {
@@ -76,8 +67,8 @@ export function FormattedRuneAmount({
 
   // Check if conversion to number would lose precision
   if (
-    isNaN(formattedNumber) ||
-    !Number.isSafeInteger(formattedNumber * Math.pow(10, decimals)) ||
+    Number.isNaN(formattedNumber) ||
+    !Number.isSafeInteger(formattedNumber * 10 ** decimals) ||
     formattedNumber > Number.MAX_SAFE_INTEGER
   ) {
     // For very large numbers, use string formatting to preserve precision

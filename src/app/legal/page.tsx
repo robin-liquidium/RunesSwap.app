@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import React from 'react';
 
 import styles from '@/app/page.module.css';
 
@@ -13,29 +12,16 @@ export default function LegalPage() {
       <h1 className="heading">Legal Disclaimer</h1>
       <div className={styles.docsContent}>
         <p>
-          RunesSwap.app is an open-source project provided{' '}
-          <strong>as is</strong> without any warranty.
+          RunesSwap.app is an open-source project provided <strong>as is</strong> without any
+          warranty.
         </p>
+        <p>Use at your own risk. The developers assume no liability for any loss or damage.</p>
+        <p>Cryptocurrency transactions are irreversible and may result in loss of funds.</p>
+        <p>Always verify all transaction details and contract addresses before proceeding.</p>
         <p>
-          Use at your own risk. The developers assume no liability for any loss
-          or damage.
+          No financial or legal advice is provided. This project is for educational purposes only.
         </p>
-        <p>
-          Cryptocurrency transactions are irreversible and may result in loss of
-          funds.
-        </p>
-        <p>
-          Always verify all transaction details and contract addresses before
-          proceeding.
-        </p>
-        <p>
-          No financial or legal advice is provided. This project is for
-          educational purposes only.
-        </p>
-        <p>
-          By using RunesSwap.app, you agree that you are solely responsible for
-          your actions.
-        </p>
+        <p>By using RunesSwap.app, you agree that you are solely responsible for your actions.</p>
       </div>
       <div className={styles.backToHome}>
         <Link href="/">Back to Home</Link>

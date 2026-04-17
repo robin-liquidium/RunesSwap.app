@@ -13,13 +13,13 @@ jest.mock('@/lib/supabase', () => ({
 jest.mock('@/lib/runesData');
 jest.mock('@/lib/runeMarketData');
 
+import { GET } from '@/app/api/portfolio-data/route';
 import { getRuneMarketData } from '@/lib/runeMarketData';
-import { type RuneData, getRuneData } from '@/lib/runesData';
+import { getRuneData, type RuneData } from '@/lib/runesData';
 import { getOrdiscanClient } from '@/lib/serverUtils';
 import { supabase } from '@/lib/supabase';
 import { createTestRequest, testData } from '@/test-utils';
 import type { RuneMarketInfo } from '@/types/ordiscan';
-import { GET } from '@/app/api/portfolio-data/route';
 
 const mockGetOrdiscanClient = jest.mocked(getOrdiscanClient);
 const mockSupabase = jest.mocked(supabase);
@@ -49,12 +49,8 @@ const setupMocks = (overrides: Record<string, unknown> = {}) => {
     address: { getRunes: mockGetRunes },
   } as unknown as ReturnType<typeof getOrdiscanClient>);
 
-  const mockGt = jest.fn(() =>
-    Promise.resolve({ data: marketData, error: marketError }),
-  );
-  const mockInRunes = jest.fn(() =>
-    Promise.resolve({ data: runeInfos, error: runeInfosError }),
-  );
+  const mockGt = jest.fn(() => Promise.resolve({ data: marketData, error: marketError }));
+  const mockInRunes = jest.fn(() => Promise.resolve({ data: runeInfos, error: runeInfosError }));
   const mockInMarket = jest.fn(() => ({ gt: mockGt }));
 
   (mockSupabase.from as jest.Mock).mockImplementation((table: string) => ({
@@ -64,9 +60,7 @@ const setupMocks = (overrides: Record<string, unknown> = {}) => {
   }));
 
   mockGetRuneData.mockResolvedValue(missingRuneData as RuneData | null);
-  mockGetRuneMarketData.mockResolvedValue(
-    missingMarketData as RuneMarketInfo | null,
-  );
+  mockGetRuneMarketData.mockResolvedValue(missingMarketData as RuneMarketInfo | null);
 
   return { mockGetRunes, mockInRunes, mockInMarket, mockGt };
 };
@@ -143,28 +137,19 @@ describe('/api/portfolio-data', () => {
       },
       expectedCall: [mockGetRuneMarketData, 'MISSING•MARKET'],
     },
-  ])(
-    'should fetch missing $type from external API',
-    async ({ setup, expectedCall }) => {
-      setupMocks(setup);
-      const response = await GET(createRequest());
-      const data = await response.json();
+  ])('should fetch missing $type from external API', async ({ setup, expectedCall }) => {
+    setupMocks(setup);
+    const response = await GET(createRequest());
+    const data = await response.json();
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(expectedCall[0]).toHaveBeenCalledWith(expectedCall[1]);
-    },
-  );
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(expectedCall[0]).toHaveBeenCalledWith(expectedCall[1]);
+  });
 
   it.each([
-    [
-      'rune info',
-      { runeInfos: null, runeInfosError: { message: 'Database error' } },
-    ],
-    [
-      'market data',
-      { marketData: null, marketError: { message: 'Market data error' } },
-    ],
+    ['rune info', { runeInfos: null, runeInfosError: { message: 'Database error' } }],
+    ['market data', { marketData: null, marketError: { message: 'Market data error' } }],
   ])('should handle Supabase %s errors gracefully', async (_, overrides) => {
     setupMocks(overrides);
     const response = await GET(createRequest());
@@ -176,9 +161,7 @@ describe('/api/portfolio-data', () => {
   });
 
   it('should handle Ordiscan API errors', async () => {
-    const mockGetRunes = jest
-      .fn()
-      .mockRejectedValue(new Error('Ordiscan API error'));
+    const mockGetRunes = jest.fn().mockRejectedValue(new Error('Ordiscan API error'));
     mockGetOrdiscanClient.mockReturnValue({
       address: { getRunes: mockGetRunes },
     } as unknown as ReturnType<typeof getOrdiscanClient>);
@@ -205,9 +188,7 @@ describe('/api/portfolio-data', () => {
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(data.data.balances).toEqual([
-      { name: 'UNKNOWN•RUNE', balance: '1000' },
-    ]);
+    expect(data.data.balances).toEqual([{ name: 'UNKNOWN•RUNE', balance: '1000' }]);
     expect(data.data.runeInfos).toEqual({});
     expect(data.data.marketData).toEqual({});
   });
@@ -217,14 +198,8 @@ describe('/api/portfolio-data', () => {
     const response = await GET(createRequest());
 
     expect(response.status).toBe(200);
-    expect(mockInRunes).toHaveBeenCalledWith('name', [
-      'UNCOMMON•GOODS',
-      'RSIC•METAPROTOCOL',
-    ]);
-    expect(mockInMarket).toHaveBeenCalledWith('rune_name', [
-      'UNCOMMON•GOODS',
-      'RSIC•METAPROTOCOL',
-    ]);
+    expect(mockInRunes).toHaveBeenCalledWith('name', ['UNCOMMON•GOODS', 'RSIC•METAPROTOCOL']);
+    expect(mockInMarket).toHaveBeenCalledWith('rune_name', ['UNCOMMON•GOODS', 'RSIC•METAPROTOCOL']);
     expect(mockGt).toHaveBeenCalled();
   });
 
@@ -239,8 +214,6 @@ describe('/api/portfolio-data', () => {
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(data.data.balances).toEqual([
-      { name: 'MALFORMED•RUNE', balance: '0' },
-    ]);
+    expect(data.data.balances).toEqual([{ name: 'MALFORMED•RUNE', balance: '0' }]);
   });
 });

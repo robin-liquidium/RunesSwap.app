@@ -1,189 +1,15 @@
 import type { LaserEyesContextType } from '@omnisat/lasereyes';
+import type { GetPSBTParams, Order, QuoteResponse } from '@satsterminal-sdk/swaps';
 import { useRef } from 'react';
-import {
-  type ConfirmPSBTParams,
-  type GetPSBTParams,
-  type Order,
-  type QuoteResponse,
-} from 'satsterminal-sdk';
 
-import type {
-  SwapProcessAction,
-  SwapProcessState,
-} from '@/components/swap/SwapProcessManager';
+import type { SwapProcessAction, SwapProcessState } from '@/components/swap/SwapProcessManager';
+import { parsePsbtResult } from '@/hooks/swapExecution/psbtParsers';
+import { signAndConfirmPsbt } from '@/hooks/swapExecution/signAndConfirm';
 import useFeeRates from '@/hooks/useFeeRates';
-import { confirmPsbtViaApi, getPsbtFromApi } from '@/lib/api';
+import { getPsbtFromApi } from '@/lib/api/satsTerminal';
 import { logger } from '@/lib/logger';
 import type { Asset } from '@/types/common';
 import { patchOrder } from '@/utils/orderUtils';
-
-interface SignAndConfirmParams {
-  mainPsbtBase64: string;
-  rbfPsbtBase64: string | null;
-  swapId: string;
-  orders: Order[];
-  address: string;
-  publicKey: string;
-  paymentAddress: string;
-  paymentPublicKey: string;
-  runeName: string;
-  isBtcToRune: boolean;
-  dispatchSwap: React.Dispatch<SwapProcessAction>;
-  signPsbt: UseSwapExecutionArgs['signPsbt'];
-  isRetry?: boolean;
-}
-
-// Response shape from PSBT creation API
-interface PsbtApiResponse {
-  psbtBase64?: string;
-  psbt?: string;
-  swapId?: string;
-  rbfProtected?: { base64?: string };
-}
-
-// Response shape from PSBT confirmation API
-interface SwapConfirmationResult {
-  txid?: string;
-  rbfProtection?: {
-    fundsPreparationTxId?: string;
-  };
-}
-
-/**
- * Determines whether a value matches the PSBT API response shape.
- *
- * @param value - The value to test
- * @returns `true` if the value contains a `psbtBase64` or `psbt` string and, if present, `swapId` is a string and `rbfProtected.base64` is a string; `false` otherwise.
- */
-function isPsbtApiResponse(value: unknown): value is PsbtApiResponse {
-  if (!value || typeof value !== 'object') return false;
-  const v = value as Record<string, unknown>;
-  const hasPsbt =
-    typeof v.psbtBase64 === 'string' || typeof v.psbt === 'string';
-  const swapIdOk = v.swapId === undefined || typeof v.swapId === 'string';
-  // RBF protection is optional; when present, base64 must be a string or undefined
-  const rbfOk =
-    v.rbfProtected === undefined ||
-    (typeof v.rbfProtected === 'object' &&
-      v.rbfProtected !== null &&
-      (typeof (v.rbfProtected as Record<string, unknown>).base64 === 'string' ||
-        (v.rbfProtected as Record<string, unknown>).base64 === undefined));
-  return hasPsbt && swapIdOk && rbfOk;
-}
-
-function isSwapConfirmationResult(
-  value: unknown,
-): value is SwapConfirmationResult {
-  if (!value || typeof value !== 'object') return false;
-  const v = value as Record<string, unknown>;
-  const hasTxid = typeof v.txid === 'string';
-  const hasRbf =
-    typeof v.rbfProtection === 'object' &&
-    v.rbfProtection !== null &&
-    typeof (v.rbfProtection as Record<string, unknown>).fundsPreparationTxId ===
-      'string';
-  return hasTxid || hasRbf;
-}
-
-/**
- * Extracts the main PSBT base64, swap identifier, and RBF PSBT base64 from a PSBT API response value.
- *
- * @returns An object with any of the following properties when present:
- * - `mainPsbtBase64` — the primary PSBT encoded as a base64 string
- * - `swapId` — the swap identifier returned by the API
- * - `rbfPsbtBase64` — the RBF (replace-by-fee) PSBT encoded as a base64 string
- */
-function parsePsbtResult(result: unknown): {
-  mainPsbtBase64?: string;
-  swapId?: string;
-  rbfPsbtBase64?: string;
-} {
-  if (!isPsbtApiResponse(result)) return {};
-  const out: {
-    mainPsbtBase64?: string;
-    swapId?: string;
-    rbfPsbtBase64?: string;
-  } = {};
-  const main = result.psbtBase64 || result.psbt;
-  if (typeof main === 'string') out.mainPsbtBase64 = main;
-  if (typeof result.swapId === 'string') out.swapId = result.swapId;
-  const rbf = result.rbfProtected?.base64;
-  if (typeof rbf === 'string') out.rbfPsbtBase64 = rbf;
-  return out;
-}
-
-async function signAndConfirmPsbt({
-  mainPsbtBase64,
-  rbfPsbtBase64,
-  swapId,
-  orders,
-  address,
-  publicKey,
-  paymentAddress,
-  paymentPublicKey,
-  runeName,
-  isBtcToRune,
-  dispatchSwap,
-  signPsbt,
-  isRetry = false,
-}: SignAndConfirmParams): Promise<string> {
-  dispatchSwap({ type: 'SWAP_STEP', step: 'signing' });
-  const mainSigningResult = await signPsbt(mainPsbtBase64);
-  const signedMainPsbt = mainSigningResult?.signedPsbtBase64;
-  if (!signedMainPsbt) {
-    throw new Error('Main PSBT signing cancelled or failed.');
-  }
-
-  let signedRbfPsbt: string | null = null;
-  if (rbfPsbtBase64) {
-    const rbfSigningResult = await signPsbt(rbfPsbtBase64);
-    signedRbfPsbt = rbfSigningResult?.signedPsbtBase64 ?? null;
-  }
-
-  dispatchSwap({ type: 'SWAP_STEP', step: 'confirming' });
-  const confirmParams: ConfirmPSBTParams = {
-    orders,
-    address,
-    publicKey,
-    paymentAddress,
-    paymentPublicKey,
-    signedPsbtBase64: signedMainPsbt,
-    swapId,
-    runeName,
-    sell: !isBtcToRune,
-    rbfProtection: !!signedRbfPsbt,
-    ...(signedRbfPsbt && { signedRbfPsbtBase64: signedRbfPsbt }),
-  };
-
-  const confirmResult = await confirmPsbtViaApi(confirmParams);
-  if (!isSwapConfirmationResult(confirmResult)) {
-    throw new Error('Invalid confirmation response from API.');
-  }
-
-  const confirmedResult: SwapConfirmationResult = confirmResult;
-
-  const finalTxId =
-    confirmedResult.txid || confirmedResult.rbfProtection?.fundsPreparationTxId;
-
-  if (!finalTxId) {
-    logger.error(
-      `Confirmation failed or transaction ID missing${isRetry ? ' (retry)' : ''}`,
-      {
-        hasTxid: !!confirmedResult.txid,
-        hasRbfTxId: !!confirmedResult.rbfProtection?.fundsPreparationTxId,
-        runeName,
-        sell: !isBtcToRune,
-        retryAttempt: isRetry,
-      },
-      'API',
-    );
-
-    throw new Error('Confirmation failed or transaction ID missing.');
-  }
-
-  dispatchSwap({ type: 'SWAP_SUCCESS', txId: finalTxId });
-  return finalTxId;
-}
 
 interface UseSwapExecutionArgs {
   connected: boolean;
@@ -306,8 +132,7 @@ export default function useSwapExecution({
 
       // *** Use API client function ***
       const rawPsbtResult = await getPsbtFromApi(psbtParams);
-      const { mainPsbtBase64, swapId, rbfPsbtBase64 } =
-        parsePsbtResult(rawPsbtResult);
+      const { mainPsbtBase64, swapId, rbfPsbtBase64 } = parsePsbtResult(rawPsbtResult);
 
       if (!mainPsbtBase64 || !swapId) {
         // Log rich context for diagnostics
@@ -353,9 +178,7 @@ export default function useSwapExecution({
     } catch (error: unknown) {
       // Extract error message for better error handling
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during the swap.';
+        error instanceof Error ? error.message : 'An unknown error occurred during the swap.';
 
       // Store the error message for use in the finally block
       errorMessageRef.current = errorMessage;
@@ -368,8 +191,7 @@ export default function useSwapExecution({
         // First, notify the user that we're retrying
         dispatchSwap({
           type: 'SET_GENERIC_ERROR',
-          error:
-            'Fee rate too low, automatically retrying with a higher fee rate...',
+          error: 'Fee rate too low, automatically retrying with a higher fee rate...',
         });
 
         try {
@@ -394,8 +216,7 @@ export default function useSwapExecution({
 
           // Removed redundant log as we already logged the fee rate
           const rawPsbtResult = await getPsbtFromApi(retryParams);
-          const { mainPsbtBase64, swapId, rbfPsbtBase64 } =
-            parsePsbtResult(rawPsbtResult);
+          const { mainPsbtBase64, swapId, rbfPsbtBase64 } = parsePsbtResult(rawPsbtResult);
 
           if (!mainPsbtBase64 || !swapId) {
             // Log rich context for diagnostics
@@ -449,10 +270,7 @@ export default function useSwapExecution({
             'API Error in retryTransaction',
             {
               operation: 'retryTransaction',
-              error:
-                retryError instanceof Error
-                  ? retryError.message
-                  : String(retryError),
+              error: retryError instanceof Error ? retryError.message : String(retryError),
               stack: retryError instanceof Error ? retryError.stack : undefined,
             },
             'API',

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 
 import RuneIcon from '@/components/runes/RuneIcon';
 import styles from '@/components/runes/RunesInfoTab.module.css';
@@ -24,10 +24,7 @@ interface RuneSearchBarProps {
  *
  * @param props - Component props.
  */
-const RuneSearchBar: React.FC<RuneSearchBarProps> = ({
-  onRuneSelect,
-  selectedRuneName,
-}) => {
+const RuneSearchBar: React.FC<RuneSearchBarProps> = ({ onRuneSelect, selectedRuneName }) => {
   const {
     searchQuery,
     handleSearchChange,
@@ -66,9 +63,7 @@ const RuneSearchBar: React.FC<RuneSearchBarProps> = ({
         <div className={styles.runesListContainer}>
           {isLoadingRunes && (
             <div className={styles.listboxLoadingOrEmpty}>
-              {searchQuery.trim()
-                ? `Searching for "${searchQuery}"...`
-                : 'Loading Latest Runes...'}
+              {searchQuery.trim() ? `Searching for "${searchQuery}"...` : 'Loading Latest Runes...'}
             </div>
           )}
           {currentRunesError && (
@@ -83,15 +78,11 @@ const RuneSearchBar: React.FC<RuneSearchBarProps> = ({
               <span>{currentRunesError}</span>
             </div>
           )}
-          {!isLoadingRunes &&
-            !currentRunesError &&
-            availableRunes.length === 0 && (
-              <div className={styles.listboxLoadingOrEmpty}>
-                {searchQuery.trim()
-                  ? `Rune "${searchQuery}" not found.`
-                  : 'No recent runes found'}
-              </div>
-            )}
+          {!isLoadingRunes && !currentRunesError && availableRunes.length === 0 && (
+            <div className={styles.listboxLoadingOrEmpty}>
+              {searchQuery.trim() ? `Rune "${searchQuery}" not found.` : 'No recent runes found'}
+            </div>
+          )}
           {!isLoadingRunes &&
             !currentRunesError &&
             availableRunes.map((rune) => (
