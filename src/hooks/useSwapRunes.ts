@@ -30,6 +30,7 @@ function useSwapRunes({
   setAssetIn,
   setAssetOut,
 }: UseSwapRunesArgs) {
+  const normalizedPreselectedRune = preSelectedRune ? normalizeRuneName(preSelectedRune) : null;
   const {
     popularRunes: basePopularRunes,
     isLoading: isPopularLoading,
@@ -47,6 +48,17 @@ function useSwapRunes({
       setHasLoadedPreselectedRune(true);
     }
   }, [preSelectedAsset, setAssetIn, setAssetOut, hasLoadedPreselectedRune]);
+
+  useEffect(() => {
+    if (!normalizedPreselectedRune) {
+      setIsPreselectedRuneLoading(false);
+      setHasLoadedPreselectedRune(false);
+      return;
+    }
+
+    setIsPreselectedRuneLoading(true);
+    setHasLoadedPreselectedRune(false);
+  }, [normalizedPreselectedRune]);
 
   useEffect(() => {
     if (isPopularLoading) return;
@@ -71,14 +83,15 @@ function useSwapRunes({
 
   useEffect(() => {
     const findAndSelectRune = async () => {
-      if (preSelectedRune && !hasLoadedPreselectedRune) {
+      if (preSelectedRune && normalizedPreselectedRune && !hasLoadedPreselectedRune) {
         setIsPreselectedRuneLoading(true);
-        const normalized = normalizeRuneName(preSelectedRune);
-        let rune = popularRunes.find((r) => normalizeRuneName(r.name) === normalized);
+        let rune = popularRunes.find(
+          (r) => normalizeRuneName(r.name) === normalizedPreselectedRune,
+        );
 
         if (!rune) {
           const provisionalAsset: Asset = {
-            id: normalized.toLowerCase(),
+            id: normalizedPreselectedRune.toLowerCase(),
             name: preSelectedRune,
             imageURI: getRuneIconUrl(preSelectedRune),
             isBTC: false,
@@ -98,7 +111,7 @@ function useSwapRunes({
             const searchResults = await fetchRunesFromApi(preSelectedRune);
             if (searchResults && searchResults.length > 0) {
               const matchingRune = searchResults.find(
-                (r) => normalizeRuneName(r.name) === normalized,
+                (r) => normalizeRuneName(r.name) === normalizedPreselectedRune,
               );
               const foundRune = matchingRune || safeArrayFirst(searchResults);
               if (foundRune) {
@@ -116,7 +129,7 @@ function useSwapRunes({
             // If still not selected, fall back to creating a basic Asset so the UI switches pairs.
             if (!assetOut) {
               const fallbackAsset: Asset = {
-                id: normalized.toLowerCase(),
+                id: normalizedPreselectedRune.toLowerCase(),
                 name: preSelectedRune,
                 imageURI: getRuneIconUrl(preSelectedRune),
                 isBTC: false,
@@ -129,14 +142,19 @@ function useSwapRunes({
             setHasLoadedPreselectedRune(true);
           }
         }
-      } else if (!preSelectedRune) {
-        setIsPreselectedRuneLoading(false);
-        setHasLoadedPreselectedRune(false);
       }
     };
 
     findAndSelectRune();
-  }, [preSelectedRune, popularRunes, hasLoadedPreselectedRune, setAssetIn, setAssetOut, assetOut]);
+  }, [
+    preSelectedRune,
+    normalizedPreselectedRune,
+    popularRunes,
+    hasLoadedPreselectedRune,
+    setAssetIn,
+    setAssetOut,
+    assetOut,
+  ]);
 
   return {
     popularRunes,
