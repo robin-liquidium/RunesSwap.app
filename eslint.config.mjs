@@ -8,7 +8,7 @@ export default defineConfig([
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['.next/**', 'coverage/**', 'node_modules/**', 'dist/**'],
+    ignores: ['.next/**', 'coverage/**', 'node_modules/**', 'dist/**', 'next-env.d.ts'],
   },
   {
     linterOptions: {

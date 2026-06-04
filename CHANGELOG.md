@@ -34,7 +34,7 @@
 - Migrated to ESLint 9 flat config and Prettier 3 config.
 - Scoped Next.js ESLint dirs and minor next.config.ts tidy.
 - Reduced unnecessary quote requests and improved swap percentage helpers.
-- Upgraded Next.js and related ESLint config to 15.2.6.
+- Upgraded Next.js and related ESLint config to 15.5.18 and updated vulnerable dependency paths, including Vite, Axios, Rollup, Fast URI, and Handlebars.
 
 ### Fixed
 - Logging consistency: replaced stray `console.*` with `logger` in APIs; reduced noisy logs.
