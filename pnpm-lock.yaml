@@ -108,10 +108,10 @@ importers:
         specifier: ^9.39.2
         version: 9.39.2
       '@next/bundle-analyzer':
-        specifier: ^15.5.18
+        specifier: 15.5.18
         version: 15.5.18
       '@next/eslint-plugin-next':
-        specifier: ^15.5.18
+        specifier: 15.5.18
         version: 15.5.18
       '@testing-library/jest-dom':
         specifier: ^6.6.4
@@ -7549,7 +7549,7 @@ snapshots:
 
   acorn-walk@8.3.4:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
 
   acorn@8.14.1: {}
 
