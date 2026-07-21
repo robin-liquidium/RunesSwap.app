@@ -7,6 +7,5 @@
     "scripts/**/*.{js,mjs,ts}",
     "!src/sdk/liquidium/**/*"
   ],
-  "ignoreDependencies": ["@typescript/native", "vite"],
-  "ignoreBinaries": ["rg"]
+  "ignoreDependencies": ["@typescript/native", "vite"]
 }

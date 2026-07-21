@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -23,14 +22,19 @@ const OVERSIZE_ALLOWLIST = new Set([
 const issues = [];
 
 function listFiles() {
-  const output = execSync(`rg --files src -g '*.ts' -g '*.tsx'`, {
-    cwd: ROOT,
-    encoding: 'utf8',
-  });
-  return output
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean);
+  const files = [];
+  const directories = ['src'];
+
+  while (directories.length > 0) {
+    const directory = directories.pop();
+    for (const entry of fs.readdirSync(path.join(ROOT, directory), { withFileTypes: true })) {
+      const filePath = path.posix.join(directory, entry.name);
+      if (entry.isDirectory()) directories.push(filePath);
+      else if (/\.tsx?$/.test(entry.name)) files.push(filePath);
+    }
+  }
+
+  return files.sort();
 }
 
 function checkForbiddenPatterns(filePath, content) {

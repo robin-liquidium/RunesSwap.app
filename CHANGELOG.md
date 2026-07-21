@@ -56,6 +56,7 @@
 
 ### Fixed
 - Routed CoinGecko Pro keys to the Pro API host, handled repeated swap rune parameters safely, and made the changelog gate require an actual new `Unreleased` bullet.
+- Made the architecture lint self-contained so it also runs on CI hosts without ripgrep installed.
 - Added fallback rune search providers when SatsTerminal's search endpoint is unavailable, while preserving the existing `/api/sats-terminal/search` contract.
 - Moved BTC/USD price fetching behind a server-side proxy route to avoid brittle browser-side CoinGecko requests.
 - Corrected stale README guidance after the dead-code cleanup removed `src/lib/env.ts`.
