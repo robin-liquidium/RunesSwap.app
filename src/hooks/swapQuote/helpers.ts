@@ -27,16 +27,26 @@ export function buildQuoteRequestKey(
  */
 export function normalizeQuoteErrorMessage(error: unknown): string {
   const errorMessage = error instanceof Error ? error.message : 'Failed to fetch quote';
+  const normalized = errorMessage.toLowerCase();
 
-  if (errorMessage.includes('500') || errorMessage.includes('Internal Server Error')) {
-    return 'Server error: The quote service is temporarily unavailable. Please try again later.';
+  if (normalized.includes('liquidity')) {
+    return 'No liquidity available for this trade. Try a different amount or rune.';
   }
 
-  if (errorMessage.includes('No valid orders')) {
+  if (
+    normalized.includes('no orders available') ||
+    normalized.includes('no valid orders') ||
+    normalized.includes('no marketplace found') ||
+    normalized.includes('404')
+  ) {
     return 'No orders available for this trade. Try a different amount or rune.';
   }
 
-  if (errorMessage.includes('timeout') || errorMessage.includes('network')) {
+  if (normalized.includes('500') || normalized.includes('internal server error')) {
+    return 'Server error: The quote service is temporarily unavailable. Please try again later.';
+  }
+
+  if (normalized.includes('timeout') || normalized.includes('network')) {
     return 'Network error: Please check your connection and try again.';
   }
 

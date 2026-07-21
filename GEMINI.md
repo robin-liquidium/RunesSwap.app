@@ -1,1 +1,3 @@
-/Users/robin/code/hobby/swapping/AGENTS.md
+# Gemini instructions
+
+Read and follow [AGENTS.md](./AGENTS.md).

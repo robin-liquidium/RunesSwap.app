@@ -101,7 +101,7 @@ bun run start
   bun run lint
   ```
 
-The pre‑commit hook runs `lint-staged`, the test suite, and a production build. Commit messages are checked by **commitlint** and must follow the Conventional Commits format.
+The pre-commit hook runs `lint-staged`; the pre-push hook runs the full `ai-check` pipeline. Use Conventional Commits for commit messages.
 
 ## Architecture Notes
 

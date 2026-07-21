@@ -177,22 +177,21 @@ describe('useBorrowProcess', () => {
     { decimals: 0, amount: '150', expectedTokenAmount: '150' },
     { decimals: 8, amount: '1.5', expectedTokenAmount: '150000000' },
     { decimals: 18, amount: '1.5', expectedTokenAmount: '1500000000000000000' },
-  ])('should handle $decimals decimals correctly', async ({
-    decimals,
-    amount,
-    expectedTokenAmount,
-  }) => {
-    setupSuccessfulMocks();
-    const runeData = { ...mockRuneData, decimals };
-    const props = createProps({ collateralRuneInfo: runeData });
-    const { result } = renderHook(() => useBorrowProcess(props));
+  ])(
+    'should handle $decimals decimals correctly',
+    async ({ decimals, amount, expectedTokenAmount }) => {
+      setupSuccessfulMocks();
+      const runeData = { ...mockRuneData, decimals };
+      const props = createProps({ collateralRuneInfo: runeData });
+      const { result } = renderHook(() => useBorrowProcess(props));
 
-    await executeLoan(result, 'quote-123', amount);
+      await executeLoan(result, 'quote-123', amount);
 
-    expect(prepareLiquidiumBorrow).toHaveBeenCalledWith(
-      expect.objectContaining({ token_amount: expectedTokenAmount }),
-    );
-  });
+      expect(prepareLiquidiumBorrow).toHaveBeenCalledWith(
+        expect.objectContaining({ token_amount: expectedTokenAmount }),
+      );
+    },
+  );
 
   // Parameterized error tests
   test.each([

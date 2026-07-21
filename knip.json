@@ -6,5 +6,7 @@
     "__mocks__/**/*.{js,jsx,ts,tsx}",
     "scripts/**/*.{js,mjs,ts}",
     "!src/sdk/liquidium/**/*"
-  ]
+  ],
+  "ignoreDependencies": ["@typescript/native", "vite"],
+  "ignoreBinaries": ["rg"]
 }

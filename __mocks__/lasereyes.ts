@@ -22,11 +22,8 @@ export type ProviderType =
   | typeof WIZZ
   | typeof ORANGE;
 
-export const LaserEyesProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => children as React.ReactElement;
+export const LaserEyesProvider = ({ children }: { children: React.ReactNode }) =>
+  children as React.ReactElement;
 
 export const useLaserEyes = () => ({
   connected: false,

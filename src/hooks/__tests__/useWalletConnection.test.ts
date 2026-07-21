@@ -189,20 +189,21 @@ describe('useWalletConnection', () => {
       expect(result.current.installLink).toBe('https://unisat.io/download');
     });
 
-    it.each(
-      WALLET_FIXTURES.installErrorPatterns,
-    )('handles install error pattern: "%s"', async (errorMessage) => {
-      const { mockConnect } = createMockLaserEyes();
-      mockConnect.mockRejectedValue(new Error(errorMessage));
-      const { result } = renderHook(() => useWalletConnection());
+    it.each(WALLET_FIXTURES.installErrorPatterns)(
+      'handles install error pattern: "%s"',
+      async (errorMessage) => {
+        const { mockConnect } = createMockLaserEyes();
+        mockConnect.mockRejectedValue(new Error(errorMessage));
+        const { result } = renderHook(() => useWalletConnection());
 
-      await act(async () => {
-        await result.current.handleConnect(XVERSE);
-      });
+        await act(async () => {
+          await result.current.handleConnect(XVERSE);
+        });
 
-      expect(result.current.connectionError).toBe('Xverse wallet not installed.');
-      expect(result.current.installLink).toBe('https://www.xverse.app/download');
-    });
+        expect(result.current.connectionError).toBe('Xverse wallet not installed.');
+        expect(result.current.installLink).toBe('https://www.xverse.app/download');
+      },
+    );
 
     it('handles generic connection errors', async () => {
       const { mockConnect } = createMockLaserEyes();

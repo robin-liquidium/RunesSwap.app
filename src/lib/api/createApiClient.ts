@@ -48,9 +48,7 @@ async function makeApiCall<T>(
 
     if (!response.data.success) {
       const errorMessage =
-        response.data.error?.message ??
-        response.data.error?.details ??
-        'API request failed';
+        response.data.error?.message ?? response.data.error?.details ?? 'API request failed';
       throw new Error(errorMessage);
     }
 

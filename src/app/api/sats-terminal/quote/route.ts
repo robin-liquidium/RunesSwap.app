@@ -36,8 +36,7 @@ export const POST = withApiHandler(
   {
     defaultErrorMessage: 'Failed to fetch quote',
     customErrorHandler: (error: unknown) => {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       const errorDetails =
         error &&
         typeof error === 'object' &&
@@ -45,9 +44,7 @@ export const POST = withApiHandler(
         typeof (error as { details?: unknown }).details === 'string'
           ? (error as { details?: string }).details
           : '';
-      const combined = `${errorMessage} ${errorDetails} ${JSON.stringify(
-        error,
-      )}`.toLowerCase();
+      const combined = `${errorMessage} ${errorDetails} ${JSON.stringify(error)}`.toLowerCase();
 
       // Special handling for liquidity errors (maintain 404 status)
       if (combined.includes('liquidity')) {

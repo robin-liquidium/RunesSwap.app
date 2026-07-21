@@ -2,8 +2,10 @@ import { ok } from '@/lib/apiResponse';
 import { fetchExternal } from '@/lib/fetchWrapper';
 import { withApiHandler } from '@/lib/withApiHandler';
 
-const COINGECKO_BTC_PRICE_URL =
+const COINGECKO_DEMO_BTC_PRICE_URL =
   'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
+const COINGECKO_PRO_BTC_PRICE_URL =
+  'https://pro-api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
 
 interface CoinGeckoResponse {
   bitcoin?: {
@@ -29,6 +31,12 @@ function getCoinGeckoHeaders(): HeadersInit | undefined {
   return undefined;
 }
 
+function getCoinGeckoUrl(): string {
+  return process.env.COINGECKO_PRO_API_KEY
+    ? COINGECKO_PRO_BTC_PRICE_URL
+    : COINGECKO_DEMO_BTC_PRICE_URL;
+}
+
 function getFreshCachedBtcPrice(): number | null {
   if (cachedBtcPriceUsd !== null && Date.now() - cachedBtcPriceFetchedAt < BTC_PRICE_CACHE_TTL_MS) {
     return cachedBtcPriceUsd;
@@ -48,14 +56,15 @@ async function fetchBtcPriceUsd(): Promise<number> {
   }
 
   const headers = getCoinGeckoHeaders();
+  const url = getCoinGeckoUrl();
   inFlightBtcPriceRequest = (async () => {
     const { data } = headers
-      ? await fetchExternal<CoinGeckoResponse>(COINGECKO_BTC_PRICE_URL, {
+      ? await fetchExternal<CoinGeckoResponse>(url, {
           timeout: 10000,
           retries: 3,
           headers,
         })
-      : await fetchExternal<CoinGeckoResponse>(COINGECKO_BTC_PRICE_URL, {
+      : await fetchExternal<CoinGeckoResponse>(url, {
           timeout: 10000,
           retries: 3,
         });

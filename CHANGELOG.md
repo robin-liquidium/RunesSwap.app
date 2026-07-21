@@ -27,8 +27,12 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Updated all direct runtime and development dependencies to their latest compatible releases, including Next.js 16.2, React 19.2, Zod 4, Recharts 3, Jest 30, Biome 2.5, and the supported TypeScript 7/6 compatibility pairing.
+- Updated the Bun runtime pin and CI actions, simplified the changelog gate around `Unreleased`, and prevented already-tagged releases from being republished on ordinary changelog merges.
+- Refreshed transitive security overrides, including Sharp 0.35, to the latest patched releases available through the current dependency graph.
+- Replaced stale machine-specific agent-instruction symlinks with portable repository-local pointers.
 - Added `knip` v6 dead-code checks with a repo-specific `knip.json` and wired `bun run knip` into the canonical `ai-check` pipeline.
-- Replaced the umbrella `satsterminal-sdk` dependency with the swaps-only `@satsterminal-sdk/swaps` package and aligned it to `1.6.27`.
+- Replaced the umbrella `satsterminal-sdk` dependency with the swaps-only `@satsterminal-sdk/swaps` package and aligned it to `1.6.31`.
 - Hard-cutover navigation to canonical routes (`/swap`, `/borrow`, `/runes-info`, `/your-txs`, `/portfolio`) and made `/` redirect to `/swap`.
 - Removed legacy tab query/event plumbing (`/?tab=...`, `tabChange` custom events, and tab state URL syncing via `pushState`).
 - Added architecture guardrails (`lint:architecture`) and enforced them in CI to block barrel imports, tab-event patterns, and oversized modules without waivers.
@@ -48,13 +52,15 @@
 - Upgraded `next`, `eslint-config-next`, `@next/eslint-plugin-next`, and `@next/bundle-analyzer` to `15.5.10`.
 - Upgraded to Next.js `16.1.6` and aligned core frontend/tooling packages to latest compatible releases (`react`, `react-dom`, `@types/react`, `@types/react-dom`, `@types/node`, `@supabase/supabase-js`, `@tanstack/react-query`, `@headlessui/react`, `zustand`, `ordiscan`, `satsterminal-sdk`, `lint-staged`, and others).
 - Removed deprecated `eslint` config from `next.config.ts` for Next.js 16 compatibility.
-- Upgraded `@omnisat/lasereyes` to `0.0.162` (latest).
+- Upgraded `@omnisat/lasereyes` to `0.0.163`.
 
 ### Fixed
+- Routed CoinGecko Pro keys to the Pro API host, handled repeated swap rune parameters safely, and made the changelog gate require an actual new `Unreleased` bullet.
 - Added fallback rune search providers when SatsTerminal's search endpoint is unavailable, while preserving the existing `/api/sats-terminal/search` contract.
 - Moved BTC/USD price fetching behind a server-side proxy route to avoid brittle browser-side CoinGecko requests.
 - Corrected stale README guidance after the dead-code cleanup removed `src/lib/env.ts`.
 - Removed dead files, duplicate exports, stale test/helpers, and outdated package/config surface found by knip while preserving current app behavior.
+- Removed unused legacy Liquidium loan/collateral type declarations caught by the upgraded dead-code checks.
 - Eliminated runtime dependency on legacy tab events and query-driven tab selection after route cutover.
 - Removed lint and type regressions introduced during the cleanup extraction pass (`swapExecution` helper typing and Biome compliance).
 - Logging consistency: replaced stray `console.*` with `logger` in APIs; reduced noisy logs.

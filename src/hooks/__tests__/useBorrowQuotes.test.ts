@@ -112,28 +112,27 @@ describe('useBorrowQuotes', () => {
       },
     ];
 
-    test.each(quoteScenarios)('handles quote fetch $name', async ({
-      mockData,
-      expectQuotes,
-      expectError,
-    }) => {
-      if (mockData instanceof Error) {
-        mocks.fetchBorrowQuotes.mockRejectedValue(mockData);
-      } else {
-        mocks.fetchBorrowQuotes.mockResolvedValue(mockData);
-      }
-      mocks.usePopularRunes.mockReturnValue({
-        popularRunes: [],
-        isLoading: false,
-        error: null,
-      });
+    test.each(quoteScenarios)(
+      'handles quote fetch $name',
+      async ({ mockData, expectQuotes, expectError }) => {
+        if (mockData instanceof Error) {
+          mocks.fetchBorrowQuotes.mockRejectedValue(mockData);
+        } else {
+          mocks.fetchBorrowQuotes.mockResolvedValue(mockData);
+        }
+        mocks.usePopularRunes.mockReturnValue({
+          popularRunes: [],
+          isLoading: false,
+          error: null,
+        });
 
-      const { result } = renderHook(() => useBorrowQuotes(activeProps));
-      await act(async () => result.current.handleGetQuotes());
+        const { result } = renderHook(() => useBorrowQuotes(activeProps));
+        await act(async () => result.current.handleGetQuotes());
 
-      expect(result.current.quotes).toHaveLength(expectQuotes);
-      expect(result.current.quotesError).toBe(expectError);
-      expect(result.current.isQuotesLoading).toBe(false);
-    });
+        expect(result.current.quotes).toHaveLength(expectQuotes);
+        expect(result.current.quotesError).toBe(expectError);
+        expect(result.current.isQuotesLoading).toBe(false);
+      },
+    );
   });
 });

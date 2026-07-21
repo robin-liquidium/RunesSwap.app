@@ -2,7 +2,7 @@ import TabPageLayout from '@/components/layout/TabPageLayout';
 
 interface SwapPageProps {
   searchParams: Promise<{
-    rune?: string;
+    rune?: string | string[];
   }>;
 }
 
@@ -11,5 +11,6 @@ interface SwapPageProps {
  */
 export default async function SwapPage({ searchParams }: SwapPageProps) {
   const { rune } = await searchParams;
-  return <TabPageLayout activeTab="swap" preSelectedRune={rune ?? null} />;
+  const selectedRune = Array.isArray(rune) ? (rune[0] ?? null) : (rune ?? null);
+  return <TabPageLayout activeTab="swap" preSelectedRune={selectedRune} />;
 }

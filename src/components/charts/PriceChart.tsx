@@ -181,15 +181,16 @@ const PriceChart: React.FC<PriceChartProps> = ({
                   const day = formatDate(date);
                   return `${time} · ${day}`;
                 }}
-                formatter={(value: number) => {
+                formatter={(value) => {
+                  const numericValue = Number(value ?? 0);
                   // value is sats; use shared formatter for BTC for DRY/precision
-                  const btcStr = formatSatsToBtc(value);
+                  const btcStr = formatSatsToBtc(numericValue);
                   const usd =
                     btcPriceUsd !== undefined
                       ? Number(new Big(btcStr).times(btcPriceUsd).toFixed(6))
                       : null;
                   return [
-                    `${formatNumberWithLocale(value)} sats`,
+                    `${formatNumberWithLocale(numericValue)} sats`,
                     usd !== null
                       ? `≈ $${formatNumberWithLocale(usd, { maximumFractionDigits: 6 })}`
                       : '',

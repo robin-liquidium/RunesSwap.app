@@ -1,20 +1,12 @@
 // Liquidium API Types
 
-// --- Core Data Structures ---
-/**
- * Represents a loan offer from Liquidium.
- */
 export interface LiquidiumLoanOffer {
-  /** Unique UUID for the offer. */
   id: string;
-  /** Details of the loan terms. */
   loan_details: LiquidiumLoanDetails;
-  /** Details of the collateral required. */
   collateral_details: LiquidiumCollateralDetails;
 }
 
-// Explicit Enum for Loan State
-export type LoanStateEnum =
+type LoanState =
   | 'OFFERED'
   | 'ACCEPTED'
   | 'ACTIVATING'
@@ -29,46 +21,24 @@ export type LoanStateEnum =
   | 'CANCELLED'
   | 'FAILED';
 
-/**
- * Detailed terms of a Liquidium loan.
- */
-export interface LiquidiumLoanDetails {
-  /** Current state of the loan. */
-  state: LoanStateEnum;
-  /** Principal amount in Satoshis. */
+interface LiquidiumLoanDetails {
+  state: LoanState;
   principal_amount_sats: number;
-  /** Duration of the loan in days. */
   loan_term_days: number;
-  /** ISO 8601 timestamp for loan end date. */
   loan_term_end_date: string;
-  /** ISO 8601 timestamp for loan start date. */
   start_date: string;
-  /** Escrow address for the loan. */
   escrow_address: string;
-  /** Discount details. */
   discount: {
-    /** Discount rate (e.g., 0.15 for 15%). */
     discount_rate: number;
-    /** Discount amount in Satoshis. */
     discount_sats: number;
   };
-  /** Total repayment amount in Satoshis. */
   total_repayment_sats?: number;
 }
 
-export type CollateralTypeEnum = 'Rune' | 'Brc20' | 'Inscription'; // Example: "Rune"
-
-/**
- * Details of the collateral for a Liquidium loan.
- */
-export interface LiquidiumCollateralDetails {
-  /** Rune ID (e.g., "840010:907"). */
+interface LiquidiumCollateralDetails {
   rune_id: string;
-  /** Type of collateral (Rune, Brc20, Inscription). */
-  collateral_type: CollateralTypeEnum;
-  /** Divisibility of the Rune. */
+  collateral_type: 'Rune' | 'Brc20' | 'Inscription';
   rune_divisibility: number;
-  /** Amount of the Rune (display amount). */
   rune_amount: number;
 }
 

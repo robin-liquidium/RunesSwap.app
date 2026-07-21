@@ -66,7 +66,7 @@ export function useRepayModal({ address, signPsbt }: Args) {
   };
 
   const handleRepayModalConfirm = async () => {
-    if (!repayModal.loan || !repayModal.repayInfo || !repayModal.repayInfo.psbt) return;
+    if (!repayModal.loan || !repayModal.repayInfo?.psbt) return;
     if (!address || !signPsbt) return;
     setRepayModal((m) => ({ ...m, loading: true, error: null }));
     try {
