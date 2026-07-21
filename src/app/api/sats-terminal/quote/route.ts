@@ -1,5 +1,5 @@
+import type { QuoteParams } from '@satsterminal-sdk/swaps';
 import type { NextRequest } from 'next/server';
-import type { QuoteParams } from 'satsterminal-sdk';
 
 import { fail, ok } from '@/lib/apiResponse';
 import { validateRequest } from '@/lib/apiUtils';
@@ -10,11 +10,7 @@ import { normalizeRuneName } from '@/utils/runeUtils';
 
 export const POST = withApiHandler(
   async (request: NextRequest) => {
-    const validation = await validateRequest(
-      request,
-      requestSchemas.quoteRequest,
-      'body',
-    );
+    const validation = await validateRequest(request, requestSchemas.quoteRequest, 'body');
     if (!validation.success) return validation.errorResponse;
 
     const { btcAmount, address, runeName, sell } = validation.data;
@@ -40,8 +36,7 @@ export const POST = withApiHandler(
   {
     defaultErrorMessage: 'Failed to fetch quote',
     customErrorHandler: (error: unknown) => {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       const errorDetails =
         error &&
         typeof error === 'object' &&
@@ -49,9 +44,7 @@ export const POST = withApiHandler(
         typeof (error as { details?: unknown }).details === 'string'
           ? (error as { details?: string }).details
           : '';
-      const combined = `${errorMessage} ${errorDetails} ${JSON.stringify(
-        error,
-      )}`.toLowerCase();
+      const combined = `${errorMessage} ${errorDetails} ${JSON.stringify(error)}`.toLowerCase();
 
       // Special handling for liquidity errors (maintain 404 status)
       if (combined.includes('liquidity')) {
@@ -73,8 +66,7 @@ export const POST = withApiHandler(
       if (combined.includes('unexpected token')) {
         return fail('API service unavailable', {
           status: 503,
-          details:
-            'The SatsTerminal API is currently unavailable. Please try again later.',
+          details: 'The SatsTerminal API is currently unavailable. Please try again later.',
         });
       }
 

@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { fetchPortfolioDataFromApi, QUERY_KEYS } from '@/lib/api';
+import { fetchPortfolioDataFromApi } from '@/lib/api/ordiscan';
+import { queryKeys } from '@/lib/queryKeys';
 import {
   calculateActualBalance,
   calculateBtcValue,
@@ -10,8 +11,8 @@ import {
 import { getRuneIconUrl } from '@/utils/runeUtils';
 import { safeArrayAccess } from '@/utils/typeGuards';
 
-export type SortField = 'name' | 'balance' | 'value';
-export type SortDirection = 'asc' | 'desc';
+type SortField = 'name' | 'balance' | 'value';
+type SortDirection = 'asc' | 'desc';
 
 interface RuneBalanceItem {
   name: string;
@@ -51,7 +52,7 @@ export function usePortfolioData(address: string | null) {
     isLoading,
     error,
   } = useQuery({
-    queryKey: [QUERY_KEYS.PORTFOLIO_DATA, address],
+    queryKey: queryKeys.portfolioData(address || ''),
     queryFn: () => fetchPortfolioDataFromApi(address || ''),
     enabled: !!address,
     staleTime: 30000,

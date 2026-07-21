@@ -1,9 +1,8 @@
 import type { LaserEyesContextType } from '@omnisat/lasereyes';
 import { useState } from 'react';
 
-import type { RepayLiquidiumLoanResponse } from '@/lib/api';
-import { repayLiquidiumLoan, submitRepayPsbt } from '@/lib/api';
-import type { LiquidiumLoanOffer } from '@/types/liquidium';
+import { repayLiquidiumLoan, submitRepayPsbt } from '@/lib/api/liquidium';
+import type { LiquidiumLoanOffer, RepayLiquidiumLoanResponse } from '@/types/liquidium';
 
 interface Args {
   address: string | null;
@@ -67,8 +66,7 @@ export function useRepayModal({ address, signPsbt }: Args) {
   };
 
   const handleRepayModalConfirm = async () => {
-    if (!repayModal.loan || !repayModal.repayInfo || !repayModal.repayInfo.psbt)
-      return;
+    if (!repayModal.loan || !repayModal.repayInfo?.psbt) return;
     if (!address || !signPsbt) return;
     setRepayModal((m) => ({ ...m, loading: true, error: null }));
     try {
@@ -78,21 +76,14 @@ export function useRepayModal({ address, signPsbt }: Args) {
         signResult = await signPsbt(psbtBase64, false, false);
       } catch (signErr) {
         throw new Error(
-          `Failed to sign PSBT: ${
-            signErr instanceof Error ? signErr.message : String(signErr)
-          }`,
+          `Failed to sign PSBT: ${signErr instanceof Error ? signErr.message : String(signErr)}`,
         );
       }
-      const signedPsbt =
-        signResult?.signedPsbtBase64 || signResult?.signedPsbtHex;
+      const signedPsbt = signResult?.signedPsbtBase64 || signResult?.signedPsbtHex;
       if (!signedPsbt) throw new Error('Wallet did not return a signed PSBT');
       let submitResult;
       try {
-        submitResult = await submitRepayPsbt(
-          repayModal.loan.id,
-          signedPsbt,
-          address,
-        );
+        submitResult = await submitRepayPsbt(repayModal.loan.id, signedPsbt, address);
       } catch (submitErr) {
         throw new Error(
           `Failed to submit signed PSBT: ${

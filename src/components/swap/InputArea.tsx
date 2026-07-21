@@ -1,6 +1,6 @@
 import Image from 'next/image';
+import type React from 'react';
 import type { ReactNode } from 'react';
-import React from 'react';
 
 import AmountHelpers from '@/components/swap/AmountHelpers';
 import AssetSelector from '@/components/swap/AssetSelector';
@@ -73,7 +73,7 @@ interface InputAreaProps {
  *
  * @param props - Component props.
  */
-export const InputArea: React.FC<InputAreaProps> = ({
+const InputArea: React.FC<InputAreaProps> = ({
   label,
   inputId,
   inputValue,
@@ -119,9 +119,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
         id={inputId}
         placeholder={placeholder}
         value={inputValue}
-        onChange={
-          onInputChange ? (e) => onInputChange(e.target.value) : undefined
-        }
+        onChange={onInputChange ? (e) => onInputChange(e.target.value) : undefined}
         className={readOnly ? styles.amountInputReadOnly : styles.amountInput}
         readOnly={readOnly}
         disabled={disabled}

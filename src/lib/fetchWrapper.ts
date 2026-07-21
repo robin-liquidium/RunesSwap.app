@@ -3,7 +3,7 @@
  * Follows DRY principle by centralizing common fetch patterns
  */
 
-export interface FetchOptions extends RequestInit {
+interface FetchOptions extends RequestInit {
   /** Timeout in milliseconds (default: 30000) */
   timeout?: number;
   /** Number of retry attempts (default: 2) */
@@ -14,7 +14,7 @@ export interface FetchOptions extends RequestInit {
   parseJson?: boolean;
 }
 
-export interface FetchResponse<T = unknown> {
+interface FetchResponse<T = unknown> {
   data: T;
   status: number;
   statusText: string;
@@ -24,7 +24,7 @@ export interface FetchResponse<T = unknown> {
 /**
  * Enhanced fetch with retry logic and standardized error handling
  */
-export async function fetchWithRetry<T = unknown>(
+async function fetchWithRetry<T = unknown>(
   url: string,
   options: FetchOptions = {},
 ): Promise<FetchResponse<T>> {
@@ -62,14 +62,9 @@ export async function fetchWithRetry<T = unknown>(
                   message?: string;
                   details?: string;
                 };
-                const bodyMsg =
-                  maybeJson?.error?.message || maybeJson?.message || '';
-                const bodyDetails =
-                  maybeJson?.error?.details || maybeJson?.details || '';
-                const tail = [bodyMsg, bodyDetails]
-                  .filter(Boolean)
-                  .join(' - ')
-                  .trim();
+                const bodyMsg = maybeJson?.error?.message || maybeJson?.message || '';
+                const bodyDetails = maybeJson?.error?.details || maybeJson?.details || '';
+                const tail = [bodyMsg, bodyDetails].filter(Boolean).join(' - ').trim();
                 if (tail) enhancedMessage = `${enhancedMessage} - ${tail}`;
               } catch {
                 // Not JSON; include raw text truncated
@@ -82,12 +77,7 @@ export async function fetchWithRetry<T = unknown>(
           } catch {
             // Ignore body parse failures; keep base message
           }
-          throw new FetchError(
-            enhancedMessage,
-            response.status,
-            response.statusText,
-            url,
-          );
+          throw new FetchError(enhancedMessage, response.status, response.statusText, url);
         }
 
         const data = parseJson ? await response.json() : await response.text();
@@ -131,7 +121,7 @@ export async function fetchWithRetry<T = unknown>(
 /**
  * Custom error class for fetch operations
  */
-export class FetchError extends Error {
+class FetchError extends Error {
   constructor(
     message: string,
     public status: number,

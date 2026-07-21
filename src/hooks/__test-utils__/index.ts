@@ -1,9 +1,7 @@
 // Shared test utilities for hook testing
-import type {
-  BorrowRangeResponse,
-  LiquidiumBorrowQuoteResponse,
-} from '@/lib/api';
+
 import type { Asset, RuneData } from '@/types/common';
+import type { BorrowRangeResponse, LiquidiumBorrowQuoteResponse } from '@/types/liquidium';
 
 // Mock factory functions
 export function createMockAsset(overrides: Partial<Asset> = {}): Asset {
@@ -16,9 +14,7 @@ export function createMockAsset(overrides: Partial<Asset> = {}): Asset {
   };
 }
 
-export function createMockRuneInfo(
-  overrides: Partial<RuneData> = {},
-): RuneData {
+export function createMockRuneInfo(overrides: Partial<RuneData> = {}): RuneData {
   return {
     id: 'test-rune-id',
     name: 'TEST•RUNE',
@@ -80,70 +76,4 @@ export function createMockBorrowQuote(
     },
     ...overrides,
   } as LiquidiumBorrowQuoteResponse;
-}
-
-export function createMockPopularRunes() {
-  return [
-    { token_id: '840010:907', token: 'LIQUIDIUM•TOKEN', icon: 'liquidium.png' },
-    { token_id: '840000:45', token: 'MAGIC•INTERNET•MONEY', icon: 'magic.png' },
-  ];
-}
-
-// Common mock setups
-export function setupApiMocks() {
-  const mocks = {
-    fetchBorrowQuotesFromApi: jest.fn(),
-    fetchBorrowRangesFromApi: jest.fn(),
-    fetchPopularFromApi: jest.fn(),
-    getPsbtFromApi: jest.fn(),
-    confirmPsbtViaApi: jest.fn(),
-    fetchRecommendedFeeRates: jest.fn(),
-    fetchRunesFromApi: jest.fn(),
-  };
-
-  jest.doMock('@/lib/api', () => ({
-    ...mocks,
-    QUERY_KEYS: { BTC_FEE_RATES: 'btcFeeRates' },
-  }));
-
-  return mocks;
-}
-
-export function setupQueryMock(data = { fastestFee: 5, halfHourFee: 5 }) {
-  const mockUseQuery = jest.fn().mockReturnValue({ data });
-  jest.doMock('@tanstack/react-query', () => ({ useQuery: mockUseQuery }));
-  return mockUseQuery;
-}
-
-export function setupStoreMock(storeData: Record<string, unknown> = {}) {
-  const defaultStore = {
-    runeSearchQuery: '',
-    setRuneSearchQuery: jest.fn(),
-  };
-
-  const mockStore = jest.fn(() => ({ ...defaultStore, ...storeData }));
-  jest.doMock('@/store/runesInfoStore', () => ({
-    useRunesInfoStore: mockStore,
-  }));
-  return mockStore;
-}
-
-// Test scenario helpers
-export function createAsyncTestScenario<T>(
-  name: string,
-  mockFn: jest.Mock,
-  mockData: T | Error,
-  expectedResult?: unknown,
-) {
-  return {
-    name,
-    setup: () => {
-      if (mockData instanceof Error) {
-        mockFn.mockRejectedValue(mockData);
-      } else {
-        mockFn.mockResolvedValue(mockData);
-      }
-    },
-    expected: expectedResult,
-  };
 }

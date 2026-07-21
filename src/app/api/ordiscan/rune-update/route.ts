@@ -102,10 +102,7 @@ export const POST = withApiHandler(
       return ok(parsed);
     } catch (e) {
       logger.error('[API Route] Invalid rune data after update', {
-        error:
-          e && typeof e === 'object' && 'message' in e
-            ? (e as Error).message
-            : String(e),
+        error: e && typeof e === 'object' && 'message' in e ? (e as Error).message : String(e),
       });
       return fail('Invalid rune data received', { status: 500 });
     }

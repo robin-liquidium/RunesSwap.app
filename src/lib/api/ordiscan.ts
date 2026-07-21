@@ -1,10 +1,10 @@
 import { apiGet, apiPost } from '@/lib/api/createApiClient';
-import { type RuneData } from '@/lib/runesData';
-import {
-  type RuneActivityEvent,
-  type RuneBalance as OrdiscanRuneBalance,
-  type RuneInfo as OrdiscanRuneInfo,
-  type RuneMarketInfo as OrdiscanRuneMarketInfo,
+import type { RuneData } from '@/lib/runesData';
+import type {
+  RuneBalance as OrdiscanRuneBalance,
+  RuneInfo as OrdiscanRuneInfo,
+  RuneMarketInfo as OrdiscanRuneMarketInfo,
+  RuneActivityEvent,
 } from '@/types/ordiscan';
 import { normalizeRuneName } from '@/utils/runeUtils';
 
@@ -22,57 +22,43 @@ export const fetchRuneEndpoint = async <T>(
   }
 };
 
-export const fetchBtcBalanceFromApi = async (
-  address: string,
-): Promise<number> => {
+export const fetchBtcBalanceFromApi = async (address: string): Promise<number> => {
   const data = await apiGet<{ balance: number }>('/api/ordiscan/btc-balance', {
     address,
   });
   return data?.balance || 0;
 };
 
-export const fetchRuneBalancesFromApi = async (
-  address: string,
-): Promise<OrdiscanRuneBalance[]> =>
+export const fetchRuneBalancesFromApi = async (address: string): Promise<OrdiscanRuneBalance[]> =>
   apiGet<OrdiscanRuneBalance[]>('/api/ordiscan/rune-balances', {
     address,
   });
 
-export const fetchRuneInfoFromApi = async (
-  name: string,
-): Promise<RuneData | null> =>
+export const fetchRuneInfoFromApi = async (name: string): Promise<RuneData | null> =>
   fetchRuneEndpoint<RuneData>('/api/ordiscan/rune-info', 'GET', name);
 
-export const updateRuneDataViaApi = async (
-  name: string,
-): Promise<RuneData | null> =>
+export const updateRuneDataViaApi = async (name: string): Promise<RuneData | null> =>
   fetchRuneEndpoint<RuneData>('/api/ordiscan/rune-update', 'POST', name);
 
 export const fetchRuneMarketFromApi = async (
   name: string,
 ): Promise<OrdiscanRuneMarketInfo | null> =>
-  fetchRuneEndpoint<OrdiscanRuneMarketInfo>(
-    '/api/ordiscan/rune-market',
-    'GET',
-    name,
-  );
+  fetchRuneEndpoint<OrdiscanRuneMarketInfo>('/api/ordiscan/rune-market', 'GET', name);
 
 export const fetchListRunesFromApi = async (): Promise<OrdiscanRuneInfo[]> =>
   apiGet<OrdiscanRuneInfo[]>('/api/ordiscan/list-runes');
 
-export const fetchRuneActivityFromApi = async (
-  address: string,
-): Promise<RuneActivityEvent[]> =>
+export const fetchRuneActivityFromApi = async (address: string): Promise<RuneActivityEvent[]> =>
   apiGet<RuneActivityEvent[]>('/api/ordiscan/rune-activity', {
     address,
   });
 
-export interface PriceHistoryDataPoint {
+interface PriceHistoryDataPoint {
   timestamp: number;
   price: number;
 }
 
-export interface PriceHistoryResponse {
+interface PriceHistoryResponse {
   slug: string;
   prices: PriceHistoryDataPoint[];
   available: boolean;

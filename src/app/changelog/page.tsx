@@ -1,7 +1,6 @@
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
 import Link from 'next/link';
-import path from 'path';
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -24,9 +23,7 @@ function getCleanChangelog(raw: string): string {
   const sliced = lines.slice(startIdx);
 
   // Filter out reference-style link definitions at the bottom like: [0.2.1]: https://...
-  const filtered = sliced.filter(
-    (l) => !/^\[[^\]]+\]:\s*https?:\/\//.test(l.trim()),
-  );
+  const filtered = sliced.filter((l) => !/^\[[^\]]+\]:\s*https?:\/\//.test(l.trim()));
 
   return filtered.join('\n').trim();
 }

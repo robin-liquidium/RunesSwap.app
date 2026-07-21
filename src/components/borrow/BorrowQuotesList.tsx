@@ -1,7 +1,7 @@
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/borrow/BorrowTab.module.css';
-import type { LiquidiumBorrowQuoteOffer } from '@/lib/api';
+import type { LiquidiumBorrowQuoteOffer } from '@/types/liquidium';
 import { formatSatsToBtc } from '@/utils/formatters';
 
 /**
@@ -31,14 +31,11 @@ const BorrowQuotesList: React.FC<BorrowQuotesListProps> = ({
     <h2 className={styles.quotesTitle}>Available Loan Offers:</h2>
     {quotes.map((quote) => {
       const principalBtc = formatSatsToBtc(quote.loan_breakdown.principal_sats);
-      const repaymentBtc = formatSatsToBtc(
-        quote.loan_breakdown.total_repayment_sats,
-      );
+      const repaymentBtc = formatSatsToBtc(quote.loan_breakdown.total_repayment_sats);
       const interestPercent =
         quote.loan_breakdown.principal_sats > 0
           ? (
-              (quote.loan_breakdown.interest_sats /
-                quote.loan_breakdown.principal_sats) *
+              (quote.loan_breakdown.interest_sats / quote.loan_breakdown.principal_sats) *
               100
             ).toFixed(2)
           : '0.00';
@@ -53,9 +50,7 @@ const BorrowQuotesList: React.FC<BorrowQuotesListProps> = ({
           <div className={styles.quoteGrid}>
             <div className={styles.quoteField}>
               <span className={styles.quoteLabel}>Loan Amount</span>
-              <span
-                className={`${styles.quoteValue} ${styles.quoteValueHighlight}`}
-              >
+              <span className={`${styles.quoteValue} ${styles.quoteValueHighlight}`}>
                 {principalBtc} BTC
               </span>
             </div>
@@ -67,9 +62,7 @@ const BorrowQuotesList: React.FC<BorrowQuotesListProps> = ({
             </div>
             <div className={styles.quoteField}>
               <span className={styles.quoteLabel}>Term</span>
-              <span className={styles.quoteValue}>
-                {quote.loan_term_days ?? 'N/A'} days
-              </span>
+              <span className={styles.quoteValue}>{quote.loan_term_days ?? 'N/A'} days</span>
             </div>
             <div className={styles.quoteField}>
               <span className={styles.quoteLabel}>Interest Rate</span>
@@ -82,9 +75,7 @@ const BorrowQuotesList: React.FC<BorrowQuotesListProps> = ({
             <div className={styles.quoteField}>
               <span className={styles.quoteLabel}>Due Date</span>
               <span className={styles.quoteValue}>
-                {new Date(
-                  quote.loan_breakdown.loan_due_by_date,
-                ).toLocaleDateString()}
+                {new Date(quote.loan_breakdown.loan_due_by_date).toLocaleDateString()}
               </span>
             </div>
           </div>

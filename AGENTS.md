@@ -73,19 +73,19 @@ For precise financial calculations involving Bitcoin runes and large token amoun
 
 ## Development
 
-Install dependencies and start the development server with **pnpm**:
+Install dependencies and start the development server with **bun**:
 
 ```bash
-pnpm install
-pnpm dev
+bun install
+bun run dev
 ```
 
 The app runs at `http://localhost:3000`.
 To build and run in production mode:
 
 ```bash
-pnpm build
-pnpm start
+bun run build
+bun run start
 ```
 
 ## Testing and Linting
@@ -93,15 +93,15 @@ pnpm start
 * Unit tests use **Jest** with the `ts-jest` preset:
 
   ```bash
-  pnpm test
+  bun run test
   ```
-* Linting uses **ESLint** and Prettier:
+* Linting and formatting use **Biome**:
 
   ```bash
-  pnpm lint
+  bun run lint
   ```
 
-The pre‑commit hook runs `lint-staged`, the test suite, and a production build. Commit messages are checked by **commitlint** and must follow the Conventional Commits format.
+The pre-commit hook runs `lint-staged`; the pre-push hook runs the full `ai-check` pipeline. Use Conventional Commits for commit messages.
 
 ## Architecture Notes
 
@@ -568,7 +568,7 @@ Bitcoin fee rates are fetched from mempool.space API with the following response
 # General Instructions
 * IMPORTANT: Always use context7 to read relevant up-to-date docs when dealing with any external dependency/package/library!
 * IMPORTANT: Always follow KISS and DRY principals.
-* Run `pnpm ai-check` after every bigger change.
+* Run `bun run ai-check` after every bigger change.
 * Use the supabase tools to interact with our database!
 * SatsTerminal SDK is very aggressive with rate-limiting, we shouldn't increase the amount of queries we're doing to SatsTerminal!
 * Changelog discipline: For any noticeable change (new feature, significant refactor, important fix), add an entry under `## [Unreleased]` in `CHANGELOG.md`.

@@ -1,15 +1,12 @@
 import { logApiError, logDbError } from '@/lib/logger';
 import { getOrdiscanClient } from '@/lib/serverUtils';
-import {
-  fetchRuneMarketDataByName,
-  upsertRuneMarketData,
-} from '@/lib/supabaseQueries';
+import { fetchRuneMarketDataByName, upsertRuneMarketData } from '@/lib/supabaseQueries';
 import { normalizeRuneName } from '@/utils/runeUtils';
 
 /**
  * Market data for a Rune.
  */
-export interface RuneMarketData {
+interface RuneMarketData {
   /** Price in Satoshis. */
   price_in_sats: number;
   /** Price in USD. */
@@ -28,17 +25,12 @@ export interface RuneMarketData {
  * @param runeName - The name of the Rune.
  * @returns RuneMarketData object or null if not found/error.
  */
-export async function getRuneMarketData(
-  runeName: string,
-): Promise<RuneMarketData | null> {
+export async function getRuneMarketData(runeName: string): Promise<RuneMarketData | null> {
   try {
     const normalizedName = normalizeRuneName(runeName);
 
     // First, try to get from Supabase (10 minutes cache)
-    const existingMarketData = await fetchRuneMarketDataByName(
-      normalizedName,
-      0.17,
-    ); // 10 minutes
+    const existingMarketData = await fetchRuneMarketDataByName(normalizedName, 0.17); // 10 minutes
 
     if (existingMarketData) {
       return {

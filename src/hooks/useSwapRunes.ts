@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import usePopularRunes from '@/hooks/usePopularRunes';
-import { fetchRunesFromApi } from '@/lib/api';
+import { fetchRunesFromApi } from '@/lib/api/satsTerminal';
 import type { Asset } from '@/types/common';
 import { BTC_ASSET } from '@/types/common';
 import { mapPopularToAsset } from '@/utils/popularRunes';
@@ -23,23 +23,22 @@ interface UseSwapRunesArgs {
  * @param args - Arguments including pre-selected rune/asset and state setters.
  * @returns Popular runes list and loading states.
  */
-export function useSwapRunes({
+function useSwapRunes({
   preSelectedRune = null,
   preSelectedAsset = null,
   assetOut,
   setAssetIn,
   setAssetOut,
 }: UseSwapRunesArgs) {
+  const normalizedPreselectedRune = preSelectedRune ? normalizeRuneName(preSelectedRune) : null;
   const {
     popularRunes: basePopularRunes,
     isLoading: isPopularLoading,
     error: popularError,
   } = usePopularRunes<Asset>(mapPopularToAsset);
   const [popularRunes, setPopularRunes] = useState<Asset[]>([]);
-  const [isPreselectedRuneLoading, setIsPreselectedRuneLoading] =
-    useState(!!preSelectedRune);
-  const [hasLoadedPreselectedRune, setHasLoadedPreselectedRune] =
-    useState(false);
+  const [isPreselectedRuneLoading, setIsPreselectedRuneLoading] = useState(!!preSelectedRune);
+  const [hasLoadedPreselectedRune, setHasLoadedPreselectedRune] = useState(false);
 
   useEffect(() => {
     if (preSelectedAsset && !hasLoadedPreselectedRune) {
@@ -49,6 +48,17 @@ export function useSwapRunes({
       setHasLoadedPreselectedRune(true);
     }
   }, [preSelectedAsset, setAssetIn, setAssetOut, hasLoadedPreselectedRune]);
+
+  useEffect(() => {
+    if (!normalizedPreselectedRune) {
+      setIsPreselectedRuneLoading(false);
+      setHasLoadedPreselectedRune(false);
+      return;
+    }
+
+    setIsPreselectedRuneLoading(true);
+    setHasLoadedPreselectedRune(false);
+  }, [normalizedPreselectedRune]);
 
   useEffect(() => {
     if (isPopularLoading) return;
@@ -73,16 +83,15 @@ export function useSwapRunes({
 
   useEffect(() => {
     const findAndSelectRune = async () => {
-      if (preSelectedRune && !hasLoadedPreselectedRune) {
+      if (preSelectedRune && normalizedPreselectedRune && !hasLoadedPreselectedRune) {
         setIsPreselectedRuneLoading(true);
-        const normalized = normalizeRuneName(preSelectedRune);
         let rune = popularRunes.find(
-          (r) => normalizeRuneName(r.name) === normalized,
+          (r) => normalizeRuneName(r.name) === normalizedPreselectedRune,
         );
 
         if (!rune) {
           const provisionalAsset: Asset = {
-            id: normalized.toLowerCase(),
+            id: normalizedPreselectedRune.toLowerCase(),
             name: preSelectedRune,
             imageURI: getRuneIconUrl(preSelectedRune),
             isBTC: false,
@@ -97,17 +106,12 @@ export function useSwapRunes({
           setAssetOut(rune);
           setIsPreselectedRuneLoading(false);
           setHasLoadedPreselectedRune(true);
-          if (typeof window !== 'undefined') {
-            const url = new URL(window.location.href);
-            url.searchParams.delete('rune');
-            window.history.replaceState({}, '', url.toString());
-          }
         } else {
           try {
             const searchResults = await fetchRunesFromApi(preSelectedRune);
             if (searchResults && searchResults.length > 0) {
               const matchingRune = searchResults.find(
-                (r) => normalizeRuneName(r.name) === normalized,
+                (r) => normalizeRuneName(r.name) === normalizedPreselectedRune,
               );
               const foundRune = matchingRune || safeArrayFirst(searchResults);
               if (foundRune) {
@@ -125,7 +129,7 @@ export function useSwapRunes({
             // If still not selected, fall back to creating a basic Asset so the UI switches pairs.
             if (!assetOut) {
               const fallbackAsset: Asset = {
-                id: normalized.toLowerCase(),
+                id: normalizedPreselectedRune.toLowerCase(),
                 name: preSelectedRune,
                 imageURI: getRuneIconUrl(preSelectedRune),
                 isBTC: false,
@@ -136,22 +140,15 @@ export function useSwapRunes({
 
             setIsPreselectedRuneLoading(false);
             setHasLoadedPreselectedRune(true);
-            if (typeof window !== 'undefined') {
-              const url = new URL(window.location.href);
-              url.searchParams.delete('rune');
-              window.history.replaceState({}, '', url.toString());
-            }
           }
         }
-      } else if (!preSelectedRune) {
-        setIsPreselectedRuneLoading(false);
-        setHasLoadedPreselectedRune(false);
       }
     };
 
     findAndSelectRune();
   }, [
     preSelectedRune,
+    normalizedPreselectedRune,
     popularRunes,
     hasLoadedPreselectedRune,
     setAssetIn,

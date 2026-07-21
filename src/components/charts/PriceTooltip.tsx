@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/layout/AppInterface.module.css';
 
@@ -42,8 +42,7 @@ const PriceTooltip: React.FC<PriceTooltipProps> = ({ show, setShow }) => (
     </svg>
     {show && (
       <div className={styles.tooltipBox}>
-        Price history might be inaccurate and should only serve as an
-        estimation.
+        Price history might be inaccurate and should only serve as an estimation.
       </div>
     )}
   </div>

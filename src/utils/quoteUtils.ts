@@ -1,5 +1,5 @@
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
 import Big from 'big.js';
-import type { QuoteResponse } from 'satsterminal-sdk';
 
 import { logger } from '@/lib/logger';
 import type { Asset } from '@/types/common';
@@ -8,7 +8,7 @@ import { sanitizeForBig } from '@/utils/formatters';
 /**
  * Display strings for a quote, including formatted output amount and exchange rate.
  */
-export interface QuoteDisplay {
+interface QuoteDisplay {
   /** Formatted output amount string. */
   outputAmountDisplay: string;
   /** Formatted exchange rate string (e.g., "$1.23 per Rune"). */
@@ -38,11 +38,8 @@ export function computeQuoteDisplay(params: {
     let runeValueBig = new Big(0);
 
     if (assetIn.isBTC) {
-      const parsedOutputBig = new Big(
-        sanitizeForBig(quote.totalFormattedAmount || '0'),
-      );
-      if (parsedOutputBig.lte(0))
-        throw new Error('Invalid quote output amount');
+      const parsedOutputBig = new Big(sanitizeForBig(quote.totalFormattedAmount || '0'));
+      if (parsedOutputBig.lte(0)) throw new Error('Invalid quote output amount');
       outputBig = parsedOutputBig; // rune quantity
       btcValueBig = inputBig;
       runeValueBig = outputBig;
@@ -72,8 +69,7 @@ export function computeQuoteDisplay(params: {
         const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         return decPart ? `${intWithCommas}.${decPart}` : intWithCommas;
       };
-      const labelAsset =
-        assetIn && !assetIn.isBTC ? assetIn.name : assetOut.name;
+      const labelAsset = assetIn && !assetIn.isBTC ? assetIn.name : assetOut.name;
       exchangeRateDisplay = `$${formatWithGrouping(pricePerRuneStr)} per ${labelAsset}`;
     }
 

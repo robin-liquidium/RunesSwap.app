@@ -16,9 +16,7 @@ describe('handleSatsTerminalError', () => {
   });
 
   it('maps unexpected token to 503', () => {
-    const res = handleSatsTerminalError(
-      new Error('Unexpected token < in JSON'),
-    );
+    const res = handleSatsTerminalError(new Error('Unexpected token < in JSON'));
     expect(res).toBeTruthy();
     // @ts-expect-error - NextResponse has .status at runtime in tests
     expect(res.status).toBe(503);

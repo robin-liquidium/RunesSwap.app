@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/portfolio/PortfolioTab.module.css';
 import Button from '@/components/ui/Button';
@@ -54,14 +54,8 @@ const RepayModal: React.FC<RepayModalProps> = ({
         <div>
           Repayment Amount: <b>{repayAmount}</b>
         </div>
-        <div
-          className="smallText"
-          style={{ margin: '8px 0', wordBreak: 'break-all' }}
-        >
-          PSBT:{' '}
-          <code title="Full PSBT (truncated for display)">
-            {psbtPreview}...
-          </code>
+        <div className="smallText" style={{ margin: '8px 0', wordBreak: 'break-all' }}>
+          PSBT: <code title="Full PSBT (truncated for display)">{psbtPreview}...</code>
         </div>
         {error && (
           <div className="errorText" style={{ margin: '8px 0' }}>

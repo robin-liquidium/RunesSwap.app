@@ -23,8 +23,7 @@ const RepayModal = dynamic(() => import('@/components/borrow/RepayModal'), {
  */
 export default function PortfolioTab() {
   const router = useRouter();
-  const { address, paymentAddress, signMessage, signPsbt } =
-    useSharedLaserEyes();
+  const { address, paymentAddress, signMessage, signPsbt } = useSharedLaserEyes();
 
   const {
     sortedBalances,
@@ -59,15 +58,7 @@ export default function PortfolioTab() {
   } = useRepayModal({ address, signPsbt });
 
   const handleSwap = (asset: Asset) => {
-    // Inform TabNavigation/AppInterface with full asset info
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('tabChange', {
-          detail: { tab: 'swap', asset },
-        }),
-      );
-    }
-    router.push('/?tab=swap', { scroll: false });
+    router.push(`/swap?rune=${encodeURIComponent(asset.name)}`, { scroll: false });
   };
 
   if (!address) {
@@ -123,8 +114,8 @@ export default function PortfolioTab() {
       />
 
       <div className={styles.sectionDivider}>
-        <div className={styles.dividerLine + ' ' + styles.top}></div>
-        <div className={styles.dividerLine + ' ' + styles.bottom}></div>
+        <div className={`${styles.dividerLine} ${styles.top}`}></div>
+        <div className={`${styles.dividerLine} ${styles.bottom}`}></div>
         <div className="heading" style={{ marginTop: '1rem' }}>
           Liquidium Loans
         </div>

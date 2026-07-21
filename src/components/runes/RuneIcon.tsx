@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 
 /**
  * Props for the RuneIcon component.
@@ -23,16 +23,9 @@ interface RuneIconProps {
  *
  * @param props - Component props.
  */
-export const RuneIcon: React.FC<RuneIconProps> = ({
-  src,
-  alt,
-  className,
-  width = 24,
-  height = 24,
-}) => {
+const RuneIcon: React.FC<RuneIconProps> = ({ src, alt, className, width = 24, height = 24 }) => {
   if (!src || typeof src !== 'string') return null;
-  const isValid =
-    src.startsWith('http') || src.startsWith('/') || src.startsWith('data:');
+  const isValid = src.startsWith('http') || src.startsWith('/') || src.startsWith('data:');
   if (!isValid) return null;
 
   return (

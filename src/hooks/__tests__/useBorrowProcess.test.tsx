@@ -1,15 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
-import type { RuneData } from '@/lib/runesData';
 import { useBorrowProcess } from '@/hooks/useBorrowProcess';
+import type { RuneData } from '@/lib/runesData';
 
 // Mock the API functions
-jest.mock('@/lib/api', () => ({
+jest.mock('@/lib/api/liquidium', () => ({
   prepareLiquidiumBorrow: jest.fn(),
   submitLiquidiumBorrow: jest.fn(),
 }));
 
-const { prepareLiquidiumBorrow, submitLiquidiumBorrow } =
-  jest.requireMock('@/lib/api');
+const { prepareLiquidiumBorrow, submitLiquidiumBorrow } = jest.requireMock('@/lib/api/liquidium');
 
 type HookProps = Parameters<typeof useBorrowProcess>[0];
 
@@ -137,9 +136,7 @@ describe('useBorrowProcess', () => {
 
     await executeLoan(result, quoteId, amount);
 
-    expect(result.current.loanProcessError).toBe(
-      'Missing required information (quote or amount).',
-    );
+    expect(result.current.loanProcessError).toBe('Missing required information (quote or amount).');
     expect(prepareLiquidiumBorrow).not.toHaveBeenCalled();
   });
 
@@ -204,22 +201,18 @@ describe('useBorrowProcess', () => {
       description: 'API failure',
     },
     {
-      setupMock: () =>
-        prepareLiquidiumBorrow.mockResolvedValue({ success: true, data: null }),
+      setupMock: () => prepareLiquidiumBorrow.mockResolvedValue({ success: true, data: null }),
       expectedError: 'Failed to prepare loan transaction.',
       description: 'missing response data',
     },
     {
       setupMock: () =>
-        prepareLiquidiumBorrow.mockRejectedValue(
-          new Error('Network connection failed'),
-        ),
+        prepareLiquidiumBorrow.mockRejectedValue(new Error('Network connection failed')),
       expectedError: 'Network connection failed',
       description: 'network errors',
     },
     {
-      setupMock: () =>
-        prepareLiquidiumBorrow.mockRejectedValue('Unexpected error type'),
+      setupMock: () => prepareLiquidiumBorrow.mockRejectedValue('Unexpected error type'),
       expectedError: 'Failed to start loan.',
       description: 'unexpected errors',
     },
@@ -264,9 +257,7 @@ describe('useBorrowProcess', () => {
 
     await executeLoan(result);
 
-    expect(result.current.loanProcessError).toBe(
-      'Network error during submission',
-    );
+    expect(result.current.loanProcessError).toBe('Network error during submission');
   });
 
   it('should reset state correctly', async () => {
@@ -297,11 +288,9 @@ describe('useBorrowProcess', () => {
 
   it('should handle BigInt conversion errors gracefully', async () => {
     const originalBigInt = global.BigInt;
-    (global as { BigInt: unknown }).BigInt = jest
-      .fn()
-      .mockImplementation(() => {
-        throw new Error('BigInt conversion failed');
-      });
+    (global as { BigInt: unknown }).BigInt = jest.fn().mockImplementation(() => {
+      throw new Error('BigInt conversion failed');
+    });
 
     setupSuccessfulMocks();
     const props = createProps();

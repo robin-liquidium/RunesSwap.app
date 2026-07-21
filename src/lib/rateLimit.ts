@@ -46,11 +46,7 @@ export function enforceRateLimit(
 
   if (entry.count >= opts.limit) {
     const retryAfterSec = Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
-    return createErrorResponse(
-      'Rate limit exceeded',
-      `Try again in ${retryAfterSec}s`,
-      429,
-    );
+    return createErrorResponse('Rate limit exceeded', `Try again in ${retryAfterSec}s`, 429);
   }
 
   entry.count += 1;

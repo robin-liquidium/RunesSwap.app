@@ -21,8 +21,9 @@ export const GET = withApiHandler(
     const { address: validAddress } = validation.data;
 
     const ordiscan = getOrdiscanClient();
-    const activity: RuneActivityEvent[] =
-      await ordiscan.address.getRunesActivity({ address: validAddress });
+    const activity: RuneActivityEvent[] = await ordiscan.address.getRunesActivity({
+      address: validAddress,
+    });
 
     const validActivity = Array.isArray(activity) ? activity : [];
 

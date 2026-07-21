@@ -6,13 +6,11 @@ import { FormattedRuneAmount } from '@/components/formatters/FormattedRuneAmount
 import styles from '@/components/portfolio/PortfolioTab.module.css';
 import RuneIcon from '@/components/runes/RuneIcon';
 import { logger } from '@/lib/logger';
+import { queryKeys } from '@/lib/queryKeys';
 import { formatNumberWithLocale } from '@/utils/formatters';
 import { calculateActualBalance } from '@/utils/runeFormatting';
 
-const formatCollateralAmount = (
-  amount: number,
-  divisibility: number,
-): string => {
+const formatCollateralAmount = (amount: number, divisibility: number): string => {
   if (divisibility === 0) {
     return formatNumberWithLocale(amount);
   }
@@ -49,7 +47,7 @@ export function FormattedLiquidiumCollateral({
 }: FormattedLiquidiumCollateralProps) {
   // Fetch rune info to get the actual rune name
   const { data: runeInfo } = useQuery({
-    queryKey: ['runeInfoById', runeId],
+    queryKey: queryKeys.runeInfoById(runeId),
     queryFn: async () => {
       if (!runeId) return null;
       try {
@@ -101,10 +99,7 @@ export function FormattedLiquidiumCollateral({
         />
         <div className={styles.collateralDetails}>
           <div className={styles.collateralAmount}>
-            <FormattedRuneAmount
-              runeName={runeName}
-              rawAmount={String(runeAmount)}
-            />
+            <FormattedRuneAmount runeName={runeName} rawAmount={String(runeAmount)} />
           </div>
           <div className={styles.collateralName}>{displayName}</div>
         </div>

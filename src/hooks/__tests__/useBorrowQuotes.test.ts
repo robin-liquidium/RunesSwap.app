@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react';
-import { fetchBorrowQuotesFromApi, fetchBorrowRangesFromApi } from '@/lib/api';
 import {
   createMockAsset,
   createMockBorrowQuote,
@@ -8,8 +7,9 @@ import {
 } from '@/hooks/__test-utils__';
 import useBorrowQuotes from '@/hooks/useBorrowQuotes';
 import usePopularRunes from '@/hooks/usePopularRunes';
+import { fetchBorrowQuotesFromApi, fetchBorrowRangesFromApi } from '@/lib/api/liquidium';
 
-jest.mock('@/lib/api', () => ({
+jest.mock('@/lib/api/liquidium', () => ({
   fetchBorrowQuotesFromApi: jest.fn(),
   fetchBorrowRangesFromApi: jest.fn(),
 }));
@@ -90,10 +90,7 @@ describe('useBorrowQuotes', () => {
       const { result } = renderHook(() => useBorrowQuotes(activeProps));
       await act(async () => Promise.resolve());
 
-      expect(mocks.fetchBorrowRanges).toHaveBeenCalledWith(
-        'test-rune-id',
-        'bc1test',
-      );
+      expect(mocks.fetchBorrowRanges).toHaveBeenCalledWith('test-rune-id', 'bc1test');
       expect(result.current.minMaxRange).toContain('Min:');
       expect(result.current.minMaxRange).toContain('Max:');
     });

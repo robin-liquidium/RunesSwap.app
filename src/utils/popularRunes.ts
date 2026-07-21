@@ -27,11 +27,7 @@ export const mapPopularItems = <T>(
 ): T[] =>
   items.map((item) => {
     const base: BasePopularItem = {
-      id: String(
-        (item as PopularRuneItem).token_id ||
-          (item as Record<string, unknown>).id ||
-          '',
-      ),
+      id: String((item as PopularRuneItem).token_id || (item as Record<string, unknown>).id || ''),
       name: String(
         (item as PopularRuneItem).token ||
           (item as Record<string, unknown>).name ||
@@ -39,9 +35,7 @@ export const mapPopularItems = <T>(
           '',
       ),
       imageURI: String(
-        (item as PopularRuneItem).icon ||
-          (item as Record<string, unknown>).imageURI ||
-          '',
+        (item as PopularRuneItem).icon || (item as Record<string, unknown>).imageURI || '',
       ),
     };
     return transform(base);
@@ -52,15 +46,13 @@ export const mapPopularItems = <T>(
  * @param items - Array of raw items.
  * @returns Array of Asset objects.
  */
-export const mapPopularToAsset = (
-  items: PopularRuneItem[] | Record<string, unknown>[],
-): Asset[] => mapPopularItems(items, (item) => ({ ...item, isBTC: false }));
+export const mapPopularToAsset = (items: PopularRuneItem[] | Record<string, unknown>[]): Asset[] =>
+  mapPopularItems(items, (item) => ({ ...item, isBTC: false }));
 
 /**
  * Maps popular items to Rune objects.
  * @param items - Array of raw items.
  * @returns Array of Rune objects.
  */
-export const mapPopularToRune = (
-  items: PopularRuneItem[] | Record<string, unknown>[],
-): Rune[] => mapPopularItems(items, (item) => item);
+export const mapPopularToRune = (items: PopularRuneItem[] | Record<string, unknown>[]): Rune[] =>
+  mapPopularItems(items, (item) => item);

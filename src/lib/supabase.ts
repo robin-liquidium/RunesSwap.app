@@ -6,17 +6,13 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 let supabase: SupabaseClient;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    'Missing Supabase environment variables. Functionality may be limited.',
-  );
+  console.warn('Missing Supabase environment variables. Functionality may be limited.');
   supabase = new Proxy(
     {},
     {
-      get(target, prop) {
+      get(_target, prop) {
         throw new Error(
-          `Supabase client is not configured. Attempted to access property: ${String(
-            prop,
-          )}`,
+          `Supabase client is not configured. Attempted to access property: ${String(prop)}`,
         );
       },
     },

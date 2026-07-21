@@ -8,19 +8,12 @@ import Big from 'big.js';
  * @param decimals - Number of decimal places the token supports
  * @returns Formatted amount as string
  */
-export function formatAmountWithPrecision(
-  amount: number | string,
-  decimals: number,
-): string {
+function formatAmountWithPrecision(amount: number | string, decimals: number): string {
   const newAmountBig = new Big(amount);
   const multiplier = new Big(10).pow(decimals);
 
   // Return Big.js string directly to prevent precision loss and exponential notation
-  return newAmountBig
-    .times(multiplier)
-    .round(0, Big.roundDown)
-    .div(multiplier)
-    .toFixed();
+  return newAmountBig.times(multiplier).round(0, Big.roundDown).div(multiplier).toFixed();
 }
 
 /**
@@ -31,10 +24,7 @@ export function formatAmountWithPrecision(
  * @param decimals - Token decimals
  * @returns Display amount as string (no exponential notation)
  */
-export function rawToDisplayAmount(
-  rawAmount: number | string,
-  decimals: number,
-): string {
+export function rawToDisplayAmount(rawAmount: number | string, decimals: number): string {
   const raw = new Big(rawAmount);
   const divisor = new Big(10).pow(decimals);
   return raw.div(divisor).toFixed();
@@ -47,10 +37,7 @@ export function rawToDisplayAmount(
  * @param decimals - Number of decimal places the token supports
  * @returns Raw amount as string for API
  */
-export function convertToRawAmount(
-  amount: number | string,
-  decimals: number,
-): string {
+export function convertToRawAmount(amount: number | string, decimals: number): string {
   const amountBig = new Big(amount);
   const multiplier = new Big(10).pow(decimals);
 
@@ -89,11 +76,8 @@ export function percentageOfSatsToBtcString(
   sats: number | string | bigint,
   percentage: number,
 ): string {
-  const satsBig = new Big(
-    typeof sats === 'bigint' ? sats.toString() : String(sats),
-  );
+  const satsBig = new Big(typeof sats === 'bigint' ? sats.toString() : String(sats));
   const availableBtc = satsBig.div(new Big(10).pow(8));
-  const desiredBtc =
-    percentage === 1 ? availableBtc : availableBtc.times(percentage);
+  const desiredBtc = percentage === 1 ? availableBtc : availableBtc.times(percentage);
   return formatAmountWithPrecision(desiredBtc.toString(), 8);
 }

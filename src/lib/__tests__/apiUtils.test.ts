@@ -59,10 +59,7 @@ describe('createSuccessResponse', () => {
     const data = { key: 'value' };
     createSuccessResponse(data);
 
-    expect(NextResponse.json).toHaveBeenCalledWith(
-      { success: true, data },
-      { status: 200 },
-    );
+    expect(NextResponse.json).toHaveBeenCalledWith({ success: true, data }, { status: 200 });
   });
 
   it('creates a success response with custom status', () => {
@@ -70,10 +67,7 @@ describe('createSuccessResponse', () => {
     const status = 201;
     createSuccessResponse(data, status);
 
-    expect(NextResponse.json).toHaveBeenCalledWith(
-      { success: true, data },
-      { status },
-    );
+    expect(NextResponse.json).toHaveBeenCalledWith({ success: true, data }, { status });
   });
 });
 

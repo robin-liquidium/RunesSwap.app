@@ -58,10 +58,7 @@ export const initialSwapProcessState: SwapProcessState = {
  * @param action - The action that describes the state transition to apply.
  * @returns The new SwapProcessState after applying `action`.
  */
-export function swapProcessReducer(
-  state: SwapProcessState,
-  action: SwapProcessAction,
-): SwapProcessState {
+function swapProcessReducer(state: SwapProcessState, action: SwapProcessAction): SwapProcessState {
   // Log actions that contain errors or significant state changes
   if (action.type === 'SWAP_ERROR' || action.type === 'FETCH_QUOTE_ERROR') {
     logger.warn(`SwapProcess: ${action.type}`, { action }, 'Swap');
@@ -170,19 +167,13 @@ interface UseSwapProcessManagerProps {
 /**
  * Hook to manage the swap process state
  */
-export function useSwapProcessManager({
-  connected,
-  address,
-}: UseSwapProcessManagerProps) {
-  const [swapState, dispatchSwap] = useReducer(
-    swapProcessReducer,
-    initialSwapProcessState,
-  );
+function useSwapProcessManager({ connected, address }: UseSwapProcessManagerProps) {
+  const [swapState, dispatchSwap] = useReducer(swapProcessReducer, initialSwapProcessState);
 
   // Reset swap state when inputs/wallet change significantly
   useEffect(() => {
     dispatchSwap({ type: 'RESET_SWAP' });
-  }, [address, connected]);
+  }, []);
 
   return { swapState, dispatchSwap };
 }

@@ -9,7 +9,7 @@ import { parseAmount } from '@/utils/formatters';
 /**
  * Result of interpreting a Rune transaction
  */
-export interface RuneTransactionInterpretation {
+interface RuneTransactionInterpretation {
   /** The type of action (Minted, Etched, Sent, Received, etc.) */
   action: string;
   /** The name of the Rune involved in the transaction */
@@ -58,19 +58,13 @@ export function interpretRuneTransaction(
       runeAmountRaw = userOutput ? userOutput.rune_amount : 'N/A';
     } else {
       // Determine if user sent or received runes
-      const userSent = tx.inputs.some(
-        (i: RunicInput) => i.address === userAddress,
-      );
-      const userReceived = tx.outputs.some(
-        (o: RunicOutput) => o.address === userAddress,
-      );
+      const userSent = tx.inputs.some((i: RunicInput) => i.address === userAddress);
+      const userReceived = tx.outputs.some((o: RunicOutput) => o.address === userAddress);
 
       if (userSent && !userReceived) {
         // Case 2: User only sent runes (no change back)
         action = 'Sent';
-        const sentInput = tx.inputs.find(
-          (i: RunicInput) => i.address === userAddress,
-        );
+        const sentInput = tx.inputs.find((i: RunicInput) => i.address === userAddress);
         if (sentInput) {
           runeName = sentInput.rune;
           runeAmountRaw = sentInput.rune_amount;
@@ -78,9 +72,7 @@ export function interpretRuneTransaction(
       } else if (userReceived && !userSent) {
         // Case 3: User only received runes
         action = 'Received';
-        const receivedOutput = tx.outputs.find(
-          (o: RunicOutput) => o.address === userAddress,
-        );
+        const receivedOutput = tx.outputs.find((o: RunicOutput) => o.address === userAddress);
         if (receivedOutput) {
           runeName = receivedOutput.rune;
           runeAmountRaw = receivedOutput.rune_amount;
@@ -91,10 +83,7 @@ export function interpretRuneTransaction(
 
         // Check if user sent runes to another address
         const sentOutput = tx.outputs.find(
-          (o: RunicOutput) =>
-            o.address !== userAddress &&
-            o.rune &&
-            parseAmount(o.rune_amount) > 0,
+          (o: RunicOutput) => o.address !== userAddress && o.rune && parseAmount(o.rune_amount) > 0,
         );
 
         if (sentOutput) {
@@ -110,8 +99,7 @@ export function interpretRuneTransaction(
           // Try to find the relevant rune from the runestone message
           const relevantRune = tx.runestone_messages[0]?.rune;
           const userOutput = tx.outputs.find(
-            (o: RunicOutput) =>
-              o.address === userAddress && o.rune === relevantRune,
+            (o: RunicOutput) => o.address === userAddress && o.rune === relevantRune,
           );
 
           if (userOutput) {
@@ -121,9 +109,7 @@ export function interpretRuneTransaction(
             // Fallback: Look for any rune output back to the user
             const anyUserOutput = tx.outputs.find(
               (o: RunicOutput) =>
-                o.address === userAddress &&
-                o.rune &&
-                parseAmount(o.rune_amount) > 0,
+                o.address === userAddress && o.rune && parseAmount(o.rune_amount) > 0,
             );
 
             if (anyUserOutput) {
@@ -133,9 +119,7 @@ export function interpretRuneTransaction(
               // If still nothing, use input info or default to N/A
               runeName =
                 relevantRune ||
-                tx.inputs.find(
-                  (i: RunicInput) => i.address === userAddress && i.rune,
-                )?.rune ||
+                tx.inputs.find((i: RunicInput) => i.address === userAddress && i.rune)?.rune ||
                 'N/A';
               runeAmountRaw = 'N/A'; // Can't reliably determine amount
             }

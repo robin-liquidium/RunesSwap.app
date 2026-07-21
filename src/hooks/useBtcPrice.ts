@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { getBtcPrice } from '@/lib/api/coingecko';
+import { queryKeys } from '@/lib/queryKeys';
 
 /**
  * Subscribes to the current Bitcoin price in USD and exposes the value along with loading and error state.
@@ -10,9 +11,9 @@ import { getBtcPrice } from '@/lib/api/coingecko';
  * - `isBtcPriceLoading` — `true` while the price is being fetched, `false` otherwise.
  * - `btcPriceError` — an error object if the query failed, or `undefined` if there is no error.
  */
-export function useBtcPrice() {
+function useBtcPrice() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['btcPriceUsd'],
+    queryKey: queryKeys.btcPriceUsd(),
     queryFn: getBtcPrice,
     refetchInterval: 60000,
     staleTime: 30000,

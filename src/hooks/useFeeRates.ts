@@ -1,7 +1,7 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-import type { BitcoinFeeRates } from '@/lib/api';
-import { fetchRecommendedFeeRates, QUERY_KEYS } from '@/lib/api';
+import { type BitcoinFeeRates, fetchRecommendedFeeRates } from '@/lib/api/fees';
+import { queryKeys } from '@/lib/queryKeys';
 
 /**
  * Hook to fetch recommended Bitcoin fee rates.
@@ -10,18 +10,13 @@ import { fetchRecommendedFeeRates, QUERY_KEYS } from '@/lib/api';
  * @param options - React Query options.
  * @returns Query result containing fee rates.
  */
-export const useFeeRates = (
-  options?: Omit<UseQueryOptions<BitcoinFeeRates>, 'queryKey' | 'queryFn'>,
-) =>
+const useFeeRates = (options?: Omit<UseQueryOptions<BitcoinFeeRates>, 'queryKey' | 'queryFn'>) =>
   useQuery<BitcoinFeeRates>({
-    queryKey: [QUERY_KEYS.BTC_FEE_RATES],
+    queryKey: queryKeys.btcFeeRates(),
     queryFn: fetchRecommendedFeeRates,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
-    ...(options as Omit<
-      UseQueryOptions<BitcoinFeeRates>,
-      'queryKey' | 'queryFn'
-    >),
+    ...(options as Omit<UseQueryOptions<BitcoinFeeRates>, 'queryKey' | 'queryFn'>),
   });
 
 export default useFeeRates;

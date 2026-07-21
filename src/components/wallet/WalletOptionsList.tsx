@@ -1,13 +1,13 @@
 import type { ProviderType } from '@omnisat/lasereyes';
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/wallet/ConnectWalletButton.module.css';
 
 /**
  * Represents a wallet option available for connection.
  */
-export interface WalletOption {
+interface WalletOption {
   /** Display name of the wallet. */
   name: string;
   /** Provider type identifier. */
@@ -48,10 +48,7 @@ const WalletOptionsList: React.FC<WalletOptionsListProps> = ({
         >
           <span>{name}</span>
           {disclaimer && (
-            <div
-              className={styles.warningIconContainer}
-              title={`Warning: ${disclaimer}`}
-            >
+            <div className={styles.warningIconContainer} title={`Warning: ${disclaimer}`}>
               <Image
                 src="/icons/msg_warning-0.png"
                 alt="Warning"

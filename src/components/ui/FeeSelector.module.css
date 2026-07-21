@@ -56,8 +56,7 @@
 }
 
 .customInputError {
-  border-color: var(--win98-red) var(--win98-red) var(--win98-red)
-    var(--win98-red);
+  border-color: var(--win98-red) var(--win98-red) var(--win98-red) var(--win98-red);
   background-color: #fff8f8;
 }
 

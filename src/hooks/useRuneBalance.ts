@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { type RuneBalance as OrdiscanRuneBalance } from '@/types/ordiscan';
+import type { RuneBalance as OrdiscanRuneBalance } from '@/types/ordiscan';
 import { normalizeRuneName } from '@/utils/runeUtils';
 
 /**

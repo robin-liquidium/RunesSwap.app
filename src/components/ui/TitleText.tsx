@@ -39,7 +39,7 @@ const FUNNY_TEXTS = [
  * Component that displays a rotating title text in the header.
  * Cycles through a list of funny or informative messages.
  */
-export function TitleText() {
+function TitleText() {
   const [currentText, setCurrentText] = useState(DEFAULT_TITLE);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const textsRef = useRef(shuffleTexts());
@@ -84,13 +84,10 @@ export function TitleText() {
       clearTimeout(initialTimer);
       if (interval) clearInterval(interval);
     };
-  }, [currentText]);
+  }, [currentText, shuffleTexts]);
 
   return (
-    <span
-      className={styles.titleText}
-      style={{ opacity: isTransitioning ? 0 : 1 }}
-    >
+    <span className={styles.titleText} style={{ opacity: isTransitioning ? 0 : 1 }}>
       {currentText}
     </span>
   );

@@ -32,10 +32,7 @@ export const validators = {
     .trim()
     .min(1, 'Rune name is required')
     .max(32, 'Rune name too long')
-    .regex(
-      /^[A-Z•.]+$/,
-      'Rune name must be uppercase letters and spacers only',
-    ),
+    .regex(/^[A-Z•.]+$/, 'Rune name must be uppercase letters and spacers only'),
 
   // Amount validation (can be string or number, converted to string)
   // Note: we sanitize localized strings (e.g., "1.234,56") at the API boundary
@@ -75,8 +72,7 @@ export const validators = {
   optionalPositiveInt: z.number().int().positive().optional(),
 
   // Boolean with default
-  booleanWithDefault: (defaultValue: boolean) =>
-    z.boolean().default(defaultValue),
+  booleanWithDefault: (defaultValue: boolean) => z.boolean().default(defaultValue),
 
   // Non-empty string
   nonEmptyString: z.string().trim().min(1, 'Field cannot be empty'),
@@ -127,10 +123,7 @@ export const requestSchemas = {
   runeInfoByIdRequest: z.object({
     runeId: z
       .string()
-      .regex(
-        /^\d+(?::\d+){1,2}$/,
-        'Invalid runeId format (expected block:tx or block:tx:index)',
-      ),
+      .regex(/^\d+(?::\d+){1,2}$/, 'Invalid runeId format (expected block:tx or block:tx:index)'),
   }),
 
   // Search request
@@ -158,127 +151,5 @@ export const requestSchemas = {
     collateralAmount: validators.amount,
     loanDurationDays: validators.positiveInt,
     ltv: z.number().min(0.1).max(0.9),
-  }),
-};
-
-// Response schemas for type safety
-export const responseSchemas = {
-  // Standard API response
-  apiResponse: <T>(dataSchema: z.ZodSchema<T>) =>
-    z.object({
-      success: z.boolean(),
-      data: dataSchema.optional(),
-      error: z
-        .object({
-          message: z.string(),
-          details: z.string().optional(),
-        })
-        .optional(),
-    }),
-
-  // Paginated response
-  paginatedResponse: <T>(itemSchema: z.ZodSchema<T>) =>
-    z.object({
-      success: z.boolean(),
-      data: z
-        .object({
-          items: z.array(itemSchema),
-          total: z.number(),
-          page: z.number(),
-          limit: z.number(),
-          hasMore: z.boolean(),
-        })
-        .optional(),
-      error: z
-        .object({
-          message: z.string(),
-          details: z.string().optional(),
-        })
-        .optional(),
-    }),
-
-  // Quote response
-  quoteResponse: z.object({
-    success: z.boolean(),
-    data: z
-      .object({
-        price: z.string(),
-        totalPrice: z.string(),
-        formattedAmount: z.string(),
-        feeRate: z.number(),
-        estimatedTxSize: z.number(),
-        slippage: z.number().optional(),
-      })
-      .optional(),
-  }),
-};
-
-// Helper function to create paginated query schema
-export function createPaginatedQuerySchema(
-  additionalFields: z.ZodRawShape = {},
-) {
-  const baseSchema = {
-    page: z.coerce.number().int().min(1).default(1),
-    limit: z.coerce.number().int().min(1).max(100).default(20),
-    sort: z.string().optional(),
-    order: z.enum(['asc', 'desc']).default('desc'),
-  };
-
-  return z.object({
-    ...baseSchema,
-    ...additionalFields,
-  });
-}
-
-// Helper to validate environment variables
-export const envSchema = z.object({
-  SATS_TERMINAL_API_KEY: z.string().min(1),
-  ORDISCAN_API_KEY: z.string().min(1),
-  RUNES_FLOOR_API_KEY: z.string().min(1),
-  LIQUIDIUM_API_KEY: z.string().min(1),
-  SATS_TERMINAL_FORCED_FEE_RATE: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || (!Number.isNaN(Number(val)) && Number(val) > 0),
-      'SATS_TERMINAL_FORCED_FEE_RATE must be a positive number when provided',
-    ),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  // Optional mock address to enable quotes before wallet connection
-  NEXT_PUBLIC_QUOTE_MOCK_ADDRESS: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || validateBitcoinAddress(val),
-      'NEXT_PUBLIC_QUOTE_MOCK_ADDRESS must be a valid Bitcoin address when provided',
-    ),
-});
-
-// Export commonly used composed schemas
-export const commonSchemas = {
-  // Basic rune data
-  runeData: z.object({
-    name: validators.runeName,
-    spacedName: validators.optionalNonEmptyString,
-    symbol: validators.optionalNonEmptyString,
-    decimals: validators.decimals,
-    totalSupply: validators.optionalNonEmptyString,
-    mintedSupply: validators.optionalNonEmptyString,
-  }),
-
-  // Market data
-  marketData: z.object({
-    floorPriceSats: validators.optionalPositiveInt,
-    listedCount: validators.optionalPositiveInt,
-    holders: validators.optionalPositiveInt,
-    marketCapSats: validators.optionalNonEmptyString,
-  }),
-
-  // Wallet connection
-  walletConnection: z.object({
-    address: validators.btcAddress,
-    publicKey: validators.nonEmptyString,
-    provider: z.enum(['unisat', 'xverse', 'leather', 'phantom', 'okx']),
   }),
 };

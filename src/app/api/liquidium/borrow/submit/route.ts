@@ -1,11 +1,10 @@
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 
+import { enforceLiquidiumRateLimit, requireLiquidiumJwt } from '@/app/api/liquidium/helpers';
 import { fail, ok } from '@/lib/apiResponse';
 import { handleApiError, validateRequest } from '@/lib/apiUtils';
-import { getLiquidiumJwt } from '@/lib/liquidiumAuth';
 import { createLiquidiumClient } from '@/lib/liquidiumSdk';
-import { enforceRateLimit } from '@/lib/rateLimit';
 import type { StartLoanService } from '@/sdk/liquidium/services/StartLoanService';
 
 // Schema for request body
@@ -33,22 +32,18 @@ export async function POST(request: NextRequest) {
     return validation.errorResponse;
   }
   // Rate limit: 30 req/min per IP
-  const limited = enforceRateLimit(request, {
-    key: 'liquidium:borrow:submit',
-    limit: 30,
-    windowMs: 60_000,
-  });
+  const limited = enforceLiquidiumRateLimit(request, 'borrow:submit');
   if (limited) return limited;
   // Exclude 'address' from the data sent to Liquidium
   const { address, ...liquidiumPayload } = validation.data;
 
   try {
     // 1. Get User JWT from Supabase
-    const jwt = await getLiquidiumJwt(address);
-    if (typeof jwt !== 'string') {
-      return jwt;
+    const jwtResult = await requireLiquidiumJwt(address);
+    if ('errorResponse' in jwtResult) {
+      return jwtResult.errorResponse;
     }
-    const userJwt = jwt;
+    const userJwt = jwtResult.jwt;
 
     // 2. Call Liquidium API via SDK
     try {
@@ -63,28 +58,20 @@ export async function POST(request: NextRequest) {
         prepare_offer_id: liquidiumPayload.prepare_offer_id,
       };
 
-      const response = await client.startLoan.postApiV1BorrowerLoansStartSubmit(
-        {
-          requestBody: sdkPayload,
-        },
-      );
+      const response = await client.startLoan.postApiV1BorrowerLoansStartSubmit({
+        requestBody: sdkPayload,
+      });
 
       return ok(response);
     } catch (error) {
-      const errorInfo = handleApiError(
-        error,
-        'Failed to submit borrow transaction',
-      );
+      const errorInfo = handleApiError(error, 'Failed to submit borrow transaction');
       return fail(errorInfo.message, {
         status: errorInfo.status,
         ...(errorInfo.details ? { details: errorInfo.details } : {}),
       });
     }
   } catch (error) {
-    const errorInfo = handleApiError(
-      error,
-      'Failed to submit borrow transaction',
-    );
+    const errorInfo = handleApiError(error, 'Failed to submit borrow transaction');
     return fail(errorInfo.message, {
       status: errorInfo.status,
       ...(errorInfo.details ? { details: errorInfo.details } : {}),

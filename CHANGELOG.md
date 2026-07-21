@@ -27,16 +27,43 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Updated all direct runtime and development dependencies to their latest compatible releases, including Next.js 16.2, React 19.2, Zod 4, Recharts 3, Jest 30, Biome 2.5, and the supported TypeScript 7/6 compatibility pairing.
+- Updated the Bun runtime pin and CI actions, simplified the changelog gate around `Unreleased`, and prevented already-tagged releases from being republished on ordinary changelog merges.
+- Refreshed transitive security overrides, including Sharp 0.35, to the latest patched releases available through the current dependency graph.
+- Replaced stale machine-specific agent-instruction symlinks with portable repository-local pointers.
+- Added `knip` v6 dead-code checks with a repo-specific `knip.json` and wired `bun run knip` into the canonical `ai-check` pipeline.
+- Replaced the umbrella `satsterminal-sdk` dependency with the swaps-only `@satsterminal-sdk/swaps` package and aligned it to `1.6.31`.
+- Hard-cutover navigation to canonical routes (`/swap`, `/borrow`, `/runes-info`, `/your-txs`, `/portfolio`) and made `/` redirect to `/swap`.
+- Removed legacy tab query/event plumbing (`/?tab=...`, `tabChange` custom events, and tab state URL syncing via `pushState`).
+- Added architecture guardrails (`lint:architecture`) and enforced them in CI to block barrel imports, tab-event patterns, and oversized modules without waivers.
+- Added App Router fault boundaries (`app/error.tsx`, `app/global-error.tsx`, `app/not-found.tsx`) and aligned route patterns with current Next.js guidance.
+- Refactored swap quote/execution orchestration into smaller helper modules and standardized query key usage through the shared `queryKeys` factory.
 - Enforced Zod validation and standardized `ok`/`fail` across APIs; set `dynamic = 'force-static'` on static GETs.
 - Strict Mode effect cleanups (timers/listeners) for predictable behavior.
 - Re-enabled build-time linting.
 - Simplified Husky hooks to use lint-staged in pre-commit and checks in pre-push.
-- Migrated to ESLint 9 flat config and Prettier 3 config.
-- Scoped Next.js ESLint dirs and minor next.config.ts tidy.
+- Migrated linting/formatting from ESLint + Prettier + Stylelint to Biome with a single repo-wide config.
+- Migrated package management and project scripts from pnpm to Bun, including CI and Git hooks.
+- Standardized Husky validation by running the canonical `bun run ai-check` pipeline on `pre-push`.
 - Reduced unnecessary quote requests and improved swap percentage helpers.
 - Upgraded Next.js and eslint-config-next to 15.5.18, ignored generated next-env.d.ts output in ESLint, and updated vulnerable dependency paths including Vite, Axios, Rollup, Fast URI, and Handlebars.
+- Upgraded Next.js and related ESLint config to 15.2.6.
+- Upgraded dependency set to supersede Dependabot PRs for `react-markdown`, `@commitlint/cli`, `@commitlint/config-conventional`, `typescript`, `jsdom`, `@types/jsdom`, and `prettier`.
+- Upgraded `next`, `eslint-config-next`, `@next/eslint-plugin-next`, and `@next/bundle-analyzer` to `15.5.10`.
+- Upgraded to Next.js `16.1.6` and aligned core frontend/tooling packages to latest compatible releases (`react`, `react-dom`, `@types/react`, `@types/react-dom`, `@types/node`, `@supabase/supabase-js`, `@tanstack/react-query`, `@headlessui/react`, `zustand`, `ordiscan`, `satsterminal-sdk`, `lint-staged`, and others).
+- Removed deprecated `eslint` config from `next.config.ts` for Next.js 16 compatibility.
+- Upgraded `@omnisat/lasereyes` to `0.0.163`.
 
 ### Fixed
+- Routed CoinGecko Pro keys to the Pro API host, handled repeated swap rune parameters safely, and made the changelog gate require an actual new `Unreleased` bullet.
+- Made the architecture lint self-contained so it also runs on CI hosts without ripgrep installed.
+- Added fallback rune search providers when SatsTerminal's search endpoint is unavailable, while preserving the existing `/api/sats-terminal/search` contract.
+- Moved BTC/USD price fetching behind a server-side proxy route to avoid brittle browser-side CoinGecko requests.
+- Corrected stale README guidance after the dead-code cleanup removed `src/lib/env.ts`.
+- Removed dead files, duplicate exports, stale test/helpers, and outdated package/config surface found by knip while preserving current app behavior.
+- Removed unused legacy Liquidium loan/collateral type declarations caught by the upgraded dead-code checks.
+- Eliminated runtime dependency on legacy tab events and query-driven tab selection after route cutover.
+- Removed lint and type regressions introduced during the cleanup extraction pass (`swapExecution` helper typing and Biome compliance).
 - Logging consistency: replaced stray `console.*` with `logger` in APIs; reduced noisy logs.
 - Enforced Zod response validation in `src/app/api/ordiscan/btc-balance/route.ts`.
 - Replaced ad-hoc query checks with Zod-based validation in `src/app/api/ordiscan/rune-info-by-id/route.ts`.
@@ -48,7 +75,13 @@
 - PSBT creation now respects the client-provided fee rate with an optional `SATS_TERMINAL_FORCED_FEE_RATE` override for emergencies.
 - Quote display formatting now stays in Big.js to avoid precision loss; BTC balance display uses Big-based formatter.
 - PSBT confirmation error handling uses typed guards and proper 4xx responses instead of ad-hoc Response casting.
-- CI: pnpm is set up before the Node cache to keep pnpm caching effective.
+- CI now installs dependencies with Bun (`bun ci`) for lockfile-consistent builds.
+- Security patch: pinned transitive `diff` to `4.0.4` via top-level `overrides` to resolve the outstanding Dependabot alert.
+- Security hardening: added top-level `overrides` for transitive `axios`, `esbuild`, `lodash`, `valibot`, and `vite` to pull patched releases.
+- Updated `AssetSelectorDropdown` to satisfy Headless UI v2.2.9 Listbox typing when no selection exists.
+- Updated Jest config to map `@omnisat/lasereyes` to a local test mock so the ESM-only LaserEyes build works with the current Jest runtime.
+- Added a Node-version-aware Next build wrapper that sets a valid `--localstorage-file` path when supported to prevent noisy build-time warnings.
+- Removed deprecated `legacyBehavior` usage from `next/link` in the app footer for Next.js 16 compatibility.
 
 All notable changes to this project will be documented in this file.
 

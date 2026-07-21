@@ -1,10 +1,10 @@
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
 import { act, renderHook } from '@testing-library/react';
-import { QuoteResponse } from 'satsterminal-sdk';
 import { initialSwapProcessState } from '@/components/swap/SwapProcessManager';
-import { BTC_ASSET } from '@/types/common';
 import useSwapExecution from '@/hooks/useSwapExecution';
+import { BTC_ASSET } from '@/types/common';
 
-jest.mock('@/lib/api', () => ({
+jest.mock('@/lib/api/satsTerminal', () => ({
   getPsbtFromApi: jest.fn(),
   confirmPsbtViaApi: jest.fn(),
 }));
@@ -14,9 +14,8 @@ jest.mock('@/hooks/useFeeRates', () => ({
   default: jest.fn(),
 }));
 
-const { getPsbtFromApi, confirmPsbtViaApi } = jest.requireMock('@/lib/api');
-const useFeeRates = jest.requireMock('@/hooks/useFeeRates')
-  .default as jest.Mock;
+const { getPsbtFromApi, confirmPsbtViaApi } = jest.requireMock('@/lib/api/satsTerminal');
+const useFeeRates = jest.requireMock('@/hooks/useFeeRates').default as jest.Mock;
 
 type HookProps = Parameters<typeof useSwapExecution>[0];
 
@@ -30,9 +29,7 @@ const createBaseProps = (overrides: Partial<HookProps> = {}): HookProps => ({
   assetIn: BTC_ASSET,
   assetOut: { id: 'RUNE', name: 'RUNE', imageURI: 'test-image-uri' },
   quote: {
-    selectedOrders: [
-      { id: '1', market: 'RUNE/BTC', price: 1, formattedAmount: 1 },
-    ],
+    selectedOrders: [{ id: '1', market: 'RUNE/BTC', price: 1, formattedAmount: 1 }],
   } as unknown as QuoteResponse,
   quoteTimestamp: Date.now(),
   swapState: initialSwapProcessState,
@@ -77,20 +74,17 @@ describe('useSwapExecution', () => {
     },
   ];
 
-  test.each(swapScenarios)(
-    'handles $name',
-    async ({ setup, props, expectedActions }) => {
-      setup();
-      const hookProps = createBaseProps(props);
-      const { result } = renderHook(() => useSwapExecution(hookProps));
+  test.each(swapScenarios)('handles $name', async ({ setup, props, expectedActions }) => {
+    setup();
+    const hookProps = createBaseProps(props);
+    const { result } = renderHook(() => useSwapExecution(hookProps));
 
-      await act(async () => result.current.handleSwap());
+    await act(async () => result.current.handleSwap());
 
-      expectedActions.forEach((action) => {
-        expect(hookProps.dispatchSwap).toHaveBeenCalledWith(action);
-      });
-    },
-  );
+    expectedActions.forEach((action) => {
+      expect(hookProps.dispatchSwap).toHaveBeenCalledWith(action);
+    });
+  });
 
   it('retries with higher fee rate on fee error', async () => {
     let call = 0;
@@ -110,8 +104,7 @@ describe('useSwapExecution', () => {
     expect(getPsbtFromApi).toHaveBeenCalledTimes(2);
     expect(props.dispatchSwap).toHaveBeenCalledWith({
       type: 'SET_GENERIC_ERROR',
-      error:
-        'Fee rate too low, automatically retrying with a higher fee rate...',
+      error: 'Fee rate too low, automatically retrying with a higher fee rate...',
     });
     expect(props.dispatchSwap).toHaveBeenCalledWith({
       type: 'SWAP_SUCCESS',

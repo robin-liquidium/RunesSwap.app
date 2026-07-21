@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 import styles from '@/components/ui/FeeSelector.module.css';
 import useFeeRates from '@/hooks/useFeeRates';
@@ -7,7 +8,7 @@ import { parseAmount } from '@/utils/formatters';
 /**
  * Available fee options.
  */
-export type FeeOption = 'slow' | 'medium' | 'fast' | 'custom';
+type FeeOption = 'slow' | 'medium' | 'fast' | 'custom';
 
 /**
  * Props for the FeeSelector component.
@@ -27,10 +28,7 @@ const ALL_OPTIONS: FeeOption[] = ['slow', 'medium', 'fast', 'custom'];
  *
  * @param props - Component props.
  */
-const FeeSelector: React.FC<FeeSelectorProps> = ({
-  onChange,
-  availableOptions = ALL_OPTIONS,
-}) => {
+const FeeSelector: React.FC<FeeSelectorProps> = ({ onChange, availableOptions = ALL_OPTIONS }) => {
   const { data: fees } = useFeeRates();
   const [option, setOption] = useState<FeeOption>('medium');
   const [custom, setCustom] = useState('');
@@ -45,7 +43,7 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({
     if (!availableOptions.includes(option)) {
       setOption(availableOptions[0] ?? 'medium');
     }
-  }, [availableOptions.join('|')]);
+  }, [availableOptions.includes, option, availableOptions[0]]);
 
   useEffect(() => {
     if (!fees) return;
@@ -55,9 +53,7 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({
     else if (option === 'custom') {
       const customRate = parseAmount(custom) || 0;
       if (customRate < medium && custom !== '') {
-        setValidationError(
-          `Custom fee must be at least ${medium} sats/vB (medium fee)`,
-        );
+        setValidationError(`Custom fee must be at least ${medium} sats/vB (medium fee)`);
         rate = medium; // Use medium as fallback
       } else {
         setValidationError('');
@@ -75,12 +71,10 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({
     }
 
     const numValue = parseAmount(value);
-    if (isNaN(numValue)) {
+    if (Number.isNaN(numValue)) {
       setValidationError('Please enter a valid number');
     } else if (numValue < medium) {
-      setValidationError(
-        `Custom fee must be at least ${medium} sats/vB (medium fee)`,
-      );
+      setValidationError(`Custom fee must be at least ${medium} sats/vB (medium fee)`);
     } else {
       setValidationError('');
     }
@@ -131,12 +125,8 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({
             />
             <span className={styles.customInputLabel}>sats/vB</span>
           </div>
-          {validationError && (
-            <div className={styles.validationError}>{validationError}</div>
-          )}
-          <div className={styles.customInputHint}>
-            Minimum: {medium} sats/vB (medium fee)
-          </div>
+          {validationError && <div className={styles.validationError}>{validationError}</div>}
+          <div className={styles.customInputHint}>Minimum: {medium} sats/vB (medium fee)</div>
         </div>
       )}
     </div>

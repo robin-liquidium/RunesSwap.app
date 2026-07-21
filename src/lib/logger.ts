@@ -3,23 +3,15 @@
  * Replaces scattered console.error() calls with standardized logging
  */
 
-export enum LogLevel {
+enum LogLevel {
   DEBUG = 0,
   INFO = 1,
   WARN = 2,
   ERROR = 3,
 }
 
-export interface LogContext {
+interface LogContext {
   [key: string]: unknown;
-}
-
-export interface LogEntry {
-  level: LogLevel;
-  message: string;
-  context?: LogContext;
-  timestamp: string;
-  component?: string;
 }
 
 class Logger {
@@ -36,12 +28,7 @@ class Logger {
     }
   }
 
-  private log(
-    level: LogLevel,
-    message: string,
-    context?: LogContext,
-    component?: string,
-  ): void {
+  private log(level: LogLevel, message: string, context?: LogContext, component?: string): void {
     if (level < this.minLevel) return;
     // Extra guard: silence non-error logs during tests to keep Jest output clean
     if (process.env.NODE_ENV === 'test' && level < LogLevel.ERROR) return;
@@ -128,6 +115,3 @@ export const logDbError = (operation: string, error: unknown): void => {
     error: error instanceof Error ? error.message : String(error),
   });
 };
-
-// For backward compatibility, export as default
-export default logger;

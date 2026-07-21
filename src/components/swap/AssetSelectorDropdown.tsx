@@ -1,7 +1,8 @@
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
-import React, { Fragment } from 'react';
+import type React from 'react';
+import { Fragment } from 'react';
 
 import RuneIcon from '@/components/runes/RuneIcon';
 import styles from '@/components/swap/InputArea.module.css';
@@ -58,18 +59,19 @@ const AssetSelectorDropdown: React.FC<AssetSelectorDropdownProps> = ({
 }) => {
   return (
     <div className={styles.listboxContainer}>
-      <Listbox
-        value={selectedAsset}
-        onChange={onAssetChange}
+      <Listbox<typeof Fragment, Asset | null>
+        as={Fragment}
+        value={selectedAsset ?? null}
+        onChange={(asset) => {
+          if (asset) onAssetChange(asset);
+        }}
         disabled={disabled || isAssetsLoading || isPreselectedAssetLoading}
       >
         <div className={styles.listboxRelative}>
           <Listbox.Button className={styles.listboxButton}>
             <span className={styles.listboxButtonText}>
               {isPreselectedAssetLoading ? (
-                <span className={styles.loadingText}>
-                  Loading Rune{loadingDots}
-                </span>
+                <span className={styles.loadingText}>Loading Rune{loadingDots}</span>
               ) : (
                 <>
                   <RuneIcon
@@ -88,10 +90,7 @@ const AssetSelectorDropdown: React.FC<AssetSelectorDropdownProps> = ({
               )}
             </span>
             <span className={styles.listboxButtonIconContainer}>
-              <ChevronUpDownIcon
-                className={styles.listboxButtonIcon}
-                aria-hidden="true"
-              />
+              <ChevronUpDownIcon className={styles.listboxButtonIcon} aria-hidden="true" />
             </span>
           </Listbox.Button>
           <Transition
@@ -121,14 +120,10 @@ const AssetSelectorDropdown: React.FC<AssetSelectorDropdownProps> = ({
               </div>
 
               {isAssetsLoading && (
-                <div className={styles.listboxLoadingOrEmpty}>
-                  Loading Runes{loadingDots}
-                </div>
+                <div className={styles.listboxLoadingOrEmpty}>Loading Runes{loadingDots}</div>
               )}
               {!isAssetsLoading && assetsError && (
-                <div
-                  className={`${styles.listboxError} ${styles.messageWithIcon}`}
-                >
+                <div className={`${styles.listboxError} ${styles.messageWithIcon}`}>
                   <Image
                     src="/icons/msg_error-0.png"
                     alt="Error"
@@ -139,21 +134,15 @@ const AssetSelectorDropdown: React.FC<AssetSelectorDropdownProps> = ({
                   <span>{assetsError}</span>
                 </div>
               )}
-              {!isAssetsLoading &&
-                !assetsError &&
-                availableAssets.length === 0 && (
-                  <div className={styles.listboxLoadingOrEmpty}>
-                    {searchQuery
-                      ? 'No matching runes found'
-                      : 'No runes available'}
-                  </div>
-                )}
+              {!isAssetsLoading && !assetsError && availableAssets.length === 0 && (
+                <div className={styles.listboxLoadingOrEmpty}>
+                  {searchQuery ? 'No matching runes found' : 'No runes available'}
+                </div>
+              )}
 
               {showBtcInSelector &&
                 (searchQuery.trim() === '' ||
-                  BTC_ASSET.name
-                    .toLowerCase()
-                    .includes(searchQuery.trim().toLowerCase())) && (
+                  BTC_ASSET.name.toLowerCase().includes(searchQuery.trim().toLowerCase())) && (
                   <Listbox.Option
                     key={BTC_ASSET.id}
                     className={({ active }) =>

@@ -30,7 +30,7 @@ export interface RuneRecord {
   last_updated_at?: string;
 }
 
-export interface RuneMarketRecord {
+interface RuneMarketRecord {
   rune_name: string;
   price_in_sats?: number;
   price_in_usd?: number;
@@ -42,15 +42,10 @@ export interface RuneMarketRecord {
 /**
  * Batch fetch rune information by names
  */
-export async function batchFetchRunes(
-  runeNames: string[],
-): Promise<RuneRecord[]> {
+export async function batchFetchRunes(runeNames: string[]): Promise<RuneRecord[]> {
   if (runeNames.length === 0) return [];
 
-  const { data, error } = await supabase
-    .from('runes')
-    .select('*')
-    .in('name', runeNames);
+  const { data, error } = await supabase.from('runes').select('*').in('name', runeNames);
 
   if (error) {
     logDbError('batchFetchRunes', error);
@@ -63,9 +58,7 @@ export async function batchFetchRunes(
 /**
  * Batch fetch market data by rune names
  */
-export async function batchFetchRuneMarketData(
-  runeNames: string[],
-): Promise<RuneMarketRecord[]> {
+export async function batchFetchRuneMarketData(runeNames: string[]): Promise<RuneMarketRecord[]> {
   if (runeNames.length === 0) return [];
 
   const { data, error } = await supabase
@@ -148,14 +141,8 @@ export async function upsertRuneMarketData(
 /**
  * Get single rune by name with fallback
  */
-export async function fetchRuneByName(
-  runeName: string,
-): Promise<RuneRecord | null> {
-  const { data, error } = await supabase
-    .from('runes')
-    .select('*')
-    .eq('name', runeName)
-    .single();
+export async function fetchRuneByName(runeName: string): Promise<RuneRecord | null> {
+  const { data, error } = await supabase.from('runes').select('*').eq('name', runeName).single();
 
   if (error) {
     if (error.code !== 'PGRST116') {
@@ -192,59 +179,4 @@ export async function fetchRuneMarketDataByName(
   }
 
   return data;
-}
-
-/**
- * Batch insert/update multiple runes efficiently
- */
-export async function batchUpsertRunes(runesData: RuneData[]): Promise<number> {
-  if (runesData.length === 0) return 0;
-
-  const dataToInsert: RuneRecord[] = runesData.map((rune) => ({
-    name: rune.name,
-    formatted_name: rune.formatted_name,
-    spacers: rune.spacers,
-    number: rune.number,
-    inscription_id: rune.inscription_id,
-    decimals: rune.decimals,
-    mint_count_cap: rune.mint_count_cap,
-    symbol: rune.symbol,
-    etching_txid: rune.etching_txid,
-    amount_per_mint: rune.amount_per_mint,
-    timestamp_unix: rune.timestamp_unix,
-    premined_supply: rune.premined_supply,
-    mint_start_block: rune.mint_start_block,
-    mint_end_block: rune.mint_end_block,
-    current_supply: rune.current_supply,
-    current_mint_count: rune.current_mint_count,
-  }));
-
-  const { error } = await supabase
-    .from('runes')
-    .upsert(dataToInsert, { onConflict: 'name' });
-
-  if (error) {
-    logDbError('batchUpsertRunes', error);
-    return 0;
-  }
-
-  return runesData.length;
-}
-
-/**
- * Clean up old market data to prevent database bloat
- */
-export async function cleanupOldMarketData(olderThanHours = 24): Promise<void> {
-  const cutoffTime = new Date(
-    Date.now() - olderThanHours * 3600000,
-  ).toISOString();
-
-  const { error } = await supabase
-    .from('rune_market_data')
-    .delete()
-    .lt('last_updated_at', cutoffTime);
-
-  if (error) {
-    logDbError('cleanupOldMarketData', error);
-  }
 }

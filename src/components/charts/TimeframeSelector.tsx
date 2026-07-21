@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/layout/AppInterface.module.css';
 import type { Timeframe } from '@/hooks/usePriceChart';
@@ -20,10 +20,7 @@ const TIMEFRAMES: Timeframe[] = ['24h', '7d', '30d', '90d'];
  *
  * @param props - Component props.
  */
-const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({
-  timeframe,
-  onChange,
-}) => (
+const TimeframeSelector: React.FC<TimeframeSelectorProps> = ({ timeframe, onChange }) => (
   <div className={styles.timeframeSelectorBottom}>
     {TIMEFRAMES.map((tf) => (
       <button

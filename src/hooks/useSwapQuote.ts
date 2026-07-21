@@ -1,20 +1,19 @@
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
 import Big from 'big.js';
 import { useCallback, useEffect, useRef } from 'react';
-import { type QuoteResponse } from 'satsterminal-sdk';
 import { useDebounce } from 'use-debounce';
 
-import type {
-  SwapProcessAction,
-  SwapProcessState,
-} from '@/components/swap/SwapProcessManager';
-import { fetchQuoteFromApi } from '@/lib/api';
+import type { SwapProcessAction, SwapProcessState } from '@/components/swap/SwapProcessManager';
+import {
+  buildQuoteRequestKey,
+  getEffectiveQuoteAddress,
+  normalizeQuoteErrorMessage,
+} from '@/hooks/swapQuote/helpers';
+import { fetchQuoteFromApi } from '@/lib/api/satsTerminal';
 import { logger } from '@/lib/logger';
 import type { Asset } from '@/types/common';
 import { parseAmount, sanitizeForBig } from '@/utils/formatting';
 import { computeQuoteDisplay } from '@/utils/quoteUtils';
-
-const MOCK_ADDRESS = process.env.NEXT_PUBLIC_QUOTE_MOCK_ADDRESS;
-const DEFAULT_READONLY_ADDRESS = '34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo';
 
 interface UseSwapQuoteArgs {
   inputAmount: string;
@@ -56,7 +55,7 @@ interface UseSwapQuoteArgs {
  *   - quoteKeyRef: ref containing the current quote key used to avoid redundant fetches,
  *   - isThrottledRef: ref boolean indicating whether quote requests are currently throttled.
  */
-export function useSwapQuote({
+function useSwapQuote({
   inputAmount,
   assetIn,
   assetOut,
@@ -74,10 +73,7 @@ export function useSwapQuote({
 }: UseSwapQuoteArgs) {
   // Parse for debouncing using centralized helper
   const parsedInput = parseAmount(inputAmount) || 0;
-  const [debouncedInputAmount] = useDebounce(
-    parsedInput > 0 ? parsedInput : 0,
-    1500,
-  );
+  const [debouncedInputAmount] = useDebounce(parsedInput > 0 ? parsedInput : 0, 1500);
 
   const throttleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isThrottledRef = useRef(false);
@@ -106,10 +102,7 @@ export function useSwapQuote({
 
     const requestId = ++latestQuoteRequestId.current;
     // Allow quotes without connection by using an optional mock address or a default read-only address
-    const effectiveAddress =
-      address ||
-      (MOCK_ADDRESS ? String(MOCK_ADDRESS) : undefined) ||
-      DEFAULT_READONLY_ADDRESS;
+    const effectiveAddress = getEffectiveQuoteAddress(address);
 
     dispatchSwap({ type: 'FETCH_QUOTE_START' });
     setOutputAmount('');
@@ -117,10 +110,7 @@ export function useSwapQuote({
     setExchangeRate(null);
 
     try {
-      if (
-        (assetIn?.isBTC && assetOut?.isBTC) ||
-        (!assetIn?.isBTC && !assetOut?.isBTC)
-      ) {
+      if ((assetIn?.isBTC && assetOut?.isBTC) || (!assetIn?.isBTC && !assetOut?.isBTC)) {
         dispatchSwap({
           type: 'FETCH_QUOTE_ERROR',
           error: 'Invalid asset pair selected.',
@@ -147,49 +137,20 @@ export function useSwapQuote({
       if (requestId === latestQuoteRequestId.current) {
         setQuote(quoteResponse ?? null);
         setQuoteTimestamp(Date.now());
-        const { outputAmountDisplay, exchangeRateDisplay } =
-          computeQuoteDisplay({
-            inputAmount,
-            assetIn,
-            assetOut,
-            quote: quoteResponse,
-            btcPriceUsd,
-          });
+        const { outputAmountDisplay, exchangeRateDisplay } = computeQuoteDisplay({
+          inputAmount,
+          assetIn,
+          assetOut,
+          quote: quoteResponse,
+          btcPriceUsd,
+        });
         setOutputAmount(outputAmountDisplay);
         setExchangeRate(exchangeRateDisplay);
         dispatchSwap({ type: 'FETCH_QUOTE_SUCCESS' });
       }
     } catch (err) {
       if (requestId === latestQuoteRequestId.current) {
-        let errorMessage =
-          err instanceof Error ? err.message : 'Failed to fetch quote';
-
-        const lowerMessage = errorMessage.toLowerCase();
-
-        if (lowerMessage.includes('liquidity')) {
-          errorMessage =
-            'No liquidity available for this trade. Try a different amount or rune.';
-        } else if (
-          lowerMessage.includes('no orders available') ||
-          lowerMessage.includes('no valid orders') ||
-          lowerMessage.includes('no marketplace found') ||
-          lowerMessage.includes('404')
-        ) {
-          errorMessage =
-            'No orders available for this trade. Try a different amount or rune.';
-        } else if (
-          lowerMessage.includes('500') ||
-          lowerMessage.includes('internal server error')
-        ) {
-          errorMessage =
-            'Server error: The quote service is temporarily unavailable. Please try again later.';
-        } else if (
-          lowerMessage.includes('timeout') ||
-          lowerMessage.includes('network')
-        ) {
-          errorMessage =
-            'Network error: Please check your connection and try again.';
-        }
+        const errorMessage = normalizeQuoteErrorMessage(err);
 
         logger.error(
           'API Error in fetchQuote',
@@ -238,18 +199,12 @@ export function useSwapQuote({
       typeof assetOut.id === 'string' &&
       !runeAsset.isBTC;
 
-    // Allow pre-connection quotes when a mock or default read-only address is available
-    const addressKey = address || (MOCK_ADDRESS ? 'mock' : 'default');
     const currentKey =
       hasValidInputAmount && hasValidAssets
-        ? `${debouncedInputAmount}-${assetIn.id}-${assetOut.id}-${addressKey}`
+        ? buildQuoteRequestKey(debouncedInputAmount, assetIn.id, assetOut.id, address)
         : '';
 
-    if (
-      hasValidInputAmount &&
-      hasValidAssets &&
-      currentKey !== quoteKeyRef.current
-    ) {
+    if (hasValidInputAmount && hasValidAssets && currentKey !== quoteKeyRef.current) {
       // If the parameters changed, clear throttle to allow immediate fetching
       // This fixes the issue where changing input amount while loading doesn't update
       if (isThrottledRef.current) {
@@ -278,13 +233,9 @@ export function useSwapQuote({
 
       if (
         (!debouncedInputAmount || debouncedInputAmount === 0) &&
-        ![
-          'success',
-          'confirming',
-          'signing',
-          'getting_psbt',
-          'fetching_quote',
-        ].includes(swapState.swapStep) &&
+        !['success', 'confirming', 'signing', 'getting_psbt', 'fetching_quote'].includes(
+          swapState.swapStep,
+        ) &&
         !swapState.isSwapping &&
         quoteKeyRef.current !== ''
       ) {
@@ -318,6 +269,9 @@ export function useSwapQuote({
     setQuote,
     setOutputAmount,
     setExchangeRate,
+    assetOut,
+    assetIn,
+    handleFetchQuote,
   ]);
 
   useEffect(() => {

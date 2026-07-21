@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import type React from 'react';
 
 import styles from '@/components/borrow/BorrowTab.module.css';
 import Button from '@/components/ui/Button';
@@ -39,14 +39,10 @@ const BorrowSuccessMessage: React.FC<BorrowSuccessMessageProps> = ({
       <div className={styles.successContent}>
         <p className={styles.successTitle}>Loan started successfully!</p>
         <p className={styles.successDetails}>
-          Your loan has been initiated. It will appear in your portfolio
-          shortly.
+          Your loan has been initiated. It will appear in your portfolio shortly.
         </p>
         <div className={styles.successButtons}>
-          <Button
-            onClick={onViewPortfolio}
-            style={{ marginRight: 'var(--space-2)' }}
-          >
+          <Button onClick={onViewPortfolio} style={{ marginRight: 'var(--space-2)' }}>
             View Portfolio
           </Button>
           <Button onClick={onStartAnother}>Start Another Loan</Button>

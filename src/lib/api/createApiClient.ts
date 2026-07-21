@@ -10,10 +10,7 @@ type ApiResponse<T> = {
 /**
  * Simple API client for GET requests with query parameters
  */
-export function apiGet<T>(
-  endpoint: string,
-  params?: Record<string, unknown>,
-): Promise<T> {
+export function apiGet<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
   return makeApiCall('GET', endpoint, undefined, params);
 }
 
@@ -51,9 +48,7 @@ async function makeApiCall<T>(
 
     if (!response.data.success) {
       const errorMessage =
-        response.data.error?.message ??
-        response.data.error?.details ??
-        'API request failed';
+        response.data.error?.message ?? response.data.error?.details ?? 'API request failed';
       throw new Error(errorMessage);
     }
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { type QuoteResponse } from 'satsterminal-sdk';
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
+import type React from 'react';
 
 import styles from '@/components/swap/SwapButton.module.css';
 import type { Asset } from '@/types/common';
@@ -96,7 +96,7 @@ interface SwapButtonProps {
 /**
  * Button component for executing swaps with dynamic text based on swap state
  */
-export const SwapButton: React.FC<SwapButtonProps> = ({
+const SwapButton: React.FC<SwapButtonProps> = ({
   connected,
   assetIn,
   assetOut,
@@ -193,11 +193,7 @@ export const SwapButton: React.FC<SwapButtonProps> = ({
   };
 
   return (
-    <button
-      className={styles.swapButton}
-      onClick={handleClick}
-      disabled={isDisabled}
-    >
+    <button className={styles.swapButton} onClick={handleClick} disabled={isDisabled}>
       {getSwapButtonText()}
     </button>
   );

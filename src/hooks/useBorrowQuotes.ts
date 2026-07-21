@@ -2,17 +2,13 @@ import Big from 'big.js';
 import { useEffect, useState } from 'react';
 
 import usePopularRunes from '@/hooks/usePopularRunes';
-import type {
-  LiquidiumBorrowQuoteOffer,
-  LiquidiumBorrowQuoteResponse,
-} from '@/lib/api';
-import { fetchBorrowQuotesFromApi, fetchBorrowRangesFromApi } from '@/lib/api';
+import { fetchBorrowQuotesFromApi, fetchBorrowRangesFromApi } from '@/lib/api/liquidium';
 import type { RuneData } from '@/lib/runesData';
 import type { Asset } from '@/types/common';
+import type { LiquidiumBorrowQuoteOffer, LiquidiumBorrowQuoteResponse } from '@/types/liquidium';
 import { sanitizeForBig } from '@/utils/formatters';
 import { mapPopularToAsset } from '@/utils/popularRunes';
-import { convertToRawAmount } from '@/utils/runeFormatting';
-import { formatRuneAmount } from '@/utils/runeFormatting';
+import { convertToRawAmount, formatRuneAmount } from '@/utils/runeFormatting';
 import { safeArrayAccess, safeArrayFirst } from '@/utils/typeGuards';
 
 const BORROW_UNAVAILABLE_PATTERNS = [
@@ -39,7 +35,7 @@ interface UseBorrowQuotesArgs {
  * @param args - Arguments including collateral asset, amount, and user address.
  * @returns Quotes data, loading states, and functions to fetch quotes.
  */
-export function useBorrowQuotes({
+function useBorrowQuotes({
   collateralAsset,
   collateralAmount,
   address,
@@ -62,12 +58,7 @@ export function useBorrowQuotes({
   useEffect(() => {
     let cancelled = false;
     const fetchMinMaxRange = async () => {
-      if (
-        !collateralAsset ||
-        !address ||
-        collateralAsset.isBTC ||
-        !collateralRuneInfo
-      ) {
+      if (!collateralAsset || !address || collateralAsset.isBTC || !collateralRuneInfo) {
         setMinMaxRange(null);
         setBorrowRangeError(null);
         return;
@@ -106,14 +97,11 @@ export function useBorrowQuotes({
         }
       } catch (error) {
         if (cancelled) return;
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         setMinMaxRange(null);
         // Liquidium errors currently surface as strings; match known phrases while awaiting structured codes
         if (isBorrowUnavailableError(errorMessage)) {
-          setBorrowRangeError(
-            'This rune is not currently available for borrowing on Liquidium.',
-          );
+          setBorrowRangeError('This rune is not currently available for borrowing on Liquidium.');
         } else {
           setBorrowRangeError(null);
         }
@@ -151,18 +139,18 @@ export function useBorrowQuotes({
     try {
       const decimals = collateralRuneInfo?.decimals ?? 0;
       // Use centralized helper to convert display amount to raw integer string
-      const rawAmount = convertToRawAmount(
-        sanitizeForBig(collateralAmount),
-        decimals,
-      );
+      const rawAmount = convertToRawAmount(sanitizeForBig(collateralAmount), decimals);
 
       let runeIdForApi = collateralAsset.id;
       if (collateralRuneInfo?.id?.includes(':')) {
         runeIdForApi = collateralRuneInfo.id;
       }
 
-      const result: LiquidiumBorrowQuoteResponse =
-        await fetchBorrowQuotesFromApi(runeIdForApi, rawAmount, address);
+      const result: LiquidiumBorrowQuoteResponse = await fetchBorrowQuotesFromApi(
+        runeIdForApi,
+        rawAmount,
+        address,
+      );
 
       if (result?.runeDetails) {
         if (result.runeDetails.valid_ranges?.rune_amount?.ranges?.length > 0) {
@@ -180,16 +168,12 @@ export function useBorrowQuotes({
                 if (currentMax > globalMax) globalMax = currentMax;
               }
             }
-            const minFormatted = formatRuneAmount(
-              globalMin.toString(),
-              decimals,
-              { maxDecimals: 2 },
-            );
-            const maxFormatted = formatRuneAmount(
-              globalMax.toString(),
-              decimals,
-              { maxDecimals: 2 },
-            );
+            const minFormatted = formatRuneAmount(globalMin.toString(), decimals, {
+              maxDecimals: 2,
+            });
+            const maxFormatted = formatRuneAmount(globalMax.toString(), decimals, {
+              maxDecimals: 2,
+            });
             setMinMaxRange(`Min: ${minFormatted} - Max: ${maxFormatted}`);
           }
         } else {
@@ -211,8 +195,7 @@ export function useBorrowQuotes({
         setMinMaxRange(null);
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to fetch quotes.';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch quotes.';
       setQuotesError(errorMessage);
       setQuotes([]);
       setMinMaxRange(null);

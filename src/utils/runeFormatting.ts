@@ -2,27 +2,17 @@ import Big from 'big.js';
 
 import { parseAmount } from '@/utils/formatters';
 
-import {
-  convertToRawAmount,
-  formatAmountWithPrecision,
-  percentageOfRawAmount,
-  rawToDisplayAmount,
-} from './amountFormatting';
+import { convertToRawAmount, percentageOfRawAmount, rawToDisplayAmount } from './amountFormatting';
 
 // Re-export core amount utilities for convenience
-export {
-  convertToRawAmount,
-  formatAmountWithPrecision,
-  percentageOfRawAmount,
-  rawToDisplayAmount,
-};
+export { convertToRawAmount, percentageOfRawAmount };
 
 /**
  * Unified rune amount formatting utility using Big.js for precision
  * This replaces all existing formatRuneAmount implementations
  */
 
-export interface RuneFormattingOptions {
+interface RuneFormattingOptions {
   /**
    * Maximum number of decimal places to display
    * @default Uses the full precision available
@@ -53,8 +43,7 @@ export function formatRuneAmount(
     // Convert using shared utility then apply formatting
     const displayBig = new Big(rawToDisplayAmount(rawAmount, decimals));
 
-    const displayDecimals =
-      maxDecimals !== undefined ? Math.min(maxDecimals, decimals) : decimals;
+    const displayDecimals = maxDecimals !== undefined ? Math.min(maxDecimals, decimals) : decimals;
 
     let formattedString = displayBig.toFixed(displayDecimals);
 
@@ -75,10 +64,7 @@ export function formatRuneAmount(
  * @param decimals - Number of decimal places for the rune
  * @returns Actual balance as a number
  */
-export function calculateActualBalance(
-  rawAmount: string | number,
-  decimals: number,
-): number {
+export function calculateActualBalance(rawAmount: string | number, decimals: number): number {
   try {
     const displayAmount = rawToDisplayAmount(rawAmount, decimals);
     return parseAmount(displayAmount);

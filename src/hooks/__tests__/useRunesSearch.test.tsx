@@ -1,9 +1,12 @@
-import { act, renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook } from '@testing-library/react';
 import useRunesSearch from '@/hooks/useRunesSearch';
 
-jest.mock('@/lib/api', () => ({
+jest.mock('@/lib/api/satsTerminal', () => ({
   fetchRunesFromApi: jest.fn(),
+}));
+jest.mock('@/lib/api/popular', () => ({
+  fetchPopularFromApi: jest.fn().mockResolvedValue([]),
 }));
 
 jest.mock('@/store/runesInfoStore', () => ({
@@ -41,10 +44,10 @@ describe('useRunesSearch', () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
-    const { result, rerender } = renderHook(
-      (props: Props) => useRunesSearch(props),
-      { initialProps: { cachedPopularRunes: runes1 }, wrapper },
-    );
+    const { result, rerender } = renderHook((props: Props) => useRunesSearch(props), {
+      initialProps: { cachedPopularRunes: runes1 },
+      wrapper,
+    });
     expect(result.current.availableRunes.map((r) => r.id)).toEqual(['123:1']);
 
     rerender({ cachedPopularRunes: runes2 });

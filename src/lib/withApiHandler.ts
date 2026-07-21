@@ -28,22 +28,15 @@ interface ApiHandlerOptions {
 /**
  * Higher-order function that wraps API route handlers with automatic error handling
  */
-export function withApiHandler(
-  handler: ApiHandler,
-  options?: ApiHandlerOptions,
-): ApiHandler;
+export function withApiHandler(handler: ApiHandler, options?: ApiHandlerOptions): ApiHandler;
 
-export function withApiHandler(
-  handler: GetApiHandler,
-  options?: ApiHandlerOptions,
-): GetApiHandler;
+export function withApiHandler(handler: GetApiHandler, options?: ApiHandlerOptions): GetApiHandler;
 
 export function withApiHandler(
   handler: ApiHandler | GetApiHandler,
   options: ApiHandlerOptions = {},
 ): ApiHandler | GetApiHandler {
-  const { defaultErrorMessage = 'An error occurred', customErrorHandler } =
-    options;
+  const { defaultErrorMessage = 'An error occurred', customErrorHandler } = options;
 
   return async (request?: NextRequest) => {
     try {
@@ -61,11 +54,7 @@ export function withApiHandler(
       }
 
       const errorInfo = handleApiError(error, defaultErrorMessage);
-      return createErrorResponse(
-        errorInfo.message,
-        errorInfo.details,
-        errorInfo.status,
-      );
+      return createErrorResponse(errorInfo.message, errorInfo.details, errorInfo.status);
     }
   };
 }

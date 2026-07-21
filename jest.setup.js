@@ -6,8 +6,8 @@ const { cleanup } = require('@testing-library/react');
 global.IS_REACT_ACT_ENVIRONMENT = true;
 
 // Add necessary polyfills for libraries that require them
-global.TextEncoder = require('util').TextEncoder;
-global.TextDecoder = require('util').TextDecoder;
+global.TextEncoder = require('node:util').TextEncoder;
+global.TextDecoder = require('node:util').TextDecoder;
 
 // Mock fetch for Node.js environment
 global.fetch = jest.fn();

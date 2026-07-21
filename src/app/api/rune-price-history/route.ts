@@ -111,12 +111,10 @@ export const GET = withApiHandler(
 
     // Transform the data into our desired format
     // The API returns an array of price points directly
-    const prices: PriceHistoryDataPoint[] = data.map(
-      (item: PriceDataPoint) => ({
-        timestamp: new Date(item.date).getTime(), // Convert date string to timestamp
-        price: item.floor_value || 0, // Get price from floor_value
-      }),
-    );
+    const prices: PriceHistoryDataPoint[] = data.map((item: PriceDataPoint) => ({
+      timestamp: new Date(item.date).getTime(), // Convert date string to timestamp
+      price: item.floor_value || 0, // Get price from floor_value
+    }));
 
     // Make sure the available flag is set correctly
     const available = prices.length > 0;

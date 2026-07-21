@@ -54,7 +54,7 @@ export function sanitizeForBig(input: string | null | undefined): string {
   if (firstDot !== -1) {
     const intPart = mantissa.slice(0, firstDot).replace(/\./g, '');
     const fracPart = mantissa.slice(firstDot + 1).replace(/\./g, '');
-    mantissa = intPart + (fracPart ? '.' + fracPart : '');
+    mantissa = intPart + (fracPart ? `.${fracPart}` : '');
   }
   if (mantissa === '' || mantissa === '.') return '0';
 
@@ -98,10 +98,7 @@ export const truncateTxid = (txid: string, length = 8): string => {
  * @param defaultDisplay - Fallback string if input is invalid (default: 'N/A').
  * @returns Formatted number string with commas.
  */
-export function formatNumberString(
-  numStr?: string | null,
-  defaultDisplay = 'N/A',
-): string {
+export function formatNumberString(numStr?: string | null, defaultDisplay = 'N/A'): string {
   if (numStr == null) return defaultDisplay;
   if (String(numStr).trim() === '') return defaultDisplay;
   const cleaned = sanitizeForBig(numStr);
@@ -116,24 +113,10 @@ export function formatNumberString(
   }
   if (!/^[-+]?\d+(?:\.\d+)?$/.test(cleaned)) return defaultDisplay;
   const sign = cleaned.startsWith('-') ? '-' : '';
-  const [rawInt, rawDec] = cleaned.replace(/^[-+]/, '').split('.') as [
-    string,
-    string?,
-  ];
+  const [rawInt, rawDec] = cleaned.replace(/^[-+]/, '').split('.') as [string, string?];
   const intWithCommas = rawInt.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const formatted = rawDec ? `${intWithCommas}.${rawDec}` : intWithCommas;
   return sign + formatted;
-}
-
-/**
- * Formats a number with commas for thousands separator.
- * @param value - The number to format.
- * @returns Formatted number string.
- */
-export function formatNumber(value: number): string {
-  const [intPart, decPart] = value.toString().split('.') as [string, string?];
-  const withCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return decPart ? `${withCommas}.${decPart}` : withCommas;
 }
 
 /**
@@ -170,10 +153,7 @@ export function formatUsd(value: number): string {
  * @param options - Formatting options
  * @returns Formatted number string
  */
-export function formatNumberWithLocale(
-  value: number,
-  options?: Intl.NumberFormatOptions,
-): string {
+export function formatNumberWithLocale(value: number, options?: Intl.NumberFormatOptions): string {
   return value.toLocaleString(undefined, options);
 }
 
@@ -185,11 +165,7 @@ export function formatNumberWithLocale(
  * @param endChars - Number of characters to show at end (default: 4)
  * @returns Truncated address string
  */
-export function truncateAddress(
-  address: string,
-  startChars = 6,
-  endChars = 4,
-): string {
+export function truncateAddress(address: string, startChars = 6, endChars = 4): string {
   if (!address) return '';
   if (address.length <= startChars + endChars + 3) return address;
   return `${address.substring(0, startChars)}...${address.substring(address.length - endChars)}`;

@@ -2,8 +2,8 @@
  * Server-side utility functions.
  */
 
+import { SatsTerminal } from '@satsterminal-sdk/swaps';
 import { Ordiscan } from 'ordiscan';
-import { SatsTerminal } from 'satsterminal-sdk';
 
 import { logger } from '@/lib/logger';
 
@@ -61,9 +61,7 @@ export function getSatsTerminalClient(): SatsTerminal {
 /**
  * Simplified SatsTerminal client with basic error handling
  */
-function createEnhancedSatsTerminalClient(
-  terminal: SatsTerminal,
-): SatsTerminal {
+function createEnhancedSatsTerminalClient(terminal: SatsTerminal): SatsTerminal {
   const apiMethods = [
     'search',
     'popularTokens',
@@ -81,25 +79,21 @@ function createEnhancedSatsTerminalClient(
   apiMethods.forEach((methodName) => {
     const originalMethod = terminal[methodName as keyof SatsTerminal];
     if (typeof originalMethod === 'function') {
-      (wrappedTerminal as Record<string, unknown>)[methodName] = async (
-        ...args: unknown[]
-      ) => {
+      (wrappedTerminal as Record<string, unknown>)[methodName] = async (...args: unknown[]) => {
         try {
-          return await (
-            originalMethod as (...args: unknown[]) => Promise<unknown>
-          ).apply(terminal, args);
+          return await (originalMethod as (...args: unknown[]) => Promise<unknown>).apply(
+            terminal,
+            args,
+          );
         } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
+          const errorMessage = error instanceof Error ? error.message : String(error);
 
           // Handle common API issues
           if (
             errorMessage.includes('Unexpected token') ||
             errorMessage.includes('invalid json response body')
           ) {
-            throw new Error(
-              'API service temporarily unavailable. Please try again later.',
-            );
+            throw new Error('API service temporarily unavailable. Please try again later.');
           }
 
           if (errorMessage.includes('Rate limit')) {

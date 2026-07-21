@@ -1,8 +1,4 @@
-import {
-  mapPopularItems,
-  mapPopularToAsset,
-  mapPopularToRune,
-} from '@/utils/popularRunes';
+import { mapPopularItems, mapPopularToAsset, mapPopularToRune } from '@/utils/popularRunes';
 
 describe('popular runes mappers', () => {
   const items = [

@@ -2,7 +2,7 @@ import { getRuneIconUrl } from '@/utils/runeUtils';
 
 // Popular runes list - maintained manually for easy updates
 // You can modify this list directly to add/remove popular runes
-export const POPULAR_RUNES = [
+const POPULAR_RUNES = [
   {
     token_id: '840010:907',
     token: 'LIQUIDIUM•TOKEN',

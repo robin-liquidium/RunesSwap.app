@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useRef, useState } from 'react';
+import type React from 'react';
+import { useRef, useState } from 'react';
 
 import FooterComponent from '@/components/layout/FooterComponent';
 import styles from '@/components/layout/Layout.module.css';
@@ -25,9 +26,8 @@ interface LayoutProps {
  *
  * @param props - Component props.
  */
-export function Layout({ children }: LayoutProps) {
-  const { backgroundImage, setBackgroundImage, clearBackgroundImage } =
-    useBackground();
+function Layout({ children }: LayoutProps) {
+  const { backgroundImage, setBackgroundImage, clearBackgroundImage } = useBackground();
   const { btcPriceUsd, isBtcPriceLoading, btcPriceError } = useBtcPrice();
 
   // Background settings
@@ -81,18 +81,12 @@ export function Layout({ children }: LayoutProps) {
       {isSettingsOpen && (
         <div className={styles.bgSettingsPanel}>
           <div className={styles.bgSettingsContent}>
-            <button
-              className={styles.uploadButton}
-              onClick={() => fileInputRef.current?.click()}
-            >
+            <button className={styles.uploadButton} onClick={() => fileInputRef.current?.click()}>
               Upload Image
             </button>
 
             {backgroundImage && (
-              <button
-                className={styles.clearButton}
-                onClick={clearBackgroundImage}
-              >
+              <button className={styles.clearButton} onClick={clearBackgroundImage}>
                 Clear Background
               </button>
             )}
@@ -114,7 +108,7 @@ export function Layout({ children }: LayoutProps) {
       <div className={styles.window}>
         <div className={styles.titleBar}>
           <span className={styles.titleBarRow}>
-            <Link href="/?tab=swap" aria-label="Go to Swap tab">
+            <Link href="/swap" aria-label="Go to Swap tab">
               <Image
                 src="/icons/runesswap_logo.png"
                 alt="RunesSwap.app Logo"

@@ -1,5 +1,5 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -7,17 +7,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  eslint: {
-    dirs: ['src'],
-    // Re-enable build-time linting after cleanup
-    ignoreDuringBuilds: false,
+  turbopack: {
+    root: process.cwd(),
   },
   experimental: {
-    optimizePackageImports: [
-      '@heroicons/react',
-      '@headlessui/react',
-      'recharts'
-    ],
+    optimizePackageImports: ['@heroicons/react', '@headlessui/react', 'recharts'],
   },
   images: {
     remotePatterns: [

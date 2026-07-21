@@ -1,14 +1,11 @@
-import React from 'react';
-import type { QuoteResponse } from 'satsterminal-sdk';
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
+import type React from 'react';
 
-import type { SwapStep } from '@/components/swap';
-import {
-  PriceInfoPanel,
-  SwapButton,
-  SwapDirectionButton,
-  SwapStatusMessages,
-} from '@/components/swap';
-import { InputArea } from '@/components/swap/InputArea';
+import InputArea from '@/components/swap/InputArea';
+import PriceInfoPanel from '@/components/swap/PriceInfoPanel';
+import SwapButton, { type SwapStep } from '@/components/swap/SwapButton';
+import SwapDirectionButton from '@/components/swap/SwapDirectionButton';
+import SwapStatusMessages from '@/components/swap/SwapStatusMessages';
 import styles from '@/components/swap/SwapTab.module.css';
 import type { Asset } from '@/types/common';
 
@@ -78,10 +75,7 @@ interface SwapTabFormProps {
   showPriceChart: boolean;
   /** Callback to show price chart. */
   onShowPriceChart:
-    | ((
-        assetName?: string | undefined,
-        shouldToggle?: boolean | undefined,
-      ) => void)
+    | ((assetName?: string | undefined, shouldToggle?: boolean | undefined) => void)
     | undefined;
   /** Whether preselected Rune is loading. */
   isPreselectedRuneLoading: boolean;
@@ -179,12 +173,8 @@ export default function SwapTabForm({
         errorMessage={quoteError && !isQuoteLoading ? quoteError : undefined}
         bottomContent={
           quoteError && !isQuoteLoading ? (
-            <div
-              className="smallText"
-              style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
-            >
-              Please retry the swap, reconnect your wallet, or try a different
-              amount.
+            <div className="smallText" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+              Please retry the swap, reconnect your wallet, or try a different amount.
             </div>
           ) : undefined
         }

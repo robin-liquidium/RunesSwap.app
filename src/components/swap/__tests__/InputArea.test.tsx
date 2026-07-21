@@ -2,16 +2,15 @@
  * @jest-environment node
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { BTC_ASSET } from '@/types/common';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import InputArea from '@/components/swap/InputArea';
+import { BTC_ASSET } from '@/types/common';
 
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) =>
-    React.createElement('img', props),
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => React.createElement('img', props),
 }));
 
 describe('InputArea', () => {

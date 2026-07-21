@@ -1,5 +1,5 @@
+import type { ConfirmPSBTParams, Order } from '@satsterminal-sdk/swaps';
 import type { NextRequest } from 'next/server';
-import type { ConfirmPSBTParams, Order } from 'satsterminal-sdk';
 import { z } from 'zod';
 
 import { fail, ok } from '@/lib/apiResponse';
@@ -24,11 +24,7 @@ const confirmPsbtParamsSchema = z.object({
 });
 
 const handler = async (request: NextRequest) => {
-  const validation = await validateRequest(
-    request,
-    confirmPsbtParamsSchema,
-    'body',
-  );
+  const validation = await validateRequest(request, confirmPsbtParamsSchema, 'body');
   if (!validation.success) return validation.errorResponse;
   const validatedParams = validation.data;
 
@@ -60,14 +56,9 @@ const handler = async (request: NextRequest) => {
       }),
   };
 
-  const confirmResponse = (await terminal.confirmPSBT(
-    confirmParams,
-  )) as ConfirmResponse;
+  const confirmResponse = (await terminal.confirmPSBT(confirmParams)) as ConfirmResponse;
   // If the SDK returned an error field or did not include any tx id, map to a client-safe error
-  const txId =
-    confirmResponse.txid ||
-    confirmResponse.rbfProtection?.fundsPreparationTxId ||
-    null;
+  const txId = confirmResponse.txid || confirmResponse.rbfProtection?.fundsPreparationTxId || null;
 
   if (confirmResponse.error || !txId) {
     const details = confirmResponse.error || 'No transaction id returned';

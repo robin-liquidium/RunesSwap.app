@@ -4,13 +4,12 @@
 
 // Mock the external SDK modules before importing
 jest.mock('ordiscan');
-jest.mock('satsterminal-sdk');
+jest.mock('@satsterminal-sdk/swaps');
 
 import { Ordiscan } from 'ordiscan';
 
 // Loaded dynamically in each test to avoid memoization bleed
-const loadServerUtils = () =>
-  require('@/lib/serverUtils') as typeof import('@/lib/serverUtils');
+const loadServerUtils = () => require('@/lib/serverUtils') as typeof import('@/lib/serverUtils');
 const loadLogger = () => require('@/lib/logger').logger;
 
 const MockedOrdiscan = Ordiscan as jest.MockedClass<typeof Ordiscan>;
@@ -166,8 +165,7 @@ describe('serverUtils', () => {
       // Reset modules to clear any cached client
       jest.resetModules();
 
-      const { getSatsTerminalClient: getSatsTerminalClient1 } =
-        loadServerUtils();
+      const { getSatsTerminalClient: getSatsTerminalClient1 } = loadServerUtils();
       const client1 = getSatsTerminalClient1();
 
       // Second call with different API key
@@ -176,8 +174,7 @@ describe('serverUtils', () => {
       // Reset modules to clear cached client - this is the critical fix
       jest.resetModules();
 
-      const { getSatsTerminalClient: getSatsTerminalClient2 } =
-        loadServerUtils();
+      const { getSatsTerminalClient: getSatsTerminalClient2 } = loadServerUtils();
       const client2 = getSatsTerminalClient2();
 
       // Should create different clients (not cached) - the critical assertion

@@ -176,7 +176,7 @@
 
   .successButtons button {
     width: 100%;
-    margin-right: 0 !important;
+    margin-right: 0;
   }
 
   .quoteGrid {

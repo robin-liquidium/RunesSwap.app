@@ -2,13 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
-import React from 'react';
 
 import { FormattedRuneAmount } from '@/components/formatters/FormattedRuneAmount';
 import { FormattedRuneName } from '@/components/formatters/FormattedRuneName';
 import styles from '@/components/layout/AppInterface.module.css';
 import RuneIcon from '@/components/runes/RuneIcon';
-import { fetchRuneActivityFromApi } from '@/lib/api'; // Import API functions
+import { fetchRuneActivityFromApi } from '@/lib/api/ordiscan';
+import { queryKeys } from '@/lib/queryKeys';
 import type { RuneActivityEvent } from '@/types/ordiscan'; // Import types
 import { formatDateTime, truncateTxid } from '@/utils/formatters';
 import { getRuneIconUrl } from '@/utils/runeUtils';
@@ -30,7 +30,7 @@ interface YourTxsTabProps {
  *
  * @param props - Component props.
  */
-export function YourTxsTab({ connected, address }: YourTxsTabProps) {
+function YourTxsTab({ connected, address }: YourTxsTabProps) {
   // --- Query for User's Rune Transaction Activity ---
   const {
     data: runeActivity,
@@ -38,7 +38,7 @@ export function YourTxsTab({ connected, address }: YourTxsTabProps) {
     error: runeActivityError,
     // Add pagination state/controls later if needed
   } = useQuery<RuneActivityEvent[], Error>({
-    queryKey: ['runeActivityApi', address],
+    queryKey: queryKeys.runeActivity(address || ''),
     queryFn: () => fetchRuneActivityFromApi(address!), // Use API function
     enabled: !!connected && !!address, // Only fetch when connected and address exists
     staleTime: 60 * 1000, // Stale after 1 minute
@@ -49,14 +49,10 @@ export function YourTxsTab({ connected, address }: YourTxsTabProps) {
     <div className={styles.yourTxsTabContainer}>
       <h1 className="heading">Your Rune Transactions</h1>
       {!connected || !address ? (
-        <p className={styles.hintText}>
-          Connect your wallet to view your transactions.
-        </p>
+        <p className={styles.hintText}>Connect your wallet to view your transactions.</p>
       ) : isRuneActivityLoading ? (
         <div className={styles.listboxLoadingOrEmpty}>
-          <span className={styles.loadingText}>
-            Loading your transactions...
-          </span>
+          <span className={styles.loadingText}>Loading your transactions...</span>
         </div>
       ) : runeActivityError ? (
         <div className={`${styles.listboxError} ${styles.messageWithIcon}`}>
@@ -75,9 +71,7 @@ export function YourTxsTab({ connected, address }: YourTxsTabProps) {
           </span>
         </div>
       ) : !runeActivity || runeActivity.length === 0 ? (
-        <p className={styles.hintText}>
-          No recent rune transactions found for this address.
-        </p>
+        <p className={styles.hintText}>No recent rune transactions found for this address.</p>
       ) : (
         <div className={styles.txListContainer}>
           {runeActivity.map((tx: RuneActivityEvent) => {
@@ -97,9 +91,7 @@ export function YourTxsTab({ connected, address }: YourTxsTabProps) {
                   >
                     TXID: {truncateTxid(tx.txid)}
                   </a>
-                  <span className={styles.txTimestamp}>
-                    {formatDateTime(tx.timestamp)}
-                  </span>
+                  <span className={styles.txTimestamp}>{formatDateTime(tx.timestamp)}</span>
                 </div>
                 <div className={styles.txDetails}>
                   <div className={styles.txDetailRow}>
@@ -129,10 +121,7 @@ export function YourTxsTab({ connected, address }: YourTxsTabProps) {
                   <div className={styles.txDetailRow}>
                     <span>Amount:</span>
                     <span>
-                      <FormattedRuneAmount
-                        runeName={runeName}
-                        rawAmount={runeAmountRaw}
-                      />
+                      <FormattedRuneAmount runeName={runeName} rawAmount={runeAmountRaw} />
                     </span>
                   </div>
                 </div>

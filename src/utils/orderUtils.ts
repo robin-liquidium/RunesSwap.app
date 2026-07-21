@@ -1,4 +1,4 @@
-import type { Order } from 'satsterminal-sdk';
+import type { Order } from '@satsterminal-sdk/swaps';
 
 import { parseAmount } from '@/utils/formatters';
 
@@ -15,14 +15,14 @@ export function patchOrder(order: Order): Order {
 
   if (typeof patchedOrder.price === 'string') {
     const priceAsNumber = parseAmount(patchedOrder.price);
-    if (!isNaN(priceAsNumber)) {
+    if (!Number.isNaN(priceAsNumber)) {
       patchedOrder.price = priceAsNumber;
     }
   }
 
   if (typeof patchedOrder.formattedAmount === 'string') {
     const amountAsNumber = parseAmount(patchedOrder.formattedAmount);
-    if (!isNaN(amountAsNumber)) {
+    if (!Number.isNaN(amountAsNumber)) {
       patchedOrder.formattedAmount = amountAsNumber;
     }
   }
@@ -33,7 +33,7 @@ export function patchOrder(order: Order): Order {
       typeof patchedOrder.slippage === 'string'
         ? parseAmount(patchedOrder.slippage)
         : patchedOrder.slippage;
-    if (!isNaN(slippageValue)) {
+    if (!Number.isNaN(slippageValue)) {
       patchedOrder.slippage = slippageValue;
     }
   }

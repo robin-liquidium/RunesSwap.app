@@ -3,12 +3,20 @@
 export const queryKeys = {
   /** Key for popular runes list. */
   popularRunes: () => ['popularRunes'] as const,
+  /** Key for generic popular list by namespace. */
+  popularItems: (namespace: string) => ['popularItems', namespace] as const,
+  /** Key for BTC/USD price. */
+  btcPriceUsd: () => ['btcPriceUsd'] as const,
   /** Key for specific rune info. */
   runeInfo: (name: string) => ['runeInfo', name] as const,
+  /** Key for rune info by rune id prefix. */
+  runeInfoById: (runeId: string) => ['runeInfoById', runeId] as const,
   /** Key for rune market data. */
   runeMarket: (name: string) => ['runeMarket', name] as const,
   /** Key for rune price history. */
   runePriceHistory: (name: string) => ['runePriceHistory', name] as const,
+  /** Key for search results by namespace/query. */
+  search: (namespace: string, query: string) => ['search', namespace, query] as const,
   /** Key for BTC balance of an address. */
   btcBalance: (address: string) => ['btcBalance', address] as const,
   /** Key for rune balances of an address. */
@@ -20,10 +28,7 @@ export const queryKeys = {
   /** Key for portfolio data of an address. */
   portfolioData: (address: string) => ['portfolioData', address] as const,
   /** Key for Liquidium portfolio data. */
-  liquidiumPortfolio: (address: string) =>
-    ['liquidiumPortfolio', address] as const,
+  liquidiumPortfolio: (address: string) => ['liquidiumPortfolio', address] as const,
   /** Key for BTC fee rates. */
   btcFeeRates: () => ['btcFeeRates'] as const,
 };
-
-export type QueryKeyFactory = typeof queryKeys;

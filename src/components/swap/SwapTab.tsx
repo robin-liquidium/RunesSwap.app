@@ -1,11 +1,12 @@
 import type { LaserEyesContextType } from '@omnisat/lasereyes';
+import type { QuoteResponse } from '@satsterminal-sdk/swaps';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useState } from 'react';
-import { type QuoteResponse } from 'satsterminal-sdk';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Loading } from '@/components/loading';
-import { SwapTabForm, useSwapProcessManager } from '@/components/swap';
+import { Loading } from '@/components/loading/Loading';
+import useSwapProcessManager from '@/components/swap/SwapProcessManager';
 import styles from '@/components/swap/SwapTab.module.css';
+import SwapTabForm from '@/components/swap/SwapTabForm';
 import FeeSelector from '@/components/ui/FeeSelector';
 // Import our new components
 import { useRuneBalance } from '@/hooks/useRuneBalance';
@@ -17,7 +18,8 @@ import useSwapExecution from '@/hooks/useSwapExecution';
 import useSwapQuote from '@/hooks/useSwapQuote';
 import useSwapRunes from '@/hooks/useSwapRunes';
 import useUsdValues from '@/hooks/useUsdValues';
-import { fetchBtcBalanceFromApi } from '@/lib/api';
+import { fetchBtcBalanceFromApi } from '@/lib/api/ordiscan';
+import { queryKeys } from '@/lib/queryKeys';
 import type { Asset } from '@/types/common';
 import { BTC_ASSET } from '@/types/common';
 import { formatNumberWithLocale } from '@/utils/formatters';
@@ -81,7 +83,7 @@ interface SwapTabProps {
  *
  * @returns The Swap tab React element configured with current state, handlers, and derived data.
  */
-export function SwapTab({
+function SwapTab({
   connected,
   address,
   paymentAddress,
@@ -105,12 +107,7 @@ export function SwapTab({
   const [assetIn, setAssetIn] = useState<Asset>(BTC_ASSET);
   const [assetOut, setAssetOut] = useState<Asset | null>(null);
 
-  const {
-    popularRunes,
-    isPopularLoading,
-    popularError,
-    isPreselectedRuneLoading,
-  } = useSwapRunes({
+  const { popularRunes, isPopularLoading, popularError, isPreselectedRuneLoading } = useSwapRunes({
     preSelectedRune,
     preSelectedAsset,
     assetOut,
@@ -141,23 +138,22 @@ export function SwapTab({
   // State for calculated prices
   const [exchangeRate, setExchangeRate] = useState<string | null>(null);
 
-  const { handleSelectAssetIn, handleSelectAssetOut, handleSwapDirection } =
-    useSwapAssets({
-      popularRunes,
-      showPriceChart,
-      onShowPriceChart,
-      dispatchSwap,
-      setQuote,
-      setExchangeRate,
-      setInputAmount,
-      setOutputAmount,
-      inputAmount,
-      outputAmount,
-      assetIn,
-      assetOut,
-      setAssetIn,
-      setAssetOut,
-    });
+  const { handleSelectAssetIn, handleSelectAssetOut, handleSwapDirection } = useSwapAssets({
+    popularRunes,
+    showPriceChart,
+    onShowPriceChart,
+    dispatchSwap,
+    setQuote,
+    setExchangeRate,
+    setInputAmount,
+    setOutputAmount,
+    inputAmount,
+    outputAmount,
+    assetIn,
+    assetOut,
+    setAssetIn,
+    setAssetOut,
+  });
 
   // Ordiscan Balance Queries
   const {
@@ -165,7 +161,7 @@ export function SwapTab({
     isLoading: isBtcBalanceLoading,
     error: btcBalanceError,
   } = useQuery<number, Error>({
-    queryKey: ['btcBalance', paymentAddress], // Include address in key
+    queryKey: queryKeys.btcBalance(paymentAddress || ''), // Include address in key
     queryFn: () => fetchBtcBalanceFromApi(paymentAddress!), // Use API function
     enabled: !!connected && !!paymentAddress, // Only run query if connected and address exists
     staleTime: 30000, // Consider balance stale after 30 seconds
@@ -190,13 +186,10 @@ export function SwapTab({
   });
 
   // Use shared hooks for market data
-  const { data: inputRuneMarketInfo } = useRuneMarketData(
-    assetIn?.isBTC ? null : assetIn?.name,
-    {
-      enabled: !!assetIn && !assetIn.isBTC,
-      staleTime: 5 * 60 * 1000,
-    },
-  );
+  const { data: inputRuneMarketInfo } = useRuneMarketData(assetIn?.isBTC ? null : assetIn?.name, {
+    enabled: !!assetIn && !assetIn.isBTC,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const { data: outputRuneMarketInfo } = useRuneMarketData(
     assetOut?.isBTC ? null : assetOut?.name,
@@ -254,12 +247,7 @@ export function SwapTab({
 
   // Search functionality handled by AssetSelector component
 
-  const {
-    handleFetchQuote,
-    debouncedInputAmount,
-    quoteKeyRef,
-    isThrottledRef,
-  } = useSwapQuote({
+  const { handleFetchQuote, debouncedInputAmount, quoteKeyRef, isThrottledRef } = useSwapQuote({
     inputAmount,
     assetIn,
     assetOut,
@@ -309,11 +297,7 @@ export function SwapTab({
       if (rawBalance === null) return;
       try {
         decimals = swapRuneInfo?.decimals ?? 0;
-        const formattedAmount = percentageOfRawAmount(
-          rawBalance,
-          decimals,
-          percentage,
-        );
+        const formattedAmount = percentageOfRawAmount(rawBalance, decimals, percentage);
         setInputAmount(formattedAmount);
         return;
       } catch {
@@ -322,20 +306,15 @@ export function SwapTab({
     }
 
     // BTC path: use shared helper for clarity and precision
-    const formattedBtc = percentageOfSatsToBtcString(
-      btcBalanceSats!,
-      percentage,
-    );
+    const formattedBtc = percentageOfSatsToBtcString(btcBalanceSats!, percentage);
     setInputAmount(formattedBtc);
   };
 
   const availableBalanceNode = useMemo(() => {
     if (!connected || !assetIn) return null;
     if (assetIn.isBTC) {
-      if (isBtcBalanceLoading)
-        return <Loading variant="balance" className={styles.loadingText} />;
-      if (btcBalanceError)
-        return <span className={styles.errorText}>Error loading balance</span>;
+      if (isBtcBalanceLoading) return <Loading variant="balance" className={styles.loadingText} />;
+      if (btcBalanceError) return <span className={styles.errorText}>Error loading balance</span>;
       if (btcBalanceSats !== undefined) {
         const btcValue = btcBalanceSats / 1e8;
         return formatNumberWithLocale(btcValue, {
@@ -354,7 +333,7 @@ export function SwapTab({
     if (rawBalance === null) return 'N/A';
     try {
       const balanceNum = parseFloat(rawBalance);
-      if (isNaN(balanceNum)) return 'Invalid Balance';
+      if (Number.isNaN(balanceNum)) return 'Invalid Balance';
       const decimals = swapRuneInfo?.decimals ?? 0;
       const displayValue = calculateActualBalance(rawBalance, decimals);
       return `${formatNumberWithLocale(displayValue, { maximumFractionDigits: decimals })}`;
@@ -411,10 +390,7 @@ export function SwapTab({
       isPreselectedRuneLoading={isPreselectedRuneLoading}
       feeSelector={
         quote && !quoteError ? (
-          <FeeSelector
-            onChange={setFeeRate}
-            availableOptions={['medium', 'fast', 'custom']}
-          />
+          <FeeSelector onChange={setFeeRate} availableOptions={['medium', 'fast', 'custom']} />
         ) : null
       }
     />
