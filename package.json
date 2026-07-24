@@ -63,7 +63,7 @@
     "knip": "^6.27.0",
     "lint-staged": "^17.1.0",
     "openapi-typescript-codegen": "^0.31.0",
-    "typescript": "^6.0.2",
+    "typescript": "^7.0.2",
     "vite": "6.4.3"
   },
   "lint-staged": {
