@@ -21,6 +21,7 @@
 ## [Unreleased]
 
 ### Added
+- Automatic PR reviews in the opencode workflow (runs on PR open/update, reviews with Kimi k3).
 - Add opencode GitHub workflow for automated PR reviews and `/oc` commands (Kimi k3).
 - Centralized QueryClient defaults and query key factories.
 - CI workflows: PR (type-check, lint, test) and main build.
@@ -264,5 +265,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/ropl-btc/RunesSwap.app/releases/tag/v0.1.0
 [0.2.5]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.4...v0.2.5
 [0.2.6]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.5...v0.2.6
+
 
 
