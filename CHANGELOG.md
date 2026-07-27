@@ -1,24 +1,10 @@
 # Changelog
-## [0.2.8] - 2025-12-29
-
-### Fixed
-- Swap quote errors for missing orders/liquidity now resolve to friendly messages without crashing the UI.
-- API client now throws when a success response is missing expected data.
-
-## [0.2.7] - 2025-12-29
-
-### Added
-- Added a Jest mock for the LaserEyes SDK to keep tests stable with ESM packages.
-
-### Changed
-- Updated dependency toolchain/testing packages (eslint, @eslint/eslintrc, @commitlint/config-conventional, jest/@types/jest, jest-environment-jsdom) and @omnisat/lasereyes.
-- Adjusted LaserEyes typings usage across swap/borrow flows to align with updated SDK types.
-- Updated Jest config to handle LaserEyes with pnpm-aware transform rules.
-
-### Removed
-- Removed ts-jest (no Jest 30-compatible release).
 
 ## [Unreleased]
+
+### Fixed
+- Hardened PR CI by restricting token permissions and disabling persisted checkout credentials before running repository scripts.
+- Prevented config-only commits from failing when lint-staged passed unsupported Markdown and YAML files to Biome.
 
 ### Added
 - Automatic PR reviews in the opencode workflow (runs on PR open/update, reviews with Kimi k3).
@@ -29,6 +15,8 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Refreshed the dependency stack, enabled Next.js's TypeScript CLI integration for TypeScript 7, kept Jest config loading compatible across supported Node versions, patched transitive Lodash and brace-expansion advisories, and moved Dependabot to grouped Bun and GitHub Actions updates.
+- Upgraded GitHub Actions checkout steps to v7.
 - Replace opencode review workflow with the official comment-triggered opencode workflow.
 - Updated all direct runtime and development dependencies to their latest compatible releases, including Next.js 16.2, React 19.2, Zod 4, Recharts 3, Jest 30, Biome 2.5, and the supported TypeScript 7/6 compatibility pairing.
 - Updated the Bun runtime pin and CI actions, simplified the changelog gate around `Unreleased`, and prevented already-tagged releases from being republished on ordinary changelog merges.
@@ -85,6 +73,25 @@
 - Updated Jest config to map `@omnisat/lasereyes` to a local test mock so the ESM-only LaserEyes build works with the current Jest runtime.
 - Added a Node-version-aware Next build wrapper that sets a valid `--localstorage-file` path when supported to prevent noisy build-time warnings.
 - Removed deprecated `legacyBehavior` usage from `next/link` in the app footer for Next.js 16 compatibility.
+
+## [0.2.8] - 2025-12-29
+
+### Fixed
+- Swap quote errors for missing orders/liquidity now resolve to friendly messages without crashing the UI.
+- API client now throws when a success response is missing expected data.
+
+## [0.2.7] - 2025-12-29
+
+### Added
+- Added a Jest mock for the LaserEyes SDK to keep tests stable with ESM packages.
+
+### Changed
+- Updated dependency toolchain/testing packages (eslint, @eslint/eslintrc, @commitlint/config-conventional, jest/@types/jest, jest-environment-jsdom) and @omnisat/lasereyes.
+- Adjusted LaserEyes typings usage across swap/borrow flows to align with updated SDK types.
+- Updated Jest config to handle LaserEyes with pnpm-aware transform rules.
+
+### Removed
+- Removed ts-jest (no Jest 30-compatible release).
 
 All notable changes to this project will be documented in this file.
 
@@ -265,6 +272,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/ropl-btc/RunesSwap.app/releases/tag/v0.1.0
 [0.2.5]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.4...v0.2.5
 [0.2.6]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.5...v0.2.6
-
-
-
