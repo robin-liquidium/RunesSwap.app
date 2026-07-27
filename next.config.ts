@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['@heroicons/react', '@headlessui/react', 'recharts'],
+    useTypeScriptCli: true,
   },
   images: {
     remotePatterns: [
