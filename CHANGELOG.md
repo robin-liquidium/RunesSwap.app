@@ -20,6 +20,10 @@
 
 ## [Unreleased]
 
+### Fixed
+- Hardened PR CI by restricting token permissions and disabling persisted checkout credentials before running repository scripts.
+- Prevented config-only commits from failing when lint-staged passed unsupported Markdown and YAML files to Biome.
+
 ### Added
 - Automatic PR reviews in the opencode workflow (runs on PR open/update, reviews with Kimi k3).
 - Add opencode GitHub workflow for automated PR reviews and `/oc` commands (Kimi k3).
@@ -267,4 +271,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/ropl-btc/RunesSwap.app/releases/tag/v0.1.0
 [0.2.5]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.4...v0.2.5
 [0.2.6]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.5...v0.2.6
-
