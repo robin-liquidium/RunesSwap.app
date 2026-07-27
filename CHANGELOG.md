@@ -29,7 +29,7 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
-- Refreshed the dependency stack, enabled Next.js's TypeScript CLI integration for TypeScript 7, patched transitive Lodash and brace-expansion advisories, and moved Dependabot to grouped Bun and GitHub Actions updates.
+- Refreshed the dependency stack, enabled Next.js's TypeScript CLI integration for TypeScript 7, kept Jest config loading compatible across supported Node versions, patched transitive Lodash and brace-expansion advisories, and moved Dependabot to grouped Bun and GitHub Actions updates.
 - Upgraded GitHub Actions checkout steps to v7.
 - Replace opencode review workflow with the official comment-triggered opencode workflow.
 - Updated all direct runtime and development dependencies to their latest compatible releases, including Next.js 16.2, React 19.2, Zod 4, Recharts 3, Jest 30, Biome 2.5, and the supported TypeScript 7/6 compatibility pairing.
@@ -267,5 +267,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/ropl-btc/RunesSwap.app/releases/tag/v0.1.0
 [0.2.5]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.4...v0.2.5
 [0.2.6]: https://github.com/ropl-btc/RunesSwap.app/compare/v0.2.5...v0.2.6
-
 
