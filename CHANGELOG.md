@@ -1,22 +1,4 @@
 # Changelog
-## [0.2.8] - 2025-12-29
-
-### Fixed
-- Swap quote errors for missing orders/liquidity now resolve to friendly messages without crashing the UI.
-- API client now throws when a success response is missing expected data.
-
-## [0.2.7] - 2025-12-29
-
-### Added
-- Added a Jest mock for the LaserEyes SDK to keep tests stable with ESM packages.
-
-### Changed
-- Updated dependency toolchain/testing packages (eslint, @eslint/eslintrc, @commitlint/config-conventional, jest/@types/jest, jest-environment-jsdom) and @omnisat/lasereyes.
-- Adjusted LaserEyes typings usage across swap/borrow flows to align with updated SDK types.
-- Updated Jest config to handle LaserEyes with pnpm-aware transform rules.
-
-### Removed
-- Removed ts-jest (no Jest 30-compatible release).
 
 ## [Unreleased]
 
@@ -91,6 +73,25 @@
 - Updated Jest config to map `@omnisat/lasereyes` to a local test mock so the ESM-only LaserEyes build works with the current Jest runtime.
 - Added a Node-version-aware Next build wrapper that sets a valid `--localstorage-file` path when supported to prevent noisy build-time warnings.
 - Removed deprecated `legacyBehavior` usage from `next/link` in the app footer for Next.js 16 compatibility.
+
+## [0.2.8] - 2025-12-29
+
+### Fixed
+- Swap quote errors for missing orders/liquidity now resolve to friendly messages without crashing the UI.
+- API client now throws when a success response is missing expected data.
+
+## [0.2.7] - 2025-12-29
+
+### Added
+- Added a Jest mock for the LaserEyes SDK to keep tests stable with ESM packages.
+
+### Changed
+- Updated dependency toolchain/testing packages (eslint, @eslint/eslintrc, @commitlint/config-conventional, jest/@types/jest, jest-environment-jsdom) and @omnisat/lasereyes.
+- Adjusted LaserEyes typings usage across swap/borrow flows to align with updated SDK types.
+- Updated Jest config to handle LaserEyes with pnpm-aware transform rules.
+
+### Removed
+- Removed ts-jest (no Jest 30-compatible release).
 
 All notable changes to this project will be documented in this file.
 
