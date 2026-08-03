@@ -15,6 +15,7 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Updated Supabase, Biome, React/Node type definitions, Knip, lint-staged, and the Vite security override to their current stable releases.
 - Refreshed the dependency stack, enabled Next.js's TypeScript CLI integration for TypeScript 7, kept Jest config loading compatible across supported Node versions, patched transitive Lodash and brace-expansion advisories, and moved Dependabot to grouped Bun and GitHub Actions updates.
 - Upgraded GitHub Actions checkout steps to v7.
 - Replace opencode review workflow with the official comment-triggered opencode workflow.
@@ -46,6 +47,7 @@
 - Upgraded `@omnisat/lasereyes` to `0.0.163`.
 
 ### Fixed
+- Restricted the main-build workflow token to read-only repository access and disabled persisted checkout credentials.
 - Routed CoinGecko Pro keys to the Pro API host, handled repeated swap rune parameters safely, and made the changelog gate require an actual new `Unreleased` bullet.
 - Made the architecture lint self-contained so it also runs on CI hosts without ripgrep installed.
 - Added fallback rune search providers when SatsTerminal's search endpoint is unavailable, while preserving the existing `/api/sats-terminal/search` contract.
