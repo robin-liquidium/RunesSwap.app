@@ -15,6 +15,7 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Updated Next.js, Supabase, Biome, testing types/tooling, and Vite to current stable releases; refreshed transitive security overrides for brace-expansion, nanoid, and js-yaml.
 - Updated Supabase, Biome, React/Node type definitions, Knip, lint-staged, and the Vite security override to their current stable releases.
 - Refreshed the dependency stack, enabled Next.js's TypeScript CLI integration for TypeScript 7, kept Jest config loading compatible across supported Node versions, patched transitive Lodash and brace-expansion advisories, and moved Dependabot to grouped Bun and GitHub Actions updates.
 - Upgraded GitHub Actions checkout steps to v7.
