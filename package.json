@@ -29,7 +29,7 @@
     "@heroicons/react": "^2.2.0",
     "@omnisat/lasereyes": "^0.0.163",
     "@satsterminal-sdk/swaps": "1.6.31",
-    "@supabase/supabase-js": "^2.112.2",
+    "@supabase/supabase-js": "^2.112.3",
     "@tanstack/react-query": "^5.101.4",
     "@vercel/analytics": "^2.0.1",
     "big.js": "^7.0.1",
@@ -46,7 +46,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.7",
+    "@biomejs/biome": "^2.5.8",
     "@next/bundle-analyzer": "^16.3.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
@@ -60,9 +60,9 @@
     "husky": "^9.1.7",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
-    "knip": "^6.32.0",
+    "knip": "^6.32.1",
     "lint-staged": "^17.3.0",
-    "minimatch": "3.1.4",
+    "minimatch": "10.2.6",
     "openapi-typescript-codegen": "^0.31.0",
     "typescript": "^7.0.2",
     "vite": "8.2.1"
