@@ -15,6 +15,7 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Updated Next.js, Supabase, Zustand, Biome, bundle analyzer, and Knip to current stable releases.
 - Updated Next.js, Supabase, Biome, testing types/tooling, and Vite to current stable releases; refreshed transitive security overrides for brace-expansion, nanoid, and js-yaml.
 - Updated Supabase, Biome, React/Node type definitions, Knip, lint-staged, and the Vite security override to their current stable releases.
 - Refreshed the dependency stack, enabled Next.js's TypeScript CLI integration for TypeScript 7, kept Jest config loading compatible across supported Node versions, patched transitive Lodash and brace-expansion advisories, and moved Dependabot to grouped Bun and GitHub Actions updates.
@@ -48,6 +49,7 @@
 - Upgraded `@omnisat/lasereyes` to `0.0.163`.
 
 ### Fixed
+- Updated the transitive Nano ID override to 3.3.18 to resolve its custom-generator infinite-loop advisory.
 - Restricted the main-build workflow token to read-only repository access and disabled persisted checkout credentials.
 - Routed CoinGecko Pro keys to the Pro API host, handled repeated swap rune parameters safely, and made the changelog gate require an actual new `Unreleased` bullet.
 - Made the architecture lint self-contained so it also runs on CI hosts without ripgrep installed.
