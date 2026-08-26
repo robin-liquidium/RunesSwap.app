@@ -15,6 +15,7 @@
 - Footer layout refreshed: dedicated footer button styles, consistent heights, tightened spacing, and Docs moved next to GitHub.
 
 ### Changed
+- Updated Next.js to its August 2026 security release and refreshed Bun, Supabase, React Query, Biome, Vite, and related types/tooling to current stable versions.
 - Updated Next.js, Supabase, Zustand, Biome, bundle analyzer, and Knip to current stable releases.
 - Updated Next.js, Supabase, Biome, testing types/tooling, and Vite to current stable releases; refreshed transitive security overrides for brace-expansion, nanoid, and js-yaml.
 - Updated Supabase, Biome, React/Node type definitions, Knip, lint-staged, and the Vite security override to their current stable releases.
