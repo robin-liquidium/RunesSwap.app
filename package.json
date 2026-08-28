@@ -62,7 +62,7 @@
     "jest-environment-jsdom": "^30.4.1",
     "knip": "^6.32.2",
     "lint-staged": "^17.3.0",
-    "minimatch": "3.1.4",
+    "minimatch": "10.2.6",
     "openapi-typescript-codegen": "^0.31.0",
     "typescript": "^7.0.2",
     "vite": "8.2.2"
