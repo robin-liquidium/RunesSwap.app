@@ -43,7 +43,7 @@
         "jest-environment-jsdom": "^30.5.0",
         "knip": "^6.33.0",
         "lint-staged": "^17.4.1",
-        "minimatch": "3.1.4",
+        "minimatch": "3.1.5",
         "openapi-typescript-codegen": "^0.31.0",
         "typescript": "^7.0.2",
         "vite": "8.2.2",
@@ -65,7 +65,7 @@
     "form-data": "4.0.6",
     "js-yaml": "4.3.1",
     "lodash": "4.18.1",
-    "minimatch": "3.1.4",
+    "minimatch": "3.1.5",
     "nanoid": "3.3.18",
     "path-to-regexp": "0.1.13",
     "picomatch": "2.3.2",
@@ -1661,7 +1661,7 @@
 
     "minimalistic-crypto-utils": ["minimalistic-crypto-utils@1.0.1", "", {}, "sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg=="],
 
-    "minimatch": ["minimatch@3.1.4", "", { "dependencies": { "brace-expansion": "^1.1.7" } }, "sha512-twmL+S8+7yIsE9wsqgzU3E8/LumN3M3QELrBZ20OdmQ9jB2JvW5oZtBEmft84k/Gs5CG9mqtWc6Y9vW+JEzGxw=="],
+    "minimatch": ["minimatch@3.1.5", "", { "dependencies": { "brace-expansion": "^1.1.7" } }, "sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w=="],
 
     "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
 
