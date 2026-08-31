@@ -8,6 +8,11 @@ updates:
       weekly-dependencies:
         patterns:
           - "*"
+    ignore:
+      # Kept on v3 to exercise the patched brace-expansion v5 CommonJS contract.
+      - dependency-name: "minimatch"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
