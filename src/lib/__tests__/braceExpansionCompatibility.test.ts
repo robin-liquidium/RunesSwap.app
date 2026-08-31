@@ -6,6 +6,9 @@ type BraceExpansion = ((pattern: string) => string[]) & {
 
 const expand = require('brace-expansion') as BraceExpansion;
 const minimatch = require('minimatch') as (value: string, pattern: string) => boolean;
+const { globSync } = require('glob') as {
+  globSync: (pattern: string) => string[];
+};
 
 describe('brace-expansion CommonJS compatibility', () => {
   it('preserves the callable API and minimatch 3 integration', () => {
@@ -15,5 +18,8 @@ describe('brace-expansion CommonJS compatibility', () => {
     expect(expand.EXPANSION_MAX).toEqual(expect.any(Number));
     expect(expand.EXPANSION_MAX_LENGTH).toEqual(expect.any(Number));
     expect(minimatch('file.ts', 'file.{js,ts}')).toBe(true);
+    expect(globSync('src/lib/__tests__/braceExpansionCompatibility.{test,spec}.ts')).toEqual([
+      'src/lib/__tests__/braceExpansionCompatibility.test.ts',
+    ]);
   });
 });
