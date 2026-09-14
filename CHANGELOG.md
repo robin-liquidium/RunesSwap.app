@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+- Refreshed React 19.3, TanStack Start/Router, Vite 8.3, Cloudflare tooling, Supabase, and development dependencies.
+
+### Security
+- Updated js-yaml and csv-parse overrides to address denial-of-service and prototype replacement advisories.
+
 ### Fixed
 - Restored GitHub app access for automatic Cloudflare Worker deployments.
 
