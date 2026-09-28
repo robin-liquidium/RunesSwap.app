@@ -11,6 +11,7 @@
 - Updated js-yaml and csv-parse overrides to address denial-of-service and prototype replacement advisories.
 
 ### Fixed
+- Updated hosted OpenCode reviews to use the renamed Kimi coding plan provider ID for K3.
 - Restored GitHub app access for automatic Cloudflare Worker deployments.
 
 ## [0.3.0] - 2026-09-07
