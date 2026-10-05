@@ -8,7 +8,7 @@
 - Refreshed React 19.3, TanStack Start/Router, Vite 8.3, Cloudflare tooling, Supabase, Zod, bitcoin-address-validation, and development dependencies.
 
 ### Security
-- Added a depth guard to the unpatched `braces` 3.0.3 dependency to prevent stack exhaustion from deeply nested patterns.
+- Added shared depth guards to `braces` 3.0.3 for curly braces, parentheses, and caller-supplied ASTs in compile, expand, and stringify to prevent stack exhaustion.
 - Updated brace-expansion to 5.0.12 while preserving CommonJS compatibility and the new nesting-depth and rewrite limits.
 - Updated js-yaml and csv-parse overrides to address denial-of-service and prototype replacement advisories.
 
