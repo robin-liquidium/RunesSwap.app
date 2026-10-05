@@ -3,10 +3,12 @@
 ## [Unreleased]
 
 ### Changed
+- Refreshed TanStack Query/Router/Start, Cloudflare Vite tooling, Vite, Biome, Node types, Knip, and Wrangler to current stable releases.
 - Refreshed TanStack, Supabase, Vite, Cloudflare tooling, Jest, and development dependencies; upgraded Bitcoin address validation to v4 and adopted its bundled types.
 - Refreshed React 19.3, TanStack Start/Router, Vite 8.3, Cloudflare tooling, Supabase, Zod, bitcoin-address-validation, and development dependencies.
 
 ### Security
+- Added a depth guard to the unpatched `braces` 3.0.3 dependency to prevent stack exhaustion from deeply nested patterns.
 - Updated brace-expansion to 5.0.12 while preserving CommonJS compatibility and the new nesting-depth and rewrite limits.
 - Updated js-yaml and csv-parse overrides to address denial-of-service and prototype replacement advisories.
 
