@@ -24,17 +24,17 @@
   },
   "engines": {
     "node": ">=22.0.0",
-    "bun": ">=1.4.2"
+    "bun": ">=1.4.3"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
     "@omnisat/lasereyes": "^0.0.163",
     "@satsterminal-sdk/swaps": "1.6.31",
-    "@supabase/supabase-js": "^2.117.2",
-    "@tanstack/react-query": "^5.104.1",
-    "@tanstack/react-router": "^1.170.41",
-    "@tanstack/react-start": "^1.168.60",
+    "@supabase/supabase-js": "^2.117.3",
+    "@tanstack/react-query": "^5.104.2",
+    "@tanstack/react-router": "^1.170.42",
+    "@tanstack/react-start": "^1.168.61",
     "big.js": "^7.0.1",
     "bitcoin-address-validation": "^4.0.0",
     "ordiscan": "^1.4.0",
@@ -44,21 +44,21 @@
     "recharts": "^3.10.1",
     "remark-gfm": "^4.0.1",
     "use-debounce": "^10.1.1",
-    "zod": "^4.6.5",
+    "zod": "^4.6.6",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
-    "@cloudflare/vite-plugin": "^1.62.5",
+    "@cloudflare/vite-plugin": "^1.63.1",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/big.js": "^7.0.0",
     "@types/jest": "^30.0.0",
-    "@types/node": "^26.6.4",
+    "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@vitejs/plugin-react": "^6.1.2",
     "base58-js": "^3.0.3",
     "brace-expansion": "5.0.12",
     "braces": "3.0.3",
@@ -66,20 +66,20 @@
     "husky": "^9.1.7",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
-    "knip": "^6.39.0",
+    "knip": "^6.41.0",
     "lint-staged": "^17.6.0",
     "minimatch": "3.1.5",
     "openapi-typescript-codegen": "^0.31.0",
     "typescript": "^7.0.2",
-    "vite": "8.3.2",
-    "wrangler": "^4.147.0"
+    "vite": "8.3.4",
+    "wrangler": "^4.149.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs,json,jsonc,css,scss}": [
       "biome check --write"
     ]
   },
-  "packageManager": "bun@1.4.2",
+  "packageManager": "bun@1.4.3",
   "overrides": {
     "@babel/core": "7.29.7",
     "axios": "1.20.0",
@@ -96,12 +96,14 @@
     "path-to-regexp": "0.1.13",
     "picomatch": "2.3.2",
     "nanoid": "3.3.18",
-    "postcss": "8.5.28",
+    "postcss": "8.5.29",
+    "pbkdf2": "3.1.7",
+    "proxy-addr": "2.0.8",
     "qs": "6.16.0",
     "rollup": "4.63.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "valibot": "1.4.2",
-    "vite": "8.3.2",
+    "vite": "8.3.4",
     "ws": "8.21.3",
     "yaml": "2.9.0",
     "csv-parse": "7.0.2"
