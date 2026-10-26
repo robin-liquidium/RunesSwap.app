@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Security
+
+- Update Bun to 1.4.4 to remove trust in the compromised eMudhra CA chain.
+
 ### Changed
 - Refreshed TanStack, Supabase, Zod, Cloudflare Vite plugin, Wrangler, Vite 8.3.4, the React Vite plugin, Knip, and Bun 1.4.3.
 - Refreshed TanStack Query/Router/Start, Cloudflare Vite tooling, Vite, Biome, Node types, Knip, and Wrangler to current stable releases.
