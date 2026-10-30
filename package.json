@@ -32,9 +32,9 @@
     "@omnisat/lasereyes": "^0.0.163",
     "@satsterminal-sdk/swaps": "1.6.31",
     "@supabase/supabase-js": "^2.118.0",
-    "@tanstack/react-query": "^5.104.5",
-    "@tanstack/react-router": "^1.170.45",
-    "@tanstack/react-start": "^1.169.3",
+    "@tanstack/react-query": "^5.105.0",
+    "@tanstack/react-router": "^1.170.46",
+    "@tanstack/react-start": "^1.169.4",
     "big.js": "^7.0.1",
     "bitcoin-address-validation": "^4.0.0",
     "ordiscan": "^1.4.0",
@@ -45,11 +45,11 @@
     "remark-gfm": "^4.0.1",
     "use-debounce": "^10.1.1",
     "zod": "^4.6.7",
-    "zustand": "^5.0.15"
+    "zustand": "^5.0.16"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
-    "@cloudflare/vite-plugin": "^1.64.0",
+    "@biomejs/biome": "^2.6.3",
+    "@cloudflare/vite-plugin": "^1.65.0",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -66,13 +66,13 @@
     "husky": "^9.1.7",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
-    "knip": "^6.42.1",
+    "knip": "^6.43.0",
     "lint-staged": "^17.6.0",
     "minimatch": "3.1.5",
     "openapi-typescript-codegen": "^0.31.0",
     "typescript": "^7.0.2",
-    "vite": "8.3.4",
-    "wrangler": "^4.151.3"
+    "vite": "8.3.5",
+    "wrangler": "^4.153.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs,json,jsonc,css,scss}": [
