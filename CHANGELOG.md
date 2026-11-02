@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Changed
+- Refreshed TanStack Query/Router/Start, Zustand, Biome 2.6, Cloudflare Vite plugin, Wrangler, Vite 8.3.5, Knip, and Node types.
 - Refreshed Supabase 2.118, TanStack Query/Router/Start, React 19.3.1, Zod, Cloudflare Vite plugin, Wrangler, Knip, and the GitHub checkout action v7.
 - Refreshed TanStack, Supabase, Zod, Cloudflare Vite plugin, Wrangler, Vite 8.3.4, the React Vite plugin, Knip, and Bun 1.4.3.
 - Refreshed TanStack Query/Router/Start, Cloudflare Vite tooling, Vite, Biome, Node types, Knip, and Wrangler to current stable releases.
@@ -10,6 +11,7 @@
 - Refreshed React 19.3, TanStack Start/Router, Vite 8.3, Cloudflare tooling, Supabase, Zod, bitcoin-address-validation, and development dependencies.
 
 ### Security
+- Updated seroval, undici, body-parser, follow-redirects, and qs to patched releases for denial-of-service, code-injection, credential-leak, and TLS validation advisories.
 - Updated Bun to 1.4.4, and raised the minimum Bun version to 1.4.4, to remove trust in the compromised eMudhra CA chain.
 - Updated handlebars, proxy-addr, sharp, source-map-js, smol-toml, and pbkdf2 to patched releases for code-injection, IP-spoofing, image-parsing, and denial-of-service advisories.
 - Added shared depth guards to `braces` 3.0.3 for curly braces, parentheses, and caller-supplied ASTs in compile, expand, and stringify to prevent stack exhaustion.
