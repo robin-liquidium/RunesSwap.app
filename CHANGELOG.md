@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Changed
+- Refreshed Supabase 2.119, TanStack Query/Start, Zustand 5.1, Vite 8.3.6, the React Vite plugin, Biome, Knip, and Wrangler.
 - Refreshed TanStack Query/Router/Start, Zustand, Biome 2.6, Cloudflare Vite plugin, Wrangler, Vite 8.3.5, Knip, and Node types.
 - Refreshed Supabase 2.118, TanStack Query/Router/Start, React 19.3.1, Zod, Cloudflare Vite plugin, Wrangler, Knip, and the GitHub checkout action v7.
 - Refreshed TanStack, Supabase, Zod, Cloudflare Vite plugin, Wrangler, Vite 8.3.4, the React Vite plugin, Knip, and Bun 1.4.3.
