@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Changed
+- Removed the broken `gen:liquidium-sdk` script, whose OpenAPI spec no longer exists in the repo, and documented that `src/sdk/liquidium` is checked in and maintained by hand.
 - Refreshed the agent guide: removed references to deleted files, stated the 250-line file limit, and trimmed the generic big.js tutorial.
 - Refreshed the Cloudflare Vite plugin 1.69, Wrangler 4.162, Vite 8.3.8, the React Vite plugin 6.3, Biome, Knip, and lint-staged.
 - Refreshed Supabase 2.119, TanStack Query/Start, Zustand 5.1, Vite 8.3.6, the React Vite plugin, Biome, Knip, and Wrangler.

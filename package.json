@@ -19,7 +19,6 @@
     "test:security": "node scripts/check-braces-depth.mjs",
     "pre-commit-check": "bun run type-check && bun run test",
     "prepare": "husky",
-    "gen:liquidium-sdk": "openapi -i liquidium-openapi/liquidium-instant-loan-api.yaml -o src/sdk/liquidium --client fetch --useOptions --useUnionTypes --exportSchemas true --name LiquidiumApi",
     "deploy": "bun run build && wrangler deploy"
   },
   "engines": {

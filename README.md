@@ -112,15 +112,9 @@ Swaps depend on Bitcoin network confirmations (typically 10 minutes–1 hour). Y
 **What fees apply?**  
 RunesSwap.app charges no additional fees beyond SatsTerminal network fees and standard Bitcoin miner fees. You receive near‑optimal rates directly on‑chain.
 
-## Liquidium SDK Generation
+## Liquidium SDK
 
-When Liquidium publishes a new OpenAPI spec, regenerate the typed client:
-
-```bash
-bun run gen:liquidium-sdk
-```
-
-This reads `liquidium-openapi/liquidium-instant-loan-api.yaml` and outputs the SDK to `src/sdk/liquidium`. Biome and Jest ignore this folder, so no manual changes are required after regeneration.
+The typed Liquidium client in `src/sdk/liquidium` was originally generated from an OpenAPI spec. It is now checked in and edited by hand, and it is not regenerated. Change it directly when the Liquidium API changes. Biome and Knip skip this folder, so run `bun run type-check` and `bun run test` after editing it.
 
 ## Contributing
 
