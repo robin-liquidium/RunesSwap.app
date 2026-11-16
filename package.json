@@ -48,8 +48,8 @@
     "zustand": "^5.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.6",
-    "@cloudflare/vite-plugin": "^1.67.0",
+    "@biomejs/biome": "^2.6.8",
+    "@cloudflare/vite-plugin": "^1.69.1",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -58,7 +58,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.2.1",
+    "@vitejs/plugin-react": "^6.3.0",
     "base58-js": "^3.0.3",
     "brace-expansion": "5.0.12",
     "braces": "3.0.3",
@@ -66,13 +66,13 @@
     "husky": "^9.1.7",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
-    "knip": "^6.44.2",
-    "lint-staged": "^17.6.0",
+    "knip": "^6.45.1",
+    "lint-staged": "^17.6.1",
     "minimatch": "3.1.5",
     "openapi-typescript-codegen": "^0.31.0",
     "typescript": "^7.0.2",
-    "vite": "8.3.6",
-    "wrangler": "^4.158.0"
+    "vite": "8.3.8",
+    "wrangler": "^4.162.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs,json,jsonc,css,scss}": [
@@ -105,10 +105,22 @@
     "seroval-plugins": "1.6.12",
     "sharp": "0.35.5",
     "valibot": "1.4.2",
-    "vite": "8.3.6",
+    "vite": "8.3.8",
     "ws": "8.22.1",
     "yaml": "2.9.1",
-    "csv-parse": "7.0.2"
+    "csv-parse": "7.0.2",
+    "@oyl/sdk": {
+      "bitcoinjs-lib": "6.1.8"
+    },
+    "@sadoprotocol/ordit-sdk": {
+      "bitcoinjs-lib": "6.1.8"
+    },
+    "bip322-js": {
+      "bitcoinjs-lib": "6.1.8"
+    },
+    "@omnisat/lasereyes-core": {
+      "bitcoinjs-lib": "7.0.5"
+    }
   },
   "patchedDependencies": {
     "@satsterminal-sdk/core@1.6.31": "patches/@satsterminal-sdk%2Fcore@1.6.31.patch",
