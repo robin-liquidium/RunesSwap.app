@@ -127,7 +127,7 @@ The pre-commit hook runs `lint-staged`; the pre-push hook runs the full `ai-chec
 
 ## Component Guidelines
 
-Stateful logic lives in custom hooks under `src/hooks`; reusable UI pieces live in `src/components`. Keep files in `src/` at 250 lines or fewer (`bun run lint:architecture` enforces it): split a growing component into a hook plus smaller components. `usePriceChart` + `TimeframeSelector`/`PriceTooltip` and `useAssetSearch` + `AssetSelectorDropdown` are examples of this split.
+Stateful logic lives in custom hooks under `src/hooks`; reusable UI pieces live in `src/components`. Keep TypeScript files in `src/` at 250 lines or fewer. `bun run lint:architecture` enforces it, except for the older files allowlisted in `scripts/lint-architecture.mjs`; don't add to that list, and shrink a listed file when you work in it. Split a growing component into a hook plus smaller components. `usePriceChart` + `TimeframeSelector`/`PriceTooltip` and `useAssetSearch` + `AssetSelectorDropdown` are examples of this split.
 
 # API Reference
 
