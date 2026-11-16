@@ -34,7 +34,6 @@ API handlers under `src/server/api` act as a thin backend to proxy and cache req
 │   ├── store/           # Zustand stores
 │   ├── types/           # Shared TypeScript types
 │   └── utils/           # Helper functions
-├── liquidium-openapi/   # OpenAPI specs for Liquidium
 ├── public/              # Static assets and fonts
 └── ...                  # Config files and scripts
 ```
@@ -57,18 +56,6 @@ For precise financial calculations involving Bitcoin runes and large token amoun
 * **When to use**: Any calculations involving token amounts, prices, or financial values that require decimal precision
 * **Where to use**: Token amount formatting, price calculations, portfolio calculations
 * **Import**: `import Big from 'big.js';`
-* **Basic usage**:
-  ```typescript
-  // Creating Big numbers
-  const amount = new Big('500000000.123456789');
-  const divisor = new Big(10).pow(8); // 10^8 for 8 decimal places
-  
-  // Precise division
-  const formatted = amount.div(divisor);
-  
-  // Convert to string for display
-  const displayValue = formatted.toFixed();
-  ```
 * **Examples**: `FormattedRuneAmount.tsx`, portfolio calculations, swap amount processing
 
 ## Development
@@ -119,7 +106,7 @@ The pre-commit hook runs `lint-staged`; the pre-push hook runs the full `ai-chec
 ### Typical Data Flow
 
 1. A UI component fetches data using React Query.
-2. The query calls a helper method from `src/lib/api/` modules (re-exported by `src/lib/api/index.ts`).
+2. The query calls a helper from the matching service module in `src/lib/api/` (e.g. `ordiscan.ts`, `liquidium.ts`, `satsTerminal.ts`), imported directly.
 3. The client sends a request to a TanStack Start API route under `src/server/api`.
 4. The API route fetches data from Ordiscan, SatsTerminal, or Liquidium, optionally caching results in Supabase, and returns a standardized JSON response.
 5. The UI updates based on the React Query result.
@@ -140,17 +127,7 @@ The pre-commit hook runs `lint-staged`; the pre-push hook runs the full `ai-chec
 
 ## Component Guidelines
 
-Break larger components into smaller ones where possible. Stateful logic should live in custom hooks under `src/hooks`, while reusable UI pieces should belong in `src/components`.
-
-When implementing complex features, prefer extracting related hooks and components. For example:
-
-* `AssetSelector` and `AmountHelpers` were extracted from `InputArea`.
-* The price chart feature uses a dedicated `usePriceChart` hook, along with `TimeframeSelector` and `PriceTooltip` components.
-* The runes info view leverages a `useRunesSearch` hook, with `RuneSearchBar` and `RuneDetails` components to keep `RunesInfoTab` lean.
-* The `useWalletConnection` hook manages wallet connection state and provider detection, powering the `ConnectWalletButton` component.
-* `usePortfolioData`, `useLiquidiumAuth` and `useRepayModal` keep `PortfolioTab` lightweight by handling portfolio queries, Liquidium authentication and repayment flows.
-* `useAssetSearch` powers `AssetSelectorDropdown` for debounced search and popular-rune loading, keeping `AssetSelector` minimal.
-
+Stateful logic lives in custom hooks under `src/hooks`; reusable UI pieces live in `src/components`. Keep files in `src/` at 250 lines or fewer (`bun run lint:architecture` enforces it): split a growing component into a hook plus smaller components. `usePriceChart` + `TimeframeSelector`/`PriceTooltip` and `useAssetSearch` + `AssetSelectorDropdown` are examples of this split.
 
 # API Reference
 
@@ -158,7 +135,7 @@ Read [the API reference](docs/agent-api-reference.md) when working on the docume
 
 # General Instructions
 * Consult current official documentation when introducing or changing library/API integration behavior, upgrading dependencies, or resolving uncertain or version-sensitive behavior. Use Context7 when available, otherwise official documentation directly. Routine edits that preserve an established local pattern do not require a fresh lookup. Do not guess APIs.
-* IMPORTANT: Always follow KISS and DRY principals.
+* Keep solutions simple and avoid duplicating logic (KISS, DRY).
 * Run `bun run ai-check` after every bigger change.
 * Use the supabase tools to interact with our database!
 * SatsTerminal SDK is very aggressive with rate-limiting, we shouldn't increase the amount of queries we're doing to SatsTerminal!
