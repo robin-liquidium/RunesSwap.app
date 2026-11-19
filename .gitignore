@@ -57,6 +57,7 @@ next-env.d.ts
 # Cloudflare / Vite
 /dist/
 /.wrangler/
+/.cloudflare/
 /.tanstack/
 .dev.vars*
 .playwright-cli/

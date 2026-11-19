@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Changed
+- Moved Worker configuration and deploys from Wrangler to the `cf` CLI (`cloudflare.config.ts`, `cf deploy`), upgraded the Cloudflare Vite plugin to 2.0, removed the `wrangler` dependency, and raised the minimum Node version to what `cf` supports.
 - Removed the broken `gen:liquidium-sdk` script (its OpenAPI spec no longer exists in the repo), the now-unused `openapi-typescript-codegen` dev dependency, and the orphaned `openapitools.json`, and documented that `src/sdk/liquidium` is checked in and maintained by hand.
 - Refreshed the agent guide: removed references to deleted files, stated the 250-line file limit, and trimmed the generic big.js tutorial.
 - Refreshed the Cloudflare Vite plugin 1.69, Wrangler 4.162, Vite 8.3.8, the React Vite plugin 6.3, Biome, Knip, and lint-staged.
