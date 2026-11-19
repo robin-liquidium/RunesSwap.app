@@ -19,7 +19,7 @@
     "test:security": "node scripts/check-braces-depth.mjs",
     "pre-commit-check": "bun run type-check && bun run test",
     "prepare": "husky",
-    "deploy": "bun run build && wrangler deploy"
+    "deploy": "bun run build && cf deploy --prebuilt --mode production"
   },
   "engines": {
     "node": ">=22.0.0",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",
-    "@cloudflare/vite-plugin": "^1.69.1",
+    "@cloudflare/vite-plugin": "^2.0.0-rc.2",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -61,6 +61,7 @@
     "base58-js": "^3.0.3",
     "brace-expansion": "5.0.12",
     "braces": "3.0.3",
+    "cf": "^1.0.0-rc.2",
     "glob": "13.0.6",
     "husky": "^9.1.7",
     "jest": "^30.5.2",
@@ -69,8 +70,7 @@
     "lint-staged": "^17.6.1",
     "minimatch": "3.1.5",
     "typescript": "^7.0.2",
-    "vite": "8.3.8",
-    "wrangler": "^4.162.0"
+    "vite": "8.3.8"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs,json,jsonc,css,scss}": [

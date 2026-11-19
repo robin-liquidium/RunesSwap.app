@@ -84,7 +84,7 @@ bun run start
 bun run deploy
 ```
 
-Production secrets are configured with `wrangler secret bulk`. See
+Production secrets are uploaded with `cf deploy --secrets-file <private-file>` (deploys keep existing secrets). See
 [Cloudflare migration](https://github.com/robin-liquidium/RunesSwap.app/blob/main/docs/cloudflare-migration.md) for domain cutover and rollback.
 
 ## How to Use
@@ -136,8 +136,8 @@ builds the client assets and Worker; `bun run start` previews that build locally
 `bun run ai-check` checks lint, architecture, formatting, types, unused code,
 unit tests, and the production build.
 
-Deploy with `bun run deploy`. Runtime secrets must be uploaded separately with
-`bunx wrangler secret bulk <private-json-file>`. Vite embeds only the public
+Deploy with `bun run deploy`. Runtime secrets are uploaded with
+`bunx cf deploy --prebuilt --mode production --secrets-file <private-file>` after a build. Vite embeds only the public
 `VITE_QUOTE_MOCK_ADDRESS` setting. Local `.dev.vars` files and private secret
 exports must never be committed.
 
