@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Changed
+- Refreshed Supabase 2.119.2, TanStack Query/Start, Recharts 3.11, the Cloudflare Vite plugin 2.0 rc.3, jest-dom 8, Knip, and lint-staged.
 - Moved Worker configuration and deploys from Wrangler to the `cf` CLI (`cloudflare.config.ts`, `cf deploy`), upgraded the Cloudflare Vite plugin to 2.0, removed the `wrangler` dependency, and raised the minimum Node version to what `cf` supports.
 - Removed the broken `gen:liquidium-sdk` script (its OpenAPI spec no longer exists in the repo), the now-unused `openapi-typescript-codegen` dev dependency, and the orphaned `openapitools.json`, and documented that `src/sdk/liquidium` is checked in and maintained by hand.
 - Refreshed the agent guide: removed references to deleted files, stated the 250-line file limit, and trimmed the generic big.js tutorial.
@@ -16,6 +17,7 @@
 - Refreshed React 19.3, TanStack Start/Router, Vite 8.3, Cloudflare tooling, Supabase, Zod, bitcoin-address-validation, and development dependencies.
 
 ### Security
+- Updated Bun to 1.4.5, and raised the minimum Bun version to 1.4.5, for its TLS, DNS, and HTTP security fixes.
 - Updated every bitcoinjs-lib copy pulled in by the LaserEyes wallet stack (7.0.5 and 6.1.8) to fix the critical Merkle-root duplicate-node advisory (GHSA-8vv3-6qpc-gpw6).
 - Updated seroval, undici, body-parser, follow-redirects, and qs to patched releases for denial-of-service, code-injection, credential-leak, and TLS validation advisories.
 - Updated Bun to 1.4.4, and raised the minimum Bun version to 1.4.4, to remove trust in the compromised eMudhra CA chain.
