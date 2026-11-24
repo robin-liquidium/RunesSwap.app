@@ -24,7 +24,7 @@ A Uniswap‑style swap interface for Bitcoin Runes, built with TanStack Start, T
 
 ## Getting Started
 ### Prerequisites
-- Bun v1.4.2+
+- Bun v1.4.5+
 - Node.js 22.23+, 24.22+ or 26.12+ (required by the `cf` CLI)
 
 ### Environment Variables
